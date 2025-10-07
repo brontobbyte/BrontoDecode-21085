@@ -26,6 +26,7 @@ public class Auto_GPP extends NextFTCOpMode {
                 new SubsystemComponent(Shooter.INSTANCE)
         );
     }
+    public static class GPPPaths {
     public static double PoseInicialX = 27.468208092485547;
     public static double PoseInicialY = 128;
     public static double ShootInicialPoseX = 43.616;
@@ -84,82 +85,81 @@ public class Auto_GPP extends NextFTCOpMode {
 
     private Path scorePreload;
     private PathChain ShootInicial, GoIntake2, Intake2, Shoot2, Go, GoIntake3, Intake3, Shoot3, Park;
-    public void buildPaths() {
 
 
-        ShootInicial = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(PoseInicial, ShootInicialPose)
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(-36))
-                .build();
+        public void buildPathsGPP() {
 
-        GoIntake2 = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                ShootInicialPose,
-                                GoIntakeCurvedPose,
-                                GoIntakePose
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(180))
-                .build();
 
-        Intake2 = follower.pathBuilder()
-                .addPath(new BezierLine(GoIntakePose, Intake2Pose))
-                .setConstantHeadingInterpolation(Math.toRadians(-180))
-                .build();
+            ShootInicial = follower.pathBuilder()
+                    .addPath(
+                            new BezierLine(PoseInicial, ShootInicialPose)
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(-36))
+                    .build();
 
-        Shoot2 = follower.pathBuilder()
-                .addPath(new BezierLine(Intake2Pose, Shoot2Pose))
-                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-90))
-                .build();
+            GoIntake2 = follower.pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    ShootInicialPose,
+                                    GoIntakeCurvedPose,
+                                    GoIntakePose
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(180))
+                    .build();
 
-        Go = follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                Shoot2Pose,
-                                Shoot2CurvedPose,
-                                GoPose
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-180))
-                .build();
+            Intake2 = follower.pathBuilder()
+                    .addPath(new BezierLine(GoIntakePose, Intake2Pose))
+                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .build();
 
-        GoIntake3 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                GoPose,
-                                GoIntake3Pose
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(-180))
-                .build();
+            Shoot2 = follower.pathBuilder()
+                    .addPath(new BezierLine(Intake2Pose, Shoot2Pose))
+                    .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-90))
+                    .build();
 
-        Intake3 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                GoIntake3Pose,
-                                Intake3Pose
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(-180))
-                .build();
+            Go = follower.pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    Shoot2Pose,
+                                    Shoot2CurvedPose,
+                                    GoPose
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-180))
+                    .build();
 
-        Shoot3 = follower.pathBuilder()
-                .addPath(new BezierLine(Intake3Pose, Shoot3Pose))
-                .setConstantHeadingInterpolation(Math.toRadians(-180))
-                .build();
+            GoIntake3 = follower.pathBuilder()
+                    .addPath(
+                            new BezierLine(
+                                    GoPose,
+                                    GoIntake3Pose
+                            )
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .build();
+
+            Intake3 = follower.pathBuilder()
+                    .addPath(
+                            new BezierLine(
+                                    GoIntake3Pose,
+                                    Intake3Pose
+                            )
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .build();
+
+            Shoot3 = follower.pathBuilder()
+                    .addPath(new BezierLine(Intake3Pose, Shoot3Pose))
+                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .build();
+        }
     }
-
     @Override public void onInit() { }
     @Override public void onWaitForStart() {
 
     }
     @Override public void onStartButtonPressed() {
-        new SequentialGroup(
-                new FollowPath(ShootInicial)
-        );
     }
 }
 

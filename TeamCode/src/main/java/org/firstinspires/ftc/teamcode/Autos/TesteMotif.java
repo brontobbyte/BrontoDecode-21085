@@ -279,12 +279,62 @@ public class TesteMotif extends NextFTCOpMode {
                     desiredTag = detection;
                     foundID = 21; // This should likely be PPG_TAG_ID or the corresponding state machine ID
                     break;  // don't look any further.
-                }
-                }
-                }
+                } else if (detection.id == PGP_TAG_ID) {
+                // call lines for the PGP pattern
+                buildPathsPGP();
+                targetFound = true;
+                desiredTag = detection;
+                foundID = 22; // This should likely be PGP_TAG_ID or the corresponding state machine ID
+                break;  // don't look any further.
+            } else if (detection.id == GPP_TAG_ID) {
+                // call lines for the GPP pattern
+                buildPathsGPP();
+                targetFound = true;
+                desiredTag = detection;
+                foundID = 23; // This should likely be GPP_TAG_ID or the corresponding state machine ID
+                break;  // don't look any further.
+            }
+        } else {
+            // This tag is NOT in the library, so we don't have enough information to track to it.
+            telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+            }
+        }
+        // Update the state machine
+        if (foundID == 21) { // Consider using the TAG_ID constants or a dedicated variable for which path was found
+            updateStateMachinePPG();
+        } else if (foundID == 22) {
+            updateStateMachinePGP();
+        } else if (foundID == 23) {
+            updateStateMachineGPP();
+        }
+        // Log to Panels and driver station (custom log function)
+        log("Elapsed", runtime.toString());
+        log("X", currentPose.getX());
+        log("Y", currentPose.getY());
+        log("Heading", currentPose.getHeading());
+        telemetry.update();
+    }
+
+
+
+    private void updateStateMachinePPG() {
+    }
+    private void updateStateMachinePGP(){
+    }
+
+    private void updateStateMachineGPP(){
+    }
+
+
+    private void buildPathsPGP() {
     }
 
     private void buildPathsPPG() {
+        new Auto_PPG.PPGPaths();
+    }
+
+    private void buildPathsGPP () {
+        new Auto_GPP.GPPPaths();
     }
 
 }
