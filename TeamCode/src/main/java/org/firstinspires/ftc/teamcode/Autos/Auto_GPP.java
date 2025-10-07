@@ -2,26 +2,24 @@ package org.firstinspires.ftc.teamcode.Autos;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.extensions.pedro.FollowPath;
-import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.NextFTCOpMode;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.FollowPath;
+import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.ftc.NextFTCOpMode;
+
 @Config
-public class Auto_PPG extends NextFTCOpMode {
+public class Auto_GPP extends NextFTCOpMode {
     {
         addComponents(
                 new PedroComponent(Constants::createFollower),
@@ -32,30 +30,24 @@ public class Auto_PPG extends NextFTCOpMode {
     public static double PoseInicialY = 128;
     public static double ShootInicialPoseX = 43.616;
     public static double ShootInicialPoseY = 117.864;
-    public static double GoIntakeCurvedPoseX = 41.691;
-    public static double GoIntakeCurvedPoseY = 68.233;
-    public static double GoIntakeX = 41.785;
-    public static double GoIntakeY = 83.736;
-    public static double Intake2PoseX = 24.971;
-    public static double Intake2PoseY = 83.570;
-    public static double Shoot2PoseX = 42.950;
-    public static double Shoot2PoseY = 99.884;
-    public static double Shoot2CurvedPoseX = 47.840;
-    public static double Shoot2CurvedPoseY = 66.693;
-    public static double GoPoseX = 49.609;
-    public static double GoPoseY = 26.303;
-    public static double GoCurvedPoseX = 34.560;
-    public static double GoCurvedPoseY = 7.532;
-    public static double GoIntake3PoseX = 12.153;
-    public static double GoIntake3PoseY = 25.970;
-    public static double GoIntake3CurvedPoseX = 26.969;
-    public static double GoIntake3CurvedPoseY = 33.295;
-    public static double Intake3PoseX = 40.287;
-    public static double Intake3PoseY = 25.970;
-    public static double Shoot3PoseX = 54.603;
-    public static double Shoot3PoseY = 13.817;
-    public static double ParkPoseX = 38.622;
-    public static double ParkPoseY = 33.295;
+    public static double GoIntakeCurvedPoseX = 73.121;
+    public static double GoIntakeCurvedPoseY = 31.402;
+    public static double GoIntakeX = 41.495;
+    public static double GoIntakeY = 34.766;
+    public static double Intake2PoseX = 18.841;
+    public static double Intake2PoseY = 34.991;
+    public static double Shoot2PoseX = 71.327;
+    public static double Shoot2PoseY = 77.383;
+    public static double Shoot2CurvedPoseX = 75.364;
+    public static double Shoot2CurvedPoseY = 35.888;
+    public static double GoPoseX = 35.888;
+    public static double GoPoseY = 71.77570093457945;
+    public static double GoIntake3PoseX = 35.88785046728972;
+    public static double GoIntake3PoseY = 59.214953271028044;
+    public static double Intake3PoseX = 18.8411214953271;
+    public static double Intake3PoseY = 59.214953271028044;
+    public static double Shoot3PoseX = 40.37383177570093;
+    public static double Shoot3PoseY = 116.41121495327101;
 
 
 
@@ -86,15 +78,14 @@ public class Auto_PPG extends NextFTCOpMode {
     public static Pose Shoot2Pose = new Pose(Shoot2PoseX, Shoot2PoseY);
     public static Pose Shoot2CurvedPose = new Pose(Shoot2CurvedPoseX, Shoot2CurvedPoseY );
     public static Pose GoPose = new Pose(GoPoseX, GoPoseY);
-    public static Pose GoCurvedPose = new Pose(GoCurvedPoseX, GoCurvedPoseY);
     public static Pose GoIntake3Pose = new Pose(GoIntake3PoseX, GoIntake3PoseY);
-    public static Pose GoIntake3CurvedPose = new Pose(GoIntake3CurvedPoseX, GoIntake3CurvedPoseY);
     public static Pose Intake3Pose = new Pose(Intake3PoseX, Intake3PoseY);
     public static Pose Shoot3Pose = new Pose(Shoot3PoseX, Shoot3PoseY);
-    public static Pose ParkPose =  new Pose(ParkPoseX, ParkPoseY);
+
     private Path scorePreload;
     private PathChain ShootInicial, GoIntake2, Intake2, Shoot2, Go, GoIntake3, Intake3, Shoot3, Park;
     public void buildPaths() {
+
 
         ShootInicial = follower.pathBuilder()
                 .addPath(
@@ -132,39 +123,32 @@ public class Auto_PPG extends NextFTCOpMode {
                                 GoPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-135))
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-180))
                 .build();
 
         GoIntake3 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 GoPose,
-                                GoCurvedPose,
                                 GoIntake3Pose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-135), Math.toRadians(45))
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
 
         Intake3 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 GoIntake3Pose,
-                                GoIntake3CurvedPose,
                                 Intake3Pose
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(45))
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
 
         Shoot3 = follower.pathBuilder()
                 .addPath(new BezierLine(Intake3Pose, Shoot3Pose))
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
-                .build();
-
-        Park = follower.pathBuilder()
-                .addPath(new BezierLine(Shoot3Pose, ParkPose))
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(90))
+                .setConstantHeadingInterpolation(Math.toRadians(-180))
                 .build();
     }
 
@@ -178,3 +162,4 @@ public class Auto_PPG extends NextFTCOpMode {
         );
     }
 }
+

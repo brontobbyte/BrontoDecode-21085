@@ -1,27 +1,15 @@
 package org.firstinspires.ftc.teamcode.Programs;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.internal.network.ControlHubDeviceNameManager;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
 import java.util.List;
-
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 
