@@ -31,31 +31,34 @@ public class Auto_12_5 extends NextFTCOpMode {
                 new SubsystemComponent(Shooter.INSTANCE)
         );
     }
-    public static class GPPPaths {
 
         // COORDENADAS PARA O PANELS
-        public static double PoseInicialX = 27.468208092485547;
-        public static double PoseInicialY = 128;
-        public static double ShootInicialPoseX = 43.616;
-        public static double ShootInicialPoseY = 117.864;
-        public static double GoIntakeCurvedPoseX = 73.121;
-        public static double GoIntakeCurvedPoseY = 31.402;
-        public static double GoIntakeX = 41.495;
-        public static double GoIntakeY = 34.766;
-        public static double Intake2PoseX = 18.841;
-        public static double Intake2PoseY = 34.991;
-        public static double Shoot2PoseX = 71.327;
-        public static double Shoot2PoseY = 77.383;
-        public static double Shoot2CurvedPoseX = 75.364;
-        public static double Shoot2CurvedPoseY = 35.888;
-        public static double GoPoseX = 35.888;
-        public static double GoPoseY = 71.77570093457945;
-        public static double GoIntake3PoseX = 35.88785046728972;
-        public static double GoIntake3PoseY = 59.214953271028044;
-        public static double Intake3PoseX = 18.8411214953271;
-        public static double Intake3PoseY = 59.214953271028044;
-        public static double Shoot3PoseX = 40.37383177570093;
-        public static double Shoot3PoseY = 116.41121495327101;
+        public static double PoseInicialX = 62.760693641618495;
+        public static double PoseInicialY = 9.489017341040466;
+        public static double Intake2CurvedPoseX = 62.734177215189874;
+        public static double Intake2CurvedPoseY = 59.930635838150295;
+        public static double Intake2PoseX = 21.97456647398844;
+        public static double Intake2PoseY = 59.59768786127168;
+        public static double OpenGateCurvedPoseX = 22.48101265822785;
+        public static double OpenGateCurvedPoseY = 64.92485549132948;
+        public static double OpenGatePoseX = 14.126582278481012;
+        public static double OpenGatePoseY = 68.75375722543353;
+        public static double Shoot2PoseX = 49.67088607594937;
+        public static double Shoot2PoseY = 83.73641618497109;
+        public static double Shoot2CurvedPoseX = 52.10126582278481;
+        public static double Shoot2CurvedPoseY = 59.59768786127168;
+        public static double Intake3PoseX = 24.30379746835443;
+        public static double Intake3PoseY = 83.73641618497109;
+        public static double Shoot3PoseX = 58.09942196531792;
+        public static double Shoot3PoseY = 94.7236994219653;
+        public static double Shoot3CurvedPoseX = 52.106358381502886;
+        public static double Shoot3CurvedPoseY = 87.23236994219653;
+        public static double Intake4PoseX = 24.971098265895954;
+        public static double Intake4PoseY = 36.4578034682081;
+        public static double Intake4CurvedPoseX = 69.91907514450867;
+        public static double Intake4CurvedPoseY = 36.291329479768784;
+        public static double Shoot4PoseX = 57.11392405063291;
+        public static double Shoot4PoseY = 15.482080924855492;
 
 
 
@@ -65,96 +68,108 @@ public class Auto_12_5 extends NextFTCOpMode {
 
         // POSES COM AS COORDENADAS
         public static Pose PoseInicial = new Pose(PoseInicialX, PoseInicialY);
-        public static Pose ShootInicialPose = new Pose(ShootInicialPoseX, ShootInicialPoseY);
-        public static Pose GoIntakeCurvedPose = new Pose(GoIntakeCurvedPoseX, GoIntakeCurvedPoseY);
-        public static Pose GoIntakePose = new Pose(GoIntakeX, GoIntakeY );
+        public static Pose Intake2CurvedPose = new Pose(Intake2CurvedPoseX, Intake2CurvedPoseY);
         public static Pose Intake2Pose = new Pose(Intake2PoseX, Intake2PoseY);
+        public static Pose OpenGateCurvedPose = new Pose(OpenGateCurvedPoseX, OpenGateCurvedPoseY);
+        public static Pose OpenGatePose = new Pose(OpenGatePoseX, OpenGatePoseY);
         public static Pose Shoot2Pose = new Pose(Shoot2PoseX, Shoot2PoseY);
         public static Pose Shoot2CurvedPose = new Pose(Shoot2CurvedPoseX, Shoot2CurvedPoseY );
-        public static Pose GoPose = new Pose(GoPoseX, GoPoseY);
-        public static Pose GoIntake3Pose = new Pose(GoIntake3PoseX, GoIntake3PoseY);
         public static Pose Intake3Pose = new Pose(Intake3PoseX, Intake3PoseY);
+        public static Pose Shoot3CurvedPose = new Pose(Shoot3CurvedPoseX, Shoot3CurvedPoseY);
         public static Pose Shoot3Pose = new Pose(Shoot3PoseX, Shoot3PoseY);
+        public static Pose Intake4CurvedPose = new Pose(Intake4CurvedPoseX, Intake4CurvedPoseY);
 
-        private Path scorePreload;
-        private PathChain ShootInicial, GoIntake2, Intake2, Shoot2, Go, GoIntake3, Intake3, Shoot3, Park;
+        public static Pose Intake4Pose = new Pose(Intake4PoseX, Intake4PoseY);
+        public static Pose Shoot4Pose = new Pose(Shoot4PoseX, Shoot4PoseY);
+
+        private PathChain Intake2, OpenGate, Shoot2, Intake3, Shoot3, Intake4, Shoot4;
 
 
         public void buildPathsGPP() {
 
             //PATHS
 
-            ShootInicial = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(PoseInicial, ShootInicialPose)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(-36))
-                    .build();
-
-            GoIntake2 = follower.pathBuilder()
+            Intake2 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    ShootInicialPose,
-                                    GoIntakeCurvedPose,
-                                    GoIntakePose
+                                    PoseInicial,
+                                    Intake2CurvedPose,
+                                    Intake2Pose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(180))
+                    .setTangentHeadingInterpolation()
                     .build();
 
-            Intake2 = follower.pathBuilder()
-                    .addPath(new BezierLine(GoIntakePose, Intake2Pose))
-                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+            OpenGate = follower.pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    Intake2Pose,
+                                    OpenGateCurvedPose,
+                                    OpenGatePose
+                            )
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(180))
                     .build();
 
             Shoot2 = follower.pathBuilder()
-                    .addPath(new BezierLine(Intake2Pose, Shoot2Pose))
-                    .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-90))
-                    .build();
-
-            Go = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    Shoot2Pose,
+                                    OpenGatePose,
                                     Shoot2CurvedPose,
-                                    GoPose
+                                    Shoot2Pose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-180))
-                    .build();
-
-            GoIntake3 = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(
-                                    GoPose,
-                                    GoIntake3Pose
-                            )
-                    )
-                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .setConstantHeadingInterpolation(Math.toRadians(180))
                     .build();
 
             Intake3 = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(
-                                    GoIntake3Pose,
-                                    Intake3Pose
-                            )
-                    )
-                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .addPath(new BezierLine(Shoot2Pose, Intake3Pose))
+                    .setConstantHeadingInterpolation(Math.toRadians(180))
                     .build();
 
             Shoot3 = follower.pathBuilder()
-                    .addPath(new BezierLine(Intake3Pose, Shoot3Pose))
-                    .setConstantHeadingInterpolation(Math.toRadians(-180))
+                    .addPath(
+                            new BezierCurve(
+                                    Intake3Pose,
+                                    Shoot3CurvedPose,
+                                    Shoot3Pose
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-90))
                     .build();
-        }
+
+            Intake4 = follower.pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    Shoot3Pose,
+                                    Intake4CurvedPose,
+                                    Intake4Pose
+                            )
+                    )
+                    .setTangentHeadingInterpolation()
+                    .build();
+
+            Shoot4 = follower.pathBuilder()
+                    .addPath(new BezierLine(Intake4Pose, Shoot4Pose))
+                    .setTangentHeadingInterpolation()
+                    .setReversed()
+                    .build();
+
     }
     @Override public void onInit() { }
     @Override public void onWaitForStart() {
 
     }
     @Override public void onStartButtonPressed() {
-
+        new SequentialGroup(
+                new FollowPath(Intake2),
+                new FollowPath(OpenGate),
+                new FollowPath(Shoot2),
+                new FollowPath(Intake3),
+                new FollowPath(Shoot3),
+                new FollowPath(Intake4),
+                new FollowPath(Shoot4)
+                );
     }
 }
 
