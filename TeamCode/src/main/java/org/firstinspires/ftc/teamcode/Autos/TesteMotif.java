@@ -153,6 +153,7 @@ public class TesteMotif extends NextFTCOpMode {
                                 GoIntakePose
                         )
                 )
+
                 .setLinearHeadingInterpolation(Math.toRadians(-36), Math.toRadians(180))
                 .build();
 
@@ -327,6 +328,7 @@ public class TesteMotif extends NextFTCOpMode {
 
 
     private void buildPathsPGP() {
+        new Auto_PGP.PGPPaths();
     }
 
     private void buildPathsPPG() {

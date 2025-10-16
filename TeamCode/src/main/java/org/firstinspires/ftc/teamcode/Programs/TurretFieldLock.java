@@ -9,15 +9,13 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name = "Turret Field Lock", group = "Competition")
+@TeleOp(name = "Turret Field Lock joão", group = "Competition")
 public class TurretFieldLock extends LinearOpMode {
 
     private DcMotorEx motorTurret;
     private IMU imu;
-
-    private final double GEAR_RATIO = 20.0;
-    private final double TICKS_POR_REVOLUCAO = 750.0 * GEAR_RATIO;
-    private final double kP = 0.02;
+    private final double Tickspor360 = 998.0;
+    private final double kP = 0.05;
 
     private double headingInicial = 0;
 
@@ -36,7 +34,7 @@ public class TurretFieldLock extends LinearOpMode {
         motorTurret.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         motorTurret.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        telemetry.addLine("Pronto. Aguardando start...");
+        telemetry.addLine("nada");
         telemetry.update();
 
         waitForStart();
@@ -45,14 +43,15 @@ public class TurretFieldLock extends LinearOpMode {
 
         while (opModeIsActive()) {
             double headingAtual = getHeading();
-            double deltaHeading = angleWrap(headingAtual - headingInicial); // quanto o robô girou desde o início
 
-            double setpointGraus = deltaHeading;
+            double deltaHeading = angleWrap(headingAtual - headingInicial);
 
-            double posicaoAtualGraus = (motorTurret.getCurrentPosition() / TICKS_POR_REVOLUCAO) * 260.0;
+            double setpointGraus = - deltaHeading;
+
+            double posicaoAtualGraus = (motorTurret.getCurrentPosition() / Tickspor360) * 360.0;
 
             double erro = angleWrap(setpointGraus - posicaoAtualGraus);
-            double saida = Range.clip(kP * erro, -0.3, 0.3);
+            double saida = Range.clip(kP * erro, -1, 1);
             motorTurret.setPower(saida);
 
             telemetry.addData("Heading Inicial", "%.2f", headingInicial);
@@ -65,7 +64,6 @@ public class TurretFieldLock extends LinearOpMode {
             telemetry.update();
         }
     }
-
     private double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);

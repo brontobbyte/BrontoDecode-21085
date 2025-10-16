@@ -55,22 +55,6 @@ public class Auto_GPP extends NextFTCOpMode {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public static Pose PoseInicial = new Pose(PoseInicialX, PoseInicialY);
     public static Pose ShootInicialPose = new Pose(ShootInicialPoseX, ShootInicialPoseY);
     public static Pose GoIntakeCurvedPose = new Pose(GoIntakeCurvedPoseX, GoIntakeCurvedPoseY);

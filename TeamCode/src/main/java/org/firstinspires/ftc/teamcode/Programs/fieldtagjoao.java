@@ -1,75 +1,118 @@
 package org.firstinspires.ftc.teamcode.Programs;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
-@TeleOp(name = "fieldtagjao")
+@TeleOp(name = "Turret + Field Oriented", group = "turret")
 public class fieldtagjoao extends LinearOpMode {
-
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
+    private DcMotorEx motorTurret;
+    private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private IMU imu;
-    private double initialHeading;
-    private final double kP = 2.3;
+    private final double GEAR_RATIO = 1.0;
+    private final double tickspor360 = 998.0 * GEAR_RATIO;
+    private final double kP = 0.05;
+
+    private double headingInicial = 0;
 
     @Override
     public void runOpMode() {
-        frontLeft = hardwareMap.get(DcMotor.class, "motor_esquerda");
-        frontRight = hardwareMap.get(DcMotor.class, "motor_direita");
-        backLeft = hardwareMap.get(DcMotor.class, "motor_esquerdatras");
-        backRight = hardwareMap.get(DcMotor.class, "motor_direitatras");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
         imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                ));
+        imu.initialize(parameters);
+
+        motorTurret = hardwareMap.get(DcMotorEx.class, "motor_turret");
+        motorTurret.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorTurret.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorTurret.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        frontLeft = hardwareMap.get(DcMotorEx.class, "motor_esquerda");
+        frontRight = hardwareMap.get(DcMotorEx.class, "motor_direita");
+        backLeft = hardwareMap.get(DcMotorEx.class, "motor_esquerdatras");
+        backRight = hardwareMap.get(DcMotorEx.class, "motor_direitatras");
+
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+
+        telemetry.addLine("nada");
+        telemetry.update();
 
         waitForStart();
 
-        initialHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        headingInicial = getHeading();
 
         while (opModeIsActive()) {
+            double headingAtual = getHeading();
+
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
-            double rx;
+            double rx = gamepad1.right_stick_x;
 
-            double currentHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double botHeading = Math.toRadians(getHeading());
 
-            if (Math.abs(gamepad1.right_stick_x) > 0.1) {
-                rx = gamepad1.right_stick_x;
-            } else {
-                double erro = calculateHeadingError(initialHeading, currentHeading);
-                rx = erro * kP;
-            }
+            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1.0);
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
 
             frontLeft.setPower(frontLeftPower);
-            frontRight.setPower(frontRightPower);
             backLeft.setPower(backLeftPower);
+            frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
 
-            telemetry.addData("Heading Atual", "%.2f", Math.toDegrees(currentHeading));
-            telemetry.addData("Heading Inicial", "%.2f", Math.toDegrees(initialHeading));
-            telemetry.addData("Modo", (Math.abs(gamepad1.right_stick_x) > 0.1) ? "Manual" : "Corrigindo");
-            telemetry.update();
+            double deltaHeading = angleWrap(headingAtual - headingInicial);
+
+            double setpointGraus = -deltaHeading;
+
+            double posicaoAtualGraus = (motorTurret.getCurrentPosition() / tickspor360) * 360.0;
+
+            double erro = angleWrap(setpointGraus - posicaoAtualGraus);
+            double saida = Range.clip(kP * erro, -0.7, 0.7);
+            motorTurret.setPower(saida);
+
+            telemetry.addLine("turret");
+
+            telemetry.addData("Heading Inicial", "%.2f", headingInicial);
+
+            telemetry.addData("Heading Atual", "%.2f", headingAtual);
+
+            telemetry.addData("Delta Heading", "%.2f", deltaHeading);
+
+            telemetry.addData("Setpoint Torreta", "%.2f", setpointGraus);
+
+            telemetry.addData("Posição Atual", "%.2f", posicaoAtualGraus);
+
+            telemetry.addData("Erro", "%.2f", erro);
+
+            telemetry.addData("Saída", "%.3f", saida);
+
         }
     }
 
-    private double calculateHeadingError(double target, double current) {
-        double error = target - current;
-        while (error > Math.PI) error -= 2 * Math.PI;
-        while (error < -Math.PI) error += 2 * Math.PI;
-        return error;
+    private double getHeading() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
+    private double angleWrap(double angulo) {
+        while (angulo > 180) angulo -= 360;
+        while (angulo < -180) angulo += 360;
+        return angulo;
     }
 }

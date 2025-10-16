@@ -25,7 +25,7 @@ public class indexer implements Subsystem {
             .requires(this);
 
     public LambdaCommand STOP = new LambdaCommand("Stop")
-            .setStart(() -> indexerServo.setPower(0.5))
+            .setStart(() -> indexerServo.setPower(0))
             .requires(this);
 
     @Override
