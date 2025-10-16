@@ -14,9 +14,9 @@ import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @Config
-public class intake implements Subsystem {
-    public static final intake INSTANCE = new intake();
-    private intake() { }
+public class Intake implements Subsystem {
+    public static final Intake INSTANCE = new Intake();
+    private Intake() { }
     private final MotorEx motorintake= new MotorEx("motor_intake")
             .reversed();
     public static double p = 1;
