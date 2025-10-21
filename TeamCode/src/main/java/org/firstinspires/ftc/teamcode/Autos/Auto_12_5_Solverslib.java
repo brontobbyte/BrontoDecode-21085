@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -9,8 +7,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -20,17 +16,11 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;
 
-import org.firstinspires.ftc.teamcode.Subsystems.IndexerSolvers;
-import org.firstinspires.ftc.teamcode.Subsystems.IntakeSolvers;
-import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.Subsystems.ShooterSolvers;
+import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IntakeSolvers;
+import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers;
+import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.TurretSolvers;
+import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.extensions.pedro.FollowPath;
-import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.NextFTCOpMode;
 
 @Config
 @Autonomous
@@ -41,7 +31,12 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
 
     //TODO AUTONOMOUS - 12 ARTIFACTS + 5 PATTERN + 3 BASE - 21085 - BRONTOBYTE - BR
 
-        // COORDENADAS PARA O PANELS
+    public static int Shoot1PosTurret = 0;
+    public static int Shoot2PosTurret = 0;
+    public static int Shoot3PosTurret = 0;
+    public static int Shoot4PosTurret = 0;
+
+    // COORDENADAS PARA O PANELS
         public static double PoseInicialX = 62.760693641618495;
         public static double PoseInicialY = 9.489017341040466;
         public static double Intake2CurvedPoseX = 62.734177215189874;
@@ -166,31 +161,51 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
 
     }
 
-    private InstantCommand index() {
+    private InstantCommand intake() {
         return new InstantCommand(() -> {
-            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
-            new IntakeSolvers(hardwareMap, "motor_intake").grab();
+
+            new IntakeSolvers(hardwareMap, "motor_intake").Intake();
         });
     }
-    private InstantCommand outdex() {
+    private InstantCommand intakeoff() {
         return new InstantCommand(() -> {
-            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
-            new IntakeSolvers(hardwareMap, "motor_intake").release();
+
+            new IntakeSolvers(hardwareMap, "motor_intake").Off();
 
         });
     }
     private InstantCommand shoot() {
         return new InstantCommand(() -> {
-            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
-            new ShooterSolvers(hardwareMap, "motor_direita", "motor_direitatras").grab();
+
+            new ShooterSolvers(hardwareMap, "motor_shooter", "motor_shooter2").On();
 
         });
     }
     private InstantCommand shootoff() {
         return new InstantCommand(() -> {
-            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
-            new ShooterSolvers(hardwareMap, "motor_direita", "motor_direitatras").release();
 
+            new ShooterSolvers(hardwareMap, "motor_shooter", "motor_shooter2").Off();
+
+        });
+    }
+    private InstantCommand turretShoot1() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").ShootAuto(Shoot1PosTurret);
+        });
+    }
+    private InstantCommand turretShoot2() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").ShootAuto(Shoot2PosTurret);
+        });
+    }
+    private InstantCommand turretShoot3() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").ShootAuto(Shoot3PosTurret);
+        });
+    }
+    private InstantCommand turretShoot4() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").ShootAuto(Shoot4PosTurret);
         });
     }
 
@@ -201,20 +216,27 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
             follower = Constants.createFollower(hardwareMap);
             follower.setStartingPose(PoseInicial);
             buildPaths();
+            SequentialCommandGroup init = new SequentialCommandGroup(
+                    turretShoot1(),
+                    shoot()
+            );
+        schedule(init);
+        waitForStart();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                /*index(),
-                new WaitCommand(1000),
-                outdex(),
-                new WaitCommand(1000),
-                //shoot(),
-                new WaitCommand(1000),
-                //shootoff(),
-                new WaitCommand(1000)
-                //shoot()*/
-                index(),
-                //follower.followPath(Intake2),
+                intake(),
+                new WaitCommand(500),
+                intakeoff(),
+                new WaitCommand(500),
+                intake(),
+                new WaitCommand(500),
+                intakeoff(),
+                new WaitCommand(500),
+                intake(),
+                new WaitCommand(500),
+                intakeoff(),
+                new WaitCommand(500),
+                shootoff(),
                 new FollowPathCommand(follower, Intake2).setGlobalMaxPower(1),
-                outdex(),
                 new FollowPathCommand(follower, OpenGate),
                 new FollowPathCommand(follower, Shoot2),
                 new FollowPathCommand(follower, Intake3),

@@ -1,16 +1,10 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
-/**
- * A gripper mechanism that grabs a stone from the quarry.
- * Centered around the Skystone game for FTC that was done in the 2019
- * to 2020 season.
- */
 public class IndexerSolvers extends SubsystemBase {
 
     private final CRServo mechRotation;
@@ -20,18 +14,18 @@ public class IndexerSolvers extends SubsystemBase {
     }
 
     /**
-     * Grabs a stone.
+     * Manda pro Shooter.
      */
-    public void grab() {
+    public void On() {
         mechRotation.setPower(0.76);
     }
 
 
 
     /**
-     * Releases a stone.
+     * Desliga o Indexer.
      */
-    public void release() {
+    public void Off() {
         mechRotation.setPower(0);
     }
 

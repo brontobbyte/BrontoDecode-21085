@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Programs;
+package org.firstinspires.ftc.teamcode.NãoUsamos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -13,7 +13,7 @@ import java.util.List;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 
-@TeleOp(name = "LimelightProgram")
+
 public class LimelightProgram extends NextFTCOpMode {
     MotorEx Direita = new MotorEx("motor_shooter");
     

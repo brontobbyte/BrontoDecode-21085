@@ -1,11 +1,7 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
@@ -22,17 +18,24 @@ public class IntakeSolvers extends SubsystemBase {
     }
 
     /**
-     * Grabs a stone.
+     * Intake.
      */
-    public void grab() {
+    public void Intake() {
         intake.setRunMode(Motor.RunMode.RawPower);
         intake.set(0.6);
     }
+    /**
+     * Velocidade para shootar
+     */
+    public void IntakeShoot() {
+        intake.setRunMode(Motor.RunMode.RawPower);
+        intake.set(0.3);
+    }
 
     /**
-     * Releases a stone.
+     * Para Intake.
      */
-    public void release() {
+    public void Off() {
         intake.setRunMode(Motor.RunMode.RawPower);
         intake.set(0);
         //mechRotation.setPosition(0);
