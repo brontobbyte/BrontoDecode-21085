@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.Programs;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.pos;
 import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.vel;
 import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.vel1;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.posTurret;
-import static dev.nextftc.bindings.Bindings.button;
-
-import android.renderscript.ScriptGroup;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -19,23 +15,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
-import org.firstinspires.ftc.teamcode.Subsystems.TurretSeguidor;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.indexer;
 
 import dev.nextftc.bindings.BindingManager;
-import dev.nextftc.bindings.Bindings;
-import dev.nextftc.bindings.Bindings.*;
-import dev.nextftc.bindings.Button;
 import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.controllable.RunToPosition;
-import dev.nextftc.hardware.controllable.RunToVelocity;
-import dev.nextftc.hardware.delegates.Velocity;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp(name = "TeleOpTeste")
@@ -44,7 +33,7 @@ public class TeleopTeste extends NextFTCOpMode {
 
     {
         addComponents(
-                new SubsystemComponent(Shooter.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE, Turret.INSTANCE, Intake.INSTANCE, indexer.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -81,6 +70,16 @@ public class TeleopTeste extends NextFTCOpMode {
                 .whenFalse(() -> telemetry.update())
                 .whenFalse(Shooter.INSTANCE.OFF)
                 .whenFalse(() -> telemetry.addData("botao", "nada"));
+
+        Gamepads.gamepad1().leftBumper()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Intake.INSTANCE.coletar)
+                .whenBecomesFalse(Intake.INSTANCE.Stop());
+
+        Gamepads.gamepad1().b()
+                .whenTrue(indexer.INSTANCE.puxa)
+                .whenFalse(indexer.INSTANCE.empurra);
+
         Gamepads.gamepad1().dpadUp()
                 .whenTrue(Turret.INSTANCE.Zero);
         Gamepads.gamepad1().dpadDown()
@@ -88,16 +87,12 @@ public class TeleopTeste extends NextFTCOpMode {
         Gamepads.gamepad1().dpadRight()
                 .whenTrue(Turret.INSTANCE.Noventa);
     }
+
     @Override public void onUpdate(){
         yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         double posSeguidor = yaw;
         posSeguidorGraus = ((-posSeguidor*615)/180);
-        //motorTurret.setPower(posSeguidorGraus / 90);
-        /*Gamepads.gamepad1().b()
-                .whenBecomesTrue(TurretSeguidor.INSTANCE.seguidor);
-        Gamepads.gamepad1().y()
-                .whenTrue(()-> imu.resetYaw());
-        motorTurret.setPower(controlSystem.calculate(motorTurret.getState()));*/
+
         packet.put("Teste", vel);
         packet.put("vel1", vel1);
         packet.put("pos", pos);
@@ -105,6 +100,8 @@ public class TeleopTeste extends NextFTCOpMode {
         packet.put("posSeguidorMotor", posSeguidorGraus/90);
         packet.put("posAtual", motorTurret.getCurrentPosition());
         packet.put("posTurret", posTurret);
+
+
         dash.sendTelemetryPacket(packet);
         dashTelemetry.addData("teste2", vel);
         dashTelemetry.update();

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+//import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.control.ControlSystem;
@@ -27,7 +27,7 @@ public class TeleOpDecode extends NextFTCOpMode {
 
     {
         addComponents(
-                new SubsystemComponent(Shooter.INSTANCE, Turret.INSTANCE, Intake.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE, Turret.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -60,9 +60,9 @@ public class TeleOpDecode extends NextFTCOpMode {
                         new SetPower(ServoIndexer, 1),
                         new Delay(500),
                         new SetPower(ServoIndexer, 0),
-                        Intake.INSTANCE.coletar,
-                        new Delay(500),
-                        Intake.INSTANCE.para
+                        //Intake.INSTANCE.coletar,
+                        new Delay(500)
+                        //Intake.INSTANCE.para
                         ));
     }
     @Override public void onUpdate(){
