@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autos;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -16,9 +17,13 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
+import com.seattlesolvers.solverslib.util.TelemetryData;
 
 import org.firstinspires.ftc.teamcode.Subsystems.IndexerSolvers;
+import org.firstinspires.ftc.teamcode.Subsystems.IntakeSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.ShooterSolvers;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -28,8 +33,11 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
 @Config
-@Autonomous (name = "Auto_12_5_Solverslib")
+@Autonomous
 public class Auto_12_5_Solverslib extends CommandOpMode {
+    TelemetryData telemetryData = new TelemetryData(telemetry);
+
+    private Follower follower;
 
     //TODO AUTONOMOUS - 12 ARTIFACTS + 5 PATTERN + 3 BASE - 21085 - BRONTOBYTE - BR
 
@@ -68,10 +76,10 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
 
 
         // POSES COM AS COORDENADAS
-        public static Pose PoseInicial = new Pose(PoseInicialX, PoseInicialY);
-        public static Pose Intake2CurvedPose = new Pose(Intake2CurvedPoseX, Intake2CurvedPoseY);
-        public static Pose Intake2Pose = new Pose(Intake2PoseX, Intake2PoseY);
-        public static Pose OpenGateCurvedPose = new Pose(OpenGateCurvedPoseX, OpenGateCurvedPoseY);
+        public static Pose PoseInicial = new Pose(PoseInicialX, PoseInicialY, Math.toRadians(0));
+        public static Pose Intake2CurvedPose = new Pose(Intake2CurvedPoseX, Intake2CurvedPoseY, Math.toRadians(0));
+        public static Pose Intake2Pose = new Pose(Intake2PoseX, Intake2PoseY, Math.toRadians(0));
+        public static Pose OpenGateCurvedPose = new Pose(OpenGateCurvedPoseX, OpenGateCurvedPoseY, Math.toRadians(0));
         public static Pose OpenGatePose = new Pose(OpenGatePoseX, OpenGatePoseY);
         public static Pose Shoot2Pose = new Pose(Shoot2PoseX, Shoot2PoseY);
         public static Pose Shoot2CurvedPose = new Pose(Shoot2CurvedPoseX, Shoot2CurvedPoseY );
@@ -83,10 +91,10 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
         public static Pose Intake4Pose = new Pose(Intake4PoseX, Intake4PoseY);
         public static Pose Shoot4Pose = new Pose(Shoot4PoseX, Shoot4PoseY);
 
-        private PathChain Intake2, OpenGate, Shoot2, Intake3, Shoot3, Intake4, Shoot4;
+        private PathChain Intake2, OpenGate, Shoot2, Intake3, Shoot3, Intake4, Shoot4, teste;
 
 
-        public void buildPathsGPP() {
+        public void buildPaths() {
 
             //PATHS
 
@@ -160,12 +168,29 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
 
     private InstantCommand index() {
         return new InstantCommand(() -> {
-            new IndexerSolvers(hardwareMap, "servo_indexer").grab();
+            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
+            new IntakeSolvers(hardwareMap, "motor_intake").grab();
         });
     }
     private InstantCommand outdex() {
         return new InstantCommand(() -> {
-            new IndexerSolvers(hardwareMap, "servo_indexer").grab();
+            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
+            new IntakeSolvers(hardwareMap, "motor_intake").release();
+
+        });
+    }
+    private InstantCommand shoot() {
+        return new InstantCommand(() -> {
+            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
+            new ShooterSolvers(hardwareMap, "motor_direita", "motor_direitatras").grab();
+
+        });
+    }
+    private InstantCommand shootoff() {
+        return new InstantCommand(() -> {
+            //new IndexerSolvers(hardwareMap, "servo_indexer").grab();
+            new ShooterSolvers(hardwareMap, "motor_direita", "motor_direitatras").release();
+
         });
     }
 
@@ -173,24 +198,46 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
     @Override
     public void initialize() {
             super.reset();
+            follower = Constants.createFollower(hardwareMap);
+            follower.setStartingPose(PoseInicial);
+            buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                index(),
+                /*index(),
                 new WaitCommand(1000),
                 outdex(),
                 new WaitCommand(1000),
-                index(),
+                //shoot(),
+                new WaitCommand(1000),
+                //shootoff(),
                 new WaitCommand(1000)
+                //shoot()*/
+                index(),
+                //follower.followPath(Intake2),
+                new FollowPathCommand(follower, Intake2).setGlobalMaxPower(1),
+                outdex(),
+                new FollowPathCommand(follower, OpenGate),
+                new FollowPathCommand(follower, Shoot2),
+                new FollowPathCommand(follower, Intake3),
+                new FollowPathCommand(follower, Shoot3),
+                new FollowPathCommand(follower, Intake4),
+                new FollowPathCommand(follower, Shoot4)
+
+
+
+
+
                 );
+        follower.update();
         schedule(autonomousSequence);
-        /*new SequentialGroup(
-                new FollowPath(Intake2),
-                new FollowPath(OpenGate),
-                new FollowPath(Shoot2),
-                new FollowPath(Intake3),
-                new FollowPath(Shoot3),
-                new FollowPath(Intake4),
-                new FollowPath(Shoot4)
-        );*/
+    }
+
+    public void run(){
+            follower.update();
+            super.run();
+        telemetryData.addData("X", follower.getPose().getX());
+        telemetryData.addData("Y", follower.getPose().getY());
+        telemetryData.addData("Heading", follower.getPose().getHeading());
+        telemetryData.update();
     }
 }
 

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,24 +15,26 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
  * to 2020 season.
  */
 public class IntakeSolvers extends SubsystemBase {
-
-    private final MotorEx mechRotation;
-
+    private Motor intake;
     public IntakeSolvers(final HardwareMap hMap, final String name) {
-        mechRotation = hMap.get(com.seattlesolvers.solverslib.hardware.motors.MotorEx.class, name);
+        intake = new Motor(hMap, name);
+        //intake = hMap.get(com.seattlesolvers.solverslib.hardware.motors.Motor.class, "motor_direita");
     }
 
     /**
      * Grabs a stone.
      */
     public void grab() {
-        mechRotation.setVelocity(0.76);
+        intake.setRunMode(Motor.RunMode.RawPower);
+        intake.set(0.6);
     }
 
     /**
      * Releases a stone.
      */
     public void release() {
+        intake.setRunMode(Motor.RunMode.RawPower);
+        intake.set(0);
         //mechRotation.setPosition(0);
     }
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autos;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -27,10 +28,10 @@ public class Auto_12_5 extends NextFTCOpMode {
 
     {
         addComponents(
-                new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Shooter.INSTANCE)
+                new PedroComponent(Constants::createFollower)
         );
     }
+    private Follower follower;
 
         // COORDENADAS PARA O PANELS
         public static double PoseInicialX = 62.760693641618495;
@@ -161,6 +162,9 @@ public class Auto_12_5 extends NextFTCOpMode {
 
     }
     @Override public void onStartButtonPressed() {
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(PoseInicial);
+        buildPathsGPP();
         new SequentialGroup(
                 new FollowPath(Intake2),
                 new FollowPath(OpenGate),
