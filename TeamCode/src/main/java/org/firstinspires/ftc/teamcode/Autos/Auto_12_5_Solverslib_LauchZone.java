@@ -183,33 +183,29 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             follower = Constants.createFollower(hardwareMap);
             follower.setStartingPose(PoseInicial);
             buildPaths();
-            SequentialCommandGroup init = new SequentialCommandGroup(
-                    shoot(),
-                    turretShoot1()
-            );
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot1), turretShoot1()),
                 new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
                 intakeoff(),
                 shootoff(),
-                new ParallelDeadlineGroup(intake(),  new FollowPathCommand(follower, Intake2)),
+                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake2)),
                 intakeoff(),
                 new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot2), turretShoot2()),
-                new FollowPathCommand(follower, Shoot2),
-                new WaitCommand(1500),
-                new FollowPathCommand(follower, Intake3),
-                turretShoot3(),
-                new FollowPathCommand(follower, Shoot3),
-                new WaitCommand(1500),
-                new FollowPathCommand(follower, Intake4),
-                turretShoot4(),
-                new FollowPathCommand(follower, Shoot4)
-
-
-
-
-
-
+                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                intakeoff(),
+                shootoff(),
+                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake3)),
+                intakeoff(),
+                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot3), turretShoot3()),
+                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                intakeoff(),
+                shootoff(),
+                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake4)),
+                intakeoff(),
+                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot4), turretShoot4()),
+                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                intakeoff(),
+                shootoff()
                 );
         follower.update();
         /*if (follower.getCurrentPath() != null) {
