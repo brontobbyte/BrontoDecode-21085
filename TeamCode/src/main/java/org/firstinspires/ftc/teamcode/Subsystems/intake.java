@@ -7,19 +7,20 @@ import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 
-public class Shooter implements Subsystem {
-    public static final Shooter INSTANCE = new Shooter();
-    private Shooter() { }
-    private MotorEx motor = new MotorEx("motor_shooter");
+public class intake implements Subsystem {
+    public static final intake INSTANCE = new intake();
+    private intake() { }
+
+    private MotorEx motor = new MotorEx("motor_intake");
 
     private ControlSystem controlSystem = ControlSystem.builder()
-            .posPid(5.00, 0, 0)
+            .posPid(0.005, 0, 0)
             .elevatorFF(0)
             .build();
 
-    public Command shoot = new RunToPosition(controlSystem, 500).requires(this);
-    public Command parado = new RunToPosition(controlSystem, 0).requires(this);
-    public Command intake = new RunToPosition(controlSystem, -1).requires(this);
+    public Command pega = new RunToPosition(controlSystem, 500).requires(this);
+    public Command stop = new RunToPosition(controlSystem, 0).requires(this);
+
 
     @Override
     public void periodic() {

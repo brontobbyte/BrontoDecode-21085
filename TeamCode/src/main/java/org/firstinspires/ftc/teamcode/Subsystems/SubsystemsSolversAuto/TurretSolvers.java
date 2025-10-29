@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
@@ -10,7 +12,9 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
  * Centered around the Skystone game for FTC that was done in the 2019
  * to 2020 season.
  */
+@Configurable
 public class TurretSolvers extends SubsystemBase {
+    public static double kp = 0.002;
     private Motor Turret;
     public TurretSolvers(final HardwareMap hMap, final String name) {
         Turret = new Motor(hMap, name);
@@ -20,13 +24,14 @@ public class TurretSolvers extends SubsystemBase {
      */
     public void ShootAuto(int target) {
         Turret.setRunMode(Motor.RunMode.PositionControl);
-        Turret.setPositionCoefficient(0.05);
+        Turret.setPositionTolerance(100);   // allowed maximum error
+        Turret.setPositionCoefficient(kp);
         Turret.setTargetPosition(target);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         Turret.set(0);
         while (!Turret.atTargetPosition()) {
-            Turret.set(0.75);
+            Turret.set(-0.15);
         }
     }
 

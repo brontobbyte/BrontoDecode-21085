@@ -1,27 +1,20 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrent;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrentAndHistory;
-
-import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.field.Drawable;
-import com.bylazar.field.Style;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.Localizer;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
-import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;
@@ -29,12 +22,11 @@ import com.seattlesolvers.solverslib.util.TelemetryData;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IntakeSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.TurretSolvers;
-import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class Auto_12_5_Solverslib extends CommandOpMode {
+public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
     TelemetryData telemetryData = new TelemetryData(telemetry);
     static TelemetryManager telemetryM;
@@ -49,115 +41,70 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
     public static int Shoot4PosTurret = -1200;
 
     // COORDENADAS PARA O PANELS
-        public static double PoseInicialX = 56;
-        public static double PoseInicialY = 11;
-        public static double Intake2CurvedPoseX = 62.734177215189874;
-        public static double Intake2CurvedPoseY = 52.9306358382;
-        public static double Intake2PoseX = 21.97456647398844;
-        public static double Intake2PoseY = 61.5976878613;
-        public static double OpenGateCurvedPoseX = 22.48101265822785;
-        public static double OpenGateCurvedPoseY = 55.9248554913;
-        public static double OpenGatePoseX = 18.1265822785;
-        public static double OpenGatePoseY = 68.75375722543353;
-        public static double Shoot2PoseX = 49.67088607594937;
-        public static double Shoot2PoseY = 88.0;
-        public static double Shoot2CurvedPoseX = 52.10126582278481;
-        public static double Shoot2CurvedPoseY = 59.59768786127168;
-        public static double Intake3PoseX = 24.30379746835443;
-        public static double Intake3PoseY = 85;
-        public static double Shoot3PoseX = 58.09942196531792;
-        public static double Shoot3PoseY = 94.7236994219653;
-        public static double Shoot3CurvedPoseX = 52.106358381502886;
-        public static double Shoot3CurvedPoseY = 87.23236994219653;
-        public static double Intake4PoseX = 19;
-        public static double Intake4PoseY = 39.0;
-        public static double Intake4CurvedPoseX = 69.91907514450867;
-        public static double Intake4CurvedPoseY = 36.291329479768784;
-        public static double Shoot4PoseX = 57.11392405063291;
-        public static double Shoot4PoseY = 25.4820809249;
-
-
-
-
-
-
 
         // POSES COM AS COORDENADAS
-        public static Pose PoseInicial = new Pose(PoseInicialX, PoseInicialY, Math.toRadians(90));
-        public static Pose Intake2CurvedPose = new Pose(Intake2CurvedPoseX, Intake2CurvedPoseY);
-        public static Pose Intake2Pose = new Pose(Intake2PoseX, Intake2PoseY);
-        public static Pose OpenGateCurvedPose = new Pose(OpenGateCurvedPoseX, OpenGateCurvedPoseY);
-        public static Pose OpenGatePose = new Pose(OpenGatePoseX, OpenGatePoseY);
-        public static Pose Shoot2Pose = new Pose(Shoot2PoseX, Shoot2PoseY);
-        public static Pose Shoot2CurvedPose = new Pose(Shoot2CurvedPoseX, Shoot2CurvedPoseY );
-        public static Pose Intake3Pose = new Pose(Intake3PoseX, Intake3PoseY);
-        public static Pose Shoot3CurvedPose = new Pose(Shoot3CurvedPoseX, Shoot3CurvedPoseY);
-        public static Pose Shoot3Pose = new Pose(Shoot3PoseX, Shoot3PoseY);
-        public static Pose Intake4CurvedPose = new Pose(Intake4CurvedPoseX, Intake4CurvedPoseY);
-
-        public static Pose Intake4Pose = new Pose(Intake4PoseX, Intake4PoseY);
-        public static Pose Shoot4Pose = new Pose(Shoot4PoseX, Shoot4PoseY);
-
-        private PathChain Intake2, OpenGate, Shoot2, Intake3, Shoot3, Intake4, Shoot4, teste;
+        public static Pose PoseInicial = new Pose(21.577981651376145, 124.1834862385321, Math.toRadians(145));
+        public static Pose Intake2Pose = new Pose(18.495412844036704, 84);
+        public static Pose ShootPose = new Pose(59, 84);
+        public static Pose Intake3CurvedPose = new Pose(58.128440366972484, 59.0091743119266);
+        public static Pose Intake3Pose = new Pose(19.596, 58.789);
+        public static Pose Intake4CurvedPose = new Pose(56.587, 36.330);
+        public static Pose Intake4Pose = new Pose(21.358, 35.009);
+        private PathChain Intake2, Shoot1, Shoot2, Intake3, Shoot3, Intake4, Shoot4, teste;
 
 
         public void buildPaths() {
 
             //PATHS
-
             Intake2 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
                                     PoseInicial,
-                                    Intake2CurvedPose,
+                                    ShootPose
+                            )
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(135))
+                    .build();
+            Intake2 = follower.pathBuilder()
+                    .addPath(
+                            new BezierCurve(
+                                    ShootPose,
                                     Intake2Pose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
-                    .build();
-
-            OpenGate = follower.pathBuilder()
-                    .addPath(
-                            new BezierCurve(
-                                    Intake2Pose,
-                                    OpenGateCurvedPose,
-                                    OpenGatePose
-                            )
-                    )
-                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
                     .build();
 
             Shoot2 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    OpenGatePose,
-                                    Shoot2CurvedPose,
-                                    Shoot2Pose
+                                    Intake2Pose,
+                                    ShootPose
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(230))
                     .build();
 
             Intake3 = follower.pathBuilder()
-                    .addPath(new BezierLine(Shoot2Pose, Intake3Pose))
-                    .setConstantHeadingInterpolation(Math.toRadians(180))
+                    .addPath(new BezierLine(ShootPose, Intake3Pose))
+                    .setTangentHeadingInterpolation()
                     .build();
 
             Shoot3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
                                     Intake3Pose,
-                                    Shoot3CurvedPose,
-                                    Shoot3Pose
+                                    ShootPose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-90))
+                    .setTangentHeadingInterpolation()
+                    .setReversed()
                     .build();
 
             Intake4 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    Shoot3Pose,
+                                    ShootPose,
                                     Intake4CurvedPose,
                                     Intake4Pose
                             )
@@ -166,7 +113,7 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
                     .build();
 
             Shoot4 = follower.pathBuilder()
-                    .addPath(new BezierLine(Intake4Pose, Shoot4Pose))
+                    .addPath(new BezierLine(Intake4Pose, ShootPose))
                     .setTangentHeadingInterpolation()
                     .setReversed()
                     .build();
@@ -177,6 +124,13 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
         return new InstantCommand(() -> {
 
             new IntakeSolvers(hardwareMap, "motor_intake").Intake();
+
+        });
+    }
+    private InstantCommand intakeshoot() {
+        return new InstantCommand(() -> {
+
+            new IntakeSolvers(hardwareMap, "motor_intake").IntakeShoot();
 
         });
     }
@@ -234,14 +188,13 @@ public class Auto_12_5_Solverslib extends CommandOpMode {
                     turretShoot1()
             );
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                turretShoot1(),
-                //shoot(),
-                intake(),
-                new WaitCommand(2000),
-                new FollowPathCommand(follower, Intake2).setGlobalMaxPower(1),
+                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot1), turretShoot1()),
+                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
                 intakeoff(),
-                new FollowPathCommand(follower, OpenGate),
-                turretShoot2(),
+                shootoff(),
+                new ParallelDeadlineGroup(intake(),  new FollowPathCommand(follower, Intake2)),
+                intakeoff(),
+                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot2), turretShoot2()),
                 new FollowPathCommand(follower, Shoot2),
                 new WaitCommand(1500),
                 new FollowPathCommand(follower, Intake3),

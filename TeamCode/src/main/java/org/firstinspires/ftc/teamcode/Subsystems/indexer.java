@@ -1,35 +1,20 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.robocol.Command;
-
-import dev.nextftc.core.commands.utility.LambdaCommand;
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.impl.CRServoEx;
+import dev.nextftc.hardware.impl.ServoEx;
+import dev.nextftc.hardware.positionable.SetPosition;
+import dev.nextftc.hardware.powerable.SetPower;
 
 public class indexer implements Subsystem {
     public static final indexer INSTANCE = new indexer();
     private indexer() { }
 
-    // Use CRServo for continuous rotation
-    private final CRServo indexerServo = hardwareMap.get(CRServo.class, "indexer_servo");
+    private CRServoEx servo = new CRServoEx("servo_indexer");
 
-    // Commands for control
-    public LambdaCommand empurra = new LambdaCommand("Spin Forward")
-            .setStart(() -> indexerServo.setPower(0.8)) // Adjust speed as needed
-            .requires(this);
+    public Command empurra = new SetPower(servo, 1);
+    public Command puxa = new SetPower(servo, -1);
+    public Command para = new SetPower(servo, 0);
 
-    public LambdaCommand puxa = new LambdaCommand("Spin Reverse")
-            .setStart(() -> indexerServo.setPower(0.2)) // Adjust speed as needed
-            .requires(this);
-
-    public LambdaCommand STOP = new LambdaCommand("Stop")
-            .setStart(() -> indexerServo.setPower(0))
-            .requires(this);
-
-    @Override
-    public void periodic() {
-        // Periodic logic if needed
-    }
 }

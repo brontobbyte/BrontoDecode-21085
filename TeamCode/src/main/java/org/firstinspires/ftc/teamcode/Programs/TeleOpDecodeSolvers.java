@@ -25,7 +25,7 @@ public class TeleOpDecodeSolvers extends CommandOpMode {
     public TeleOpDecodeSolvers(final HardwareMap hMap, final String name) {
         mechRotation = hMap.get(CRServo.class, "servo_indexer");
     }
-    public class Index extends CommandBase {
+    /*public class Index extends CommandBase {
 
         // The subsystem the command runs on
         private final IndexerSolvers m_IndexerSubsystem;
@@ -67,7 +67,7 @@ public class TeleOpDecodeSolvers extends CommandOpMode {
             return true;
         }
 
-    }
+    }*/
 
     private IndexerSolvers indexer;
     @Override
@@ -85,8 +85,8 @@ public class TeleOpDecodeSolvers extends CommandOpMode {
         toolOp.getGamepadButton(GamepadKeys.Button.B);
         exampleButton2.whenPressed(new InstantCommand(() -> mechRotation.setPower(1)));
         exampleButton2.whenReleased(new InstantCommand(() -> mechRotation.setPower(0)));
-        exampleButton.whenReleased(new InstantCommand(indexer::release, indexer));
-        exampleButton.whenPressed(new InstantCommand(indexer::grab, indexer));
+        //exampleButton.whenReleased(new InstantCommand(indexer::release, indexer));
+        //exampleButton.whenPressed(new InstantCommand(indexer::grab, indexer));
         register(indexer);
 
     }

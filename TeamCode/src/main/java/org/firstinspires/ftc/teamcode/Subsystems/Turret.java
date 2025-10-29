@@ -1,59 +1,28 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToPosition;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
-import kotlin.io.TextStreamsKt;
 
-@Config
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
     private Turret() { }
-    private MotorEx motorTurret = new MotorEx("motor_turret")
-            .reversed();
-    public static double p = 1;
-    public static double i = 0;
-    public static double d = 0;
-    public static double vel, vel1;
-    public static double posTurret;
-    TelemetryPacket packet = new TelemetryPacket();
-    FtcDashboard dash = FtcDashboard.getInstance();
-    Telemetry dashTelemetry = dash.getTelemetry();
-    ControlSystem controlSystem = ControlSystem.builder()
-            .posPid(0.008, 0, 0)
+
+    private MotorEx motor = new MotorEx("motor_turret");
+
+    private ControlSystem controlSystem = ControlSystem.builder()
+            .posPid(0.005, 0, 0)
+            .elevatorFF(0)
             .build();
 
-    public Command CentoEOitenta = new RunToPosition(controlSystem, 691).requires(this); //10000 para 1
-    public Command Noventa = new RunToPosition(controlSystem, 470).requires(this); //10000 para 1
-    public Command Zero = new RunToPosition(controlSystem, 211).requires(this);
-    public Command Stop() {
-        return new RunToVelocity(controlSystem, 0).requires(this);
-    }
-    public Command ONClass() {
-        return new RunToVelocity(controlSystem, 691).requires(this);
-    }
-
-
+    public Command toLow = new RunToPosition(controlSystem, 0).requires(this);
+    public Command toMiddle = new RunToPosition(controlSystem, 500).requires(this);
+    public Command toHigh = new RunToPosition(controlSystem, 1200).requires(this);
 
     @Override
     public void periodic() {
-        posTurret = motorTurret.getCurrentPosition();
-        motorTurret.setPower(controlSystem.calculate(motorTurret.getState()));
-        // periodic logic (runs every loop)
+        motor.setPower(controlSystem.calculate(motor.getState()));
     }
-
-
 }

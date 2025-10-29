@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -12,7 +13,10 @@ import com.sun.tools.javac.util.List;
  * Centered around the Skystone game for FTC that was done in the 2019
  * to 2020 season.
  */
+@Configurable
 public class ShooterSolvers extends SubsystemBase {
+    public static double kp = 1;
+    public static double kv = 0;
     private Motor flywheel, flywheel2;
     private MotorGroup shooter;
     public ShooterSolvers(final HardwareMap hMap, final String name, final String name2) {
@@ -23,30 +27,30 @@ public class ShooterSolvers extends SubsystemBase {
         //intake = hMap.get(com.seattlesolvers.solverslib.hardware.motors.Motor.class, "motor_direita");
     }
 
-    double corrected = shooter.getCorrectedVelocity();
-
     /**
      * Grabs a stone.
      */
     public void On() {
-        shooter.setRunMode(Motor.RunMode.VelocityControl);
-        shooter.setVeloCoefficients(1, 0, 0);
-        shooter.setFeedforwardCoefficients(0, 1);
+        /*shooter.setRunMode(Motor.RunMode.VelocityControl);
+        shooter.setVeloCoefficients(kp, 0, 0);
+        shooter.setFeedforwardCoefficients(0, kv);*/
+        flywheel2.setRunMode(Motor.RunMode.RawPower);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
-        shooter.set(1);
+        flywheel2.set(-1);
     }
 
     /**
      * Releases a stone.
      */
     public void Off() {
-        shooter.setRunMode(Motor.RunMode.VelocityControl);
-        shooter.setVeloCoefficients(1, 0, 0);
-        shooter.setFeedforwardCoefficients(0, 1);
+        /*shooter.setRunMode(Motor.RunMode.VelocityControl);
+        shooter.setVeloCoefficients(kp, 0, 0);
+        shooter.setFeedforwardCoefficients(0, kv);*/
+        shooter.setRunMode(Motor.RunMode.RawPower);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
-        shooter.set(1);
+        shooter.set(0);
         //mechRotation.setPosition(0);
     }
 

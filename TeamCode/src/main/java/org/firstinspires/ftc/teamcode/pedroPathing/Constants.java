@@ -45,7 +45,7 @@ public class Constants {
             .strafePodX(-8)
             .leftEncoder_HardwareMapName("motor_intake")
             .rightEncoder_HardwareMapName("motor_esquerdatras")
-            .strafeEncoder_HardwareMapName("odometria")
+            .strafeEncoder_HardwareMapName("motor_shooter2")
             .leftEncoderDirection(Encoder.REVERSE)
             .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.FORWARD)
