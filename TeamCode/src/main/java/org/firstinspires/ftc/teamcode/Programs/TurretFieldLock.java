@@ -14,9 +14,7 @@ public class TurretFieldLock extends LinearOpMode {
 
     private DcMotorEx motorTurret;
     private IMU imu;
-
-    private final double GEAR_RATIO = 20.0;
-    private final double TICKS_POR_REVOLUCAO = 750.0 * GEAR_RATIO;
+    private final double ticks360 = 1000.0;
     private final double kP = 0.02;
 
     private double headingInicial = 0;
@@ -36,7 +34,7 @@ public class TurretFieldLock extends LinearOpMode {
         motorTurret.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         motorTurret.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        telemetry.addLine("Pronto. Aguardando start...");
+        telemetry.addLine("sla adultoideal");
         telemetry.update();
 
         waitForStart();
@@ -45,11 +43,11 @@ public class TurretFieldLock extends LinearOpMode {
 
         while (opModeIsActive()) {
             double headingAtual = getHeading();
-            double deltaHeading = angleWrap(headingAtual - headingInicial); // quanto o robô girou desde o início
+            double deltaHeading = angleWrap(headingAtual - headingInicial);
 
-            double setpointGraus = deltaHeading;
+            double posicaoAtualGraus = (motorTurret.getCurrentPosition() / ticks360 ) * 360.0;
 
-            double posicaoAtualGraus = (motorTurret.getCurrentPosition() / TICKS_POR_REVOLUCAO) * 260.0;
+            double setpointGraus = getSafeTurretTarget(posicaoAtualGraus, deltaHeading);
 
             double erro = angleWrap(setpointGraus - posicaoAtualGraus);
             double saida = Range.clip(kP * erro, -0.3, 0.3);
@@ -75,5 +73,21 @@ public class TurretFieldLock extends LinearOpMode {
         while (angulo > 180) angulo -= 360;
         while (angulo < -180) angulo += 360;
         return angulo;
+    }
+
+    private double getSafeTurretTarget(double currentAngle, double targetAngle) {
+        currentAngle = AngleUnit.normalizeDegrees(currentAngle);
+        targetAngle = AngleUnit.normalizeDegrees(targetAngle);
+
+        double delta = AngleUnit.normalizeDegrees(targetAngle - currentAngle);
+        if (Math.abs(delta) > 90) {
+            delta += (delta > 0) ? -360 : 360;
+        }
+
+        double safeTarget = AngleUnit.normalizeDegrees(currentAngle + delta);
+
+        final double maxesq = -90;
+        final double maxdir = 90;
+        return Math.max(maxesq, Math.min(maxdir, safeTarget));
     }
 }

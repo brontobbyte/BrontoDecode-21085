@@ -20,7 +20,7 @@ public class intake implements Subsystem {
 
     public Command pega = new RunToPosition(controlSystem, 500).requires(this);
     public Command stop = new RunToPosition(controlSystem, 0).requires(this);
-
+    public Command shooting = new RunToPosition(controlSystem, 200).requires(this);
 
     @Override
     public void periodic() {

@@ -1,66 +1,100 @@
 package org.firstinspires.ftc.teamcode.Programs;
 
+import static dev.nextftc.bindings.Bindings.button;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.indexer;
 import org.firstinspires.ftc.teamcode.Subsystems.intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Turret;
+
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
+import dev.nextftc.hardware.impl.Direction;
+import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import static dev.nextftc.bindings.Bindings.*;
-
-@TeleOp(name = "NextFTC TeleOp Program Java")
+import dev.nextftc.hardware.driving.FieldCentric;
+@TeleOp(name = "NextFTC TeleOp Heading Turret")
 public class next1 extends NextFTCOpMode {
+
+    private MotorEx frontLeftMotor = new MotorEx("motor_esquerda").brakeMode().
+            reversed();
+    private MotorEx frontRightMotor = new MotorEx("motor_direita").brakeMode();
+    private MotorEx backLeftMotor = new MotorEx("motor_esquerdatras").brakeMode().reversed();
+    private MotorEx backRightMotor = new MotorEx("motor_direitatras").brakeMode();
+    private IMUEx imu = new IMUEx("imu", Direction.LEFT, Direction.UP).zeroed();
+
     public next1() {
         addComponents(
-                new SubsystemComponent(Shooter.INSTANCE, intake.INSTANCE, indexer.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE, intake.INSTANCE, indexer.INSTANCE, Turret.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
     }
 
-    // change the names and directions to suit your robot
-    private final MotorEx frontLeftMotor = new MotorEx("motor_esquerda").reversed();
-    private final MotorEx frontRightMotor = new MotorEx("motor_direita");
-    private final MotorEx backLeftMotor = new MotorEx("motor_esquerdatras").reversed();
-    private final MotorEx backRightMotor = new MotorEx("motor_direitatras");
+    @Override
+    public void onInit() {
+        Turret.INSTANCE.initIMU(hardwareMap);
+        Turret.INSTANCE.headingOn();
+    }
 
     @Override
     public void onStartButtonPressed() {
-        Command driverControlled = new MecanumDriverControlled(
+       Command driverControlled = new MecanumDriverControlled(
                 frontLeftMotor,
                 frontRightMotor,
                 backLeftMotor,
                 backRightMotor,
                 Gamepads.gamepad1().leftStickY().negate(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX()
+                Gamepads.gamepad1().rightStickX(),
+                new FieldCentric(imu)
         );
         driverControlled.schedule();
 
-        Gamepads.gamepad2().a()
-                .whenBecomesTrue(indexer.INSTANCE.puxa)
-                .whenBecomesTrue(intake.INSTANCE.pega)
-                .whenBecomesFalse(intake.INSTANCE.stop)
-                .whenBecomesFalse(indexer.INSTANCE.para);
+        button(() -> gamepad2.right_bumper)
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(() ->
+                        new SequentialGroup(
+                                intake.INSTANCE.shooting.and (indexer.INSTANCE.empurra).and (Shooter.INSTANCE.shootando),
+                                Shooter.INSTANCE.shoot,
+                                new Delay(0.6),
+                                indexer.INSTANCE.puxa.and (intake.INSTANCE.shooting),
+                                new Delay(0.6),
+                                indexer.INSTANCE.puxa.and (intake.INSTANCE.shooting),
+                                new Delay(0.6),
+                                indexer.INSTANCE.puxa.and (intake.INSTANCE.shooting)
 
-        Gamepads.gamepad2().leftBumper()
-                .whenBecomesTrue(intake.INSTANCE.pega)
-                .whenBecomesTrue(Shooter.INSTANCE.intake)
-                .whenBecomesTrue(indexer.INSTANCE.empurra)
-                .whenBecomesFalse(Shooter.INSTANCE.parado)
-                .whenBecomesFalse(indexer.INSTANCE.para)
-                .whenBecomesFalse(intake.INSTANCE.stop);
+                        ).schedule()
+                )
+                .whenBecomesFalse(() ->
+                        new SequentialGroup(
+                                intake.INSTANCE.shooting.and (indexer.INSTANCE.empurra).and (Shooter.INSTANCE.shootando),
+                                Shooter.INSTANCE.shoot,
+                                new Delay(0.6),
+                                indexer.INSTANCE.puxa.and (intake.INSTANCE.shooting),
+                                new Delay(0.6),
+                                indexer.INSTANCE.puxa.and (intake.INSTANCE.shooting),
+                                new Delay(0.6),
+                                indexer.INSTANCE.puxa.and (intake.INSTANCE.shooting)
+                        ).schedule()
+                );
 
-        Gamepads.gamepad2().rightBumper()
-                .whenBecomesTrue(Shooter.INSTANCE.shoot)
-                .whenBecomesFalse(Shooter.INSTANCE.parado);
+        Gamepads.gamepad2().leftBumper().whenBecomesTrue(
+                intake.INSTANCE.pega.and(Shooter.INSTANCE.intake)
+                );
+
+        button(() -> gamepad1.b)
+                .whenBecomesTrue(() -> imu.getImu().resetYaw());
 
     }
 }

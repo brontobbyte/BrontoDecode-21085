@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous
-public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
+public class Auto_12_5_Solverslib_LauchZoneMov extends CommandOpMode {
 
     TelemetryData telemetryData = new TelemetryData(telemetry);
     static TelemetryManager telemetryM;
@@ -184,28 +184,13 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             follower.setStartingPose(PoseInicial);
             buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot1), turretShoot1()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
-                intakeoff(),
-                shootoff(),
-                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake2)),
-                intakeoff(),
-                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot2), turretShoot2()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
-                intakeoff(),
-                shootoff(),
-                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake3)),
-                intakeoff(),
-                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot3), turretShoot3()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
-                intakeoff(),
-                shootoff(),
-                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake4)),
-                intakeoff(),
-                new ParallelCommandGroup(shoot(), new FollowPathCommand(follower, Shoot4), turretShoot4()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
-                intakeoff(),
-                shootoff()
+                new FollowPathCommand(follower, Shoot1),
+                new FollowPathCommand(follower, Intake2),
+                new FollowPathCommand(follower, Shoot2),
+                new FollowPathCommand(follower, Intake3),
+                new FollowPathCommand(follower, Shoot3),
+                new FollowPathCommand(follower, Intake4),
+                new FollowPathCommand(follower, Shoot4)
                 );
         follower.update();
         /*if (follower.getCurrentPath() != null) {
