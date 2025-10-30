@@ -20,7 +20,7 @@ public class intake implements Subsystem {
 
     public Command pega = new SetPower(motor, 1).requires(this);
     public Command stop = new SetPower(motor, 0).requires(this);
-    public Command shooting = new RunToPosition(controlSystem, 200).requires(this);
+    public Command shooting = new RunToPosition(controlSystem, -200).requires(this);
 
     @Override
     public void periodic() {

@@ -14,7 +14,7 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class Shooter implements Subsystem {
     public static final Shooter INSTANCE = new Shooter();
     private final MotorEx motor1 = new MotorEx("motor_shooter");
-    private final MotorEx motor2 = new MotorEx("motor_shooter2").reversed();
+    private final MotorEx motor2 = new MotorEx("motor_shooter2");
 
     private final MotorGroup motors = new MotorGroup(motor1, motor2);
 
@@ -32,6 +32,5 @@ public class Shooter implements Subsystem {
 
     @Override
     public void periodic() {
-        motors.setPower(controlSystem.calculate(motors.getState()));
     }
 }

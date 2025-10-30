@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.indexer;
 import org.firstinspires.ftc.teamcode.Subsystems.intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -62,7 +61,7 @@ public class next1 extends NextFTCOpMode {
 
         button(() -> gamepad2.right_bumper)
                 .toggleOnBecomesTrue()
-                .whenBecomesTrue(() ->
+                .whenTrue(() ->
                         new SequentialGroup(
                                 intake.INSTANCE.shooting.and (indexer.INSTANCE.empurra).and (Shooter.INSTANCE.shootando),
                                 Shooter.INSTANCE.shoot,
@@ -75,7 +74,7 @@ public class next1 extends NextFTCOpMode {
 
                         ).schedule()
                 )
-                .whenBecomesFalse(() ->
+                .whenFalse(() ->
                         new SequentialGroup(
                                 intake.INSTANCE.shooting.and (indexer.INSTANCE.empurra).and (Shooter.INSTANCE.shootando),
                                 Shooter.INSTANCE.shoot,
