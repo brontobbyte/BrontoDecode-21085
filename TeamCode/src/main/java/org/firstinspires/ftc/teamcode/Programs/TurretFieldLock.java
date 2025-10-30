@@ -15,7 +15,7 @@ public class TurretFieldLock extends LinearOpMode {
     private DcMotorEx motorTurret;
     private IMU imu;
     private final double ticks360 = 1000.0;
-    private final double kP = 0.02;
+    private final double kP = 0.2;
 
     private double headingInicial = 0;
 
@@ -50,7 +50,7 @@ public class TurretFieldLock extends LinearOpMode {
             double setpointGraus = getSafeTurretTarget(posicaoAtualGraus, deltaHeading);
 
             double erro = angleWrap(setpointGraus - posicaoAtualGraus);
-            double saida = Range.clip(kP * erro, -0.3, 0.3);
+            double saida = Range.clip(kP * erro, -1, 1);
             motorTurret.setPower(saida);
 
             telemetry.addData("Heading Inicial", "%.2f", headingInicial);

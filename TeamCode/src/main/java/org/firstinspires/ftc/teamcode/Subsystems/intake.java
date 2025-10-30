@@ -18,8 +18,8 @@ public class intake implements Subsystem {
             .elevatorFF(0)
             .build();
 
-    public Command pega = new RunToPosition(controlSystem, 500).requires(this);
-    public Command stop = new RunToPosition(controlSystem, 0).requires(this);
+    public Command pega = new SetPower(motor, 1).requires(this);
+    public Command stop = new SetPower(motor, 0).requires(this);
     public Command shooting = new RunToPosition(controlSystem, 200).requires(this);
 
     @Override

@@ -35,7 +35,7 @@ public class next1 extends NextFTCOpMode {
 
     public next1() {
         addComponents(
-                new SubsystemComponent(Shooter.INSTANCE, intake.INSTANCE, indexer.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE, intake.INSTANCE, indexer.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -43,8 +43,7 @@ public class next1 extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        Turret.INSTANCE.initIMU(hardwareMap);
-        Turret.INSTANCE.headingOn();
+
     }
 
     @Override
@@ -89,8 +88,8 @@ public class next1 extends NextFTCOpMode {
                         ).schedule()
                 );
 
-        Gamepads.gamepad2().leftBumper().whenBecomesTrue(
-                intake.INSTANCE.pega.and(Shooter.INSTANCE.intake)
+        Gamepads.gamepad2().leftBumper().whenTrue(
+                intake.INSTANCE.pega
                 );
 
         button(() -> gamepad1.b)
