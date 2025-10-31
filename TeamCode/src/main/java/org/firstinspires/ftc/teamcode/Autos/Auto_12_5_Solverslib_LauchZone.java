@@ -19,6 +19,8 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IndexerSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IntakeSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.TurretSolvers;
@@ -175,6 +177,16 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             new TurretSolvers(hardwareMap, "motor_turret").ShootAuto(Shoot4PosTurret);
         });
     }
+    private InstantCommand indexer() {
+        return new InstantCommand(() -> {
+            new IndexerSolvers(hardwareMap, "servo_indexer").On();
+        });
+    }
+    private InstantCommand indexerOff() {
+        return new InstantCommand(() -> {
+            new IndexerSolvers(hardwareMap, "servo_indexer").Off();
+        });
+    }
 
 
     @Override
@@ -184,13 +196,15 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             follower.setStartingPose(PoseInicial);
             buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), turretShoot1(), shoot()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), /*turretShoot1(),*/ shoot()),
+                intake(),
+                indexer(),
+                new WaitCommand(4000),
                 intakeoff(),
                 shootoff(),
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake2)),
                 intakeoff(),
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), turretShoot2(), shoot()),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), /*turretShoot2(),*/ shoot()),
                 new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
                 intakeoff(),
                 shootoff(),
@@ -225,6 +239,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         telemetryData.addData("X", follower.getPose().getX());
         telemetryData.addData("Y", follower.getPose().getY());
         telemetryData.addData("Heading", follower.getPose().getHeading());
+        //telemetryData.addData("VelFlywheel", );
         telemetryData.update();
     }
 }

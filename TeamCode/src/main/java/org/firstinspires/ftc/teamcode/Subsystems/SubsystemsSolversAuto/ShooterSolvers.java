@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,6 +9,8 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 import com.sun.tools.javac.util.List;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * A gripper mechanism that grabs a stone from the quarry.
@@ -34,10 +38,12 @@ public class ShooterSolvers extends SubsystemBase {
         /*shooter.setRunMode(Motor.RunMode.VelocityControl);
         shooter.setVeloCoefficients(kp, 0, 0);
         shooter.setFeedforwardCoefficients(0, kv);*/
-        flywheel2.setRunMode(Motor.RunMode.RawPower);
+        shooter.setRunMode(Motor.RunMode.RawPower);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
-        flywheel2.set(-1);
+        shooter.set(1);
+        telemetry.addData("vel", shooter.getVelocity());
+        telemetry.update();
     }
 
     /**
