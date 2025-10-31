@@ -67,7 +67,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                                     ShootPose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(135))
+                    .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
                     .build();
             Intake2 = follower.pathBuilder()
                     .addPath(
@@ -76,7 +76,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                                     Intake2Pose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
             Shoot2 = follower.pathBuilder()
@@ -201,7 +201,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), /*turretShoot1(),*/ shoot()),
                 intake(),
                 indexer(),
-                new WaitCommand(4000),
+                new WaitCommand(2000),
                 indexerOff(),
                 intakeoff(),
                 shootoff(),
@@ -233,16 +233,13 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         drawPoseHistory(follower.getPoseHistory(), new Style("", "#4CAF50", 0.0));
         drawRobot(follower.getPose(), new Style("", "#4CAF50", 0.0));*/
         schedule(autonomousSequence);
-        telemetry.addData("vel", vel);
-        telemetry.update();
     }
 
     public void run(){
             super.run();
         follower.update();
-        telemetry.addData("vel", vel);
-        telemetry.update();
         //drawCurrentAndHistory();
+        telemetryData.addData("vel", vel);
         telemetryData.addData("X", follower.getPose().getX());
         telemetryData.addData("Y", follower.getPose().getY());
         telemetryData.addData("Heading", follower.getPose().getHeading());
