@@ -11,6 +11,7 @@ public class AnguladorSolvers extends SubsystemBase {
     private final ServoEx angulador2;
     public AnguladorSolvers(final HardwareMap hMap, final String name) {
         angulador = hMap.get(ServoEx.class, "servo_angulador");
+        
         angulador2 = hMap.get(ServoEx.class, "servo_angulador2");
 
     }
