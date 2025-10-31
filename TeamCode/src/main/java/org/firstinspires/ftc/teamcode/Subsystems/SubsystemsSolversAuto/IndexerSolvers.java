@@ -17,7 +17,7 @@ public class IndexerSolvers extends SubsystemBase {
      * Manda pro Shooter.
      */
     public void On() {
-        mechRotation.setPower(-0.7);
+        mechRotation.setPower(-0.5);
     }
 
 

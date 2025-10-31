@@ -21,6 +21,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ShooterSolvers extends SubsystemBase {
     public static double kp = 1;
     public static double kv = 0;
+    public static double vel;
+
     private Motor flywheel, flywheel2;
     private MotorGroup shooter;
     public ShooterSolvers(final HardwareMap hMap, final String name, final String name2) {
@@ -35,13 +37,14 @@ public class ShooterSolvers extends SubsystemBase {
      * Grabs a stone.
      */
     public void On() {
-        /*shooter.setRunMode(Motor.RunMode.VelocityControl);
+        shooter.setRunMode(Motor.RunMode.VelocityControl);
         shooter.setVeloCoefficients(kp, 0, 0);
-        shooter.setFeedforwardCoefficients(0, kv);*/
-        shooter.setRunMode(Motor.RunMode.RawPower);
+        shooter.setFeedforwardCoefficients(0, kv);
+        //shooter.setRunMode(Motor.RunMode.RawPower);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         shooter.set(1);
+        vel = shooter.getVelocity();
         //telemetry.addData("vel", shooter.getVelocity());
         //telemetry.update();
     }
@@ -50,10 +53,10 @@ public class ShooterSolvers extends SubsystemBase {
      * Releases a stone.
      */
     public void Off() {
-        /*shooter.setRunMode(Motor.RunMode.VelocityControl);
+        shooter.setRunMode(Motor.RunMode.VelocityControl);
         shooter.setVeloCoefficients(kp, 0, 0);
-        shooter.setFeedforwardCoefficients(0, kv);*/
-        shooter.setRunMode(Motor.RunMode.RawPower);
+        shooter.setFeedforwardCoefficients(0, kv);
+        //shooter.setRunMode(Motor.RunMode.RawPower);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         shooter.set(0);

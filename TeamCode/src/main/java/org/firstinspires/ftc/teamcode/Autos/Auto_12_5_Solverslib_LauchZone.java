@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 
+import static org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers.vel;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -231,11 +233,15 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         drawPoseHistory(follower.getPoseHistory(), new Style("", "#4CAF50", 0.0));
         drawRobot(follower.getPose(), new Style("", "#4CAF50", 0.0));*/
         schedule(autonomousSequence);
+        telemetry.addData("vel", vel);
+        telemetry.update();
     }
 
     public void run(){
             super.run();
         follower.update();
+        telemetry.addData("vel", vel);
+        telemetry.update();
         //drawCurrentAndHistory();
         telemetryData.addData("X", follower.getPose().getX());
         telemetryData.addData("Y", follower.getPose().getY());
