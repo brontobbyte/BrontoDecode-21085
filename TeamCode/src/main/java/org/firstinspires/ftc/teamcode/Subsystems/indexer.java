@@ -12,6 +12,9 @@ public class indexer implements Subsystem {
     private CRServoEx servo = new CRServoEx("servo_indexer");
 
     public Command puxa = new SetPower(servo, 1.0).requires(this);
+
+    public Command empurra = new SetPower(servo, -1.0).requires(this);
+
     public Command para = new SetPower(servo, 0).requires(this);
 
     @Override

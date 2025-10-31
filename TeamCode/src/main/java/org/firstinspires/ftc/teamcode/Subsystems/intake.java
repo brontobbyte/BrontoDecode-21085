@@ -6,6 +6,7 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.positionable.SetPosition;
 import dev.nextftc.hardware.powerable.SetPower;
 
 public class intake implements Subsystem {
@@ -20,6 +21,8 @@ public class intake implements Subsystem {
 
     public Command pega = new SetPower(motor, 1).requires(this);
     public Command stop = new SetPower(motor, 0).requires(this);
+    public Command shooting = new RunToPosition(controlSystem, 100).requires(this);
+    public Command prepara= new RunToPosition(controlSystem, -100).requires(this);
 
     @Override
     public void periodic() {
