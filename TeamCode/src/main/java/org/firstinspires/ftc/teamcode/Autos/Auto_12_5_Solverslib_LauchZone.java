@@ -28,6 +28,7 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 
 
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.AnguladorSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IndexerSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IntakeSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers;
@@ -58,7 +59,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
         // POSES COM AS COORDENADAS
         public static Pose PoseInicial = new Pose(21.577981651376145, 124.1834862385321, Math.toRadians(145));
-        public static Pose Intake2Pose = new Pose(18.495412844036704, 84);
+        public static Pose Intake2Pose = new Pose(18.495412844036704, 80);
         public static Pose ShootPose = new Pose(59, 84);
         public static Pose Intake3CurvedPose = new Pose(58.128440366972484, 59.0091743119266);
         public static Pose Intake3Pose = new Pose(19.596, 58.789);
@@ -209,6 +210,16 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             new IndexerSolvers(hardwareMap, "servo_indexer").Off();
         });
     }
+    private InstantCommand anguladorAlto() {
+        return new InstantCommand(() -> {
+            new AnguladorSolvers(hardwareMap, "baba").On();
+        });
+    }
+    private InstantCommand anguladorBaixo() {
+        return new InstantCommand(() -> {
+            new AnguladorSolvers(hardwareMap, "baba").Off();
+        });
+    }
     public class autoAlign extends CommandBase {
 
         // The subsystem the command runs on
@@ -227,7 +238,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     //telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-                    vel = (-fr.getTargetXDegrees()/44);
+                    vel = (fr.getTargetXDegrees()/44);
                 }
             }else{
                 vel = 0;
@@ -265,19 +276,23 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         motorTurret.resetEncoder();
         buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
+                anguladorAlto(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), shoot()),
                 new RepeatCommand(new autoAlign(), 50),
                 intake(),
                 indexer(),
+                anguladorBaixo(),
                 new WaitCommand(2000),
                 indexerOff(),
                 intakeoff(),
                 shootoff(),
                 indexerReverse(),
                 new ParallelCommandGroup(intake(),new FollowPathCommand(follower, Intake2)),
+                turretShoot1(),
+                new RepeatCommand(new autoAlign(), 50),
                 indexerOff(),
                 intakeoff(),
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), turretShoot2(), shoot()),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), shoot()),
                 new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
                 intakeoff(),
                 shootoff(),

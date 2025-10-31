@@ -22,7 +22,7 @@ public class Constants {
             .lateralZeroPowerAcceleration(-70.018816)
             .forwardZeroPowerAcceleration(-41.241598)
             .mass(9);
-    
+
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
