@@ -18,6 +18,7 @@ import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
+import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
@@ -48,11 +49,11 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
     //TODO AUTONOMOUS - 12 ARTIFACTS + 5 PATTERN + 3 BASE - 21085 - BRONTOBYTE - BR
     double vel;
-    public static int Shoot1PosTurret = 1209;
-    public static int Shoot2PosTurret = -700;
-    public static int Shoot3PosTurret = -1200;
+    public static int Shoot1PosTurret = -125;
+    public static int Shoot2PosTurret = -250;
+    public static int Shoot3PosTurret = -250;
     public static int Shoot4PosTurret = -1200;
-
+    private Motor motorTurret;
     // COORDENADAS PARA O PANELS
 
         // POSES COM AS COORDENADAS
@@ -198,6 +199,11 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             new IndexerSolvers(hardwareMap, "servo_indexer").On();
         });
     }
+    private InstantCommand indexerReverse() {
+        return new InstantCommand(() -> {
+            new IndexerSolvers(hardwareMap, "servo_indexer").Reverse();
+        });
+    }
     private InstantCommand indexerOff() {
         return new InstantCommand(() -> {
             new IndexerSolvers(hardwareMap, "servo_indexer").Off();
@@ -205,23 +211,16 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
     }
     public class autoAlign extends CommandBase {
 
-        private Motor motorTurret;
         // The subsystem the command runs on
         private TurretSolvers turretSolvers;
         boolean end = false;
         @Override
         public void initialize() {
             motorTurret = new Motor(hardwareMap, "motor_turret");
-            limelight = hardwareMap.get(Limelight3A.class, "limelight");
-            //telemetry.setMsTransmissionInterval(11);
-            limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-            limelight.pipelineSwitch(1); // Switch to pipeline number 0
-            limelight.start();
         }
 
         @Override
         public void execute() {
-            motorTurret = new Motor(hardwareMap, "motor_turret");
             LLResult result = limelight.getLatestResult();
             result.getPipelineIndex();
             if (result.isValid()) {
@@ -254,21 +253,29 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
     @Override
     public void initialize() {
-            super.reset();
+        motorTurret = new Motor(hardwareMap, "motor_turret");
+        super.reset();
             follower = Constants.createFollower(hardwareMap);
             follower.setStartingPose(PoseInicial);
-            buildPaths();
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        //telemetry.setMsTransmissionInterval(11);
+        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.pipelineSwitch(1); // Switch to pipeline number 0
+        limelight.start();
+        motorTurret.resetEncoder();
+        buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                new autoAlign(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), shoot()),
-                //turretAutoAlign(),
+                new RepeatCommand(new autoAlign(), 50),
                 intake(),
                 indexer(),
                 new WaitCommand(2000),
                 indexerOff(),
                 intakeoff(),
                 shootoff(),
-                new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake2)),
+                indexerReverse(),
+                new ParallelCommandGroup(intake(),new FollowPathCommand(follower, Intake2)),
+                indexerOff(),
                 intakeoff(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), turretShoot2(), shoot()),
                 new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),

@@ -29,4 +29,11 @@ public class IndexerSolvers extends SubsystemBase {
         mechRotation.setPower(0);
     }
 
+    /**
+     * Desliga o Indexer.
+     */
+    public void Reverse() {
+        mechRotation.setPower(1);
+    }
+
 }

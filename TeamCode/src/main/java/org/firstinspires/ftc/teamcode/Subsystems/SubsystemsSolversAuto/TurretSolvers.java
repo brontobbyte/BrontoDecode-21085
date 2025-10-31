@@ -47,20 +47,6 @@ public class TurretSolvers extends SubsystemBase {
             Turret.set(-0.15);
         }
     }
-    public void autoAlign(double velA){
-        targetDouble = (velA * 2.7778);
-        target = Math.toIntExact(Math.round(targetDouble));
-        Turret.setRunMode(Motor.RunMode.PositionControl);
-        Turret.setPositionTolerance(100);   // allowed maximum error
-        Turret.setPositionCoefficient(kp);
-        Turret.setTargetPosition(target);
-        //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
-        //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
-        Turret.set(0);
-        while (!Turret.atTargetPosition()) {
-            Turret.set(-0.15);
-        }
-    }
     public void Off(){
         Turret.setRunMode(Motor.RunMode.RawPower);
         Turret.set(0);

@@ -22,7 +22,7 @@ public class IntakeSolvers extends SubsystemBase {
      */
     public void Intake() {
         intake.setRunMode(Motor.RunMode.RawPower);
-        intake.set(-0.55);
+        intake.set(-0.45);
     }
     /**
      * Velocidade para shootar
