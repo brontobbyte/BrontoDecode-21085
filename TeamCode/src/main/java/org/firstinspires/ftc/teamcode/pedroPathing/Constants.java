@@ -46,7 +46,7 @@ public class Constants {
             .leftEncoder_HardwareMapName("motor_shooter2")
             .rightEncoder_HardwareMapName("motor_direitatras")
             .strafeEncoder_HardwareMapName("motor_esquerda")
-            .leftEncoderDirection(Encoder.FORWARD)
+            .leftEncoderDirection(Encoder.REVERSE)
             .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.FORWARD)
 
