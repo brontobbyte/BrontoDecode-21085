@@ -24,7 +24,7 @@ import java.util.List;
 public class TurretSolvers extends SubsystemBase {
     public static double kp = 0.002;
     private Motor Turret;
-    double Heading;
+    double Heading = 0;
     Limelight3A limelight;
 
     public TurretSolvers(final HardwareMap hMap, final String name) {
