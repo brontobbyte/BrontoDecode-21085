@@ -31,7 +31,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable
 @Autonomous
 public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
-
     TelemetryData telemetryData = new TelemetryData(telemetry);
     static TelemetryManager telemetryM;
     static PoseHistory poseHistory;
@@ -159,6 +158,11 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
         });
     }
+    private InstantCommand turretAutoAlign() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").autoAlign();
+        });
+    }
     private InstantCommand turretShoot1() {
         return new InstantCommand(() -> {
             new TurretSolvers(hardwareMap, "motor_turret").ShootAuto(Shoot1PosTurret);
@@ -199,6 +203,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), /*turretShoot1(),*/ shoot()),
+                turretAutoAlign(),
                 intake(),
                 indexer(),
                 new WaitCommand(2000),
@@ -207,7 +212,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 shootoff(),
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake2)),
                 intakeoff(),
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), /*turretShoot2(),*/ shoot()),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), turretShoot2(), shoot()),
                 new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
                 intakeoff(),
                 shootoff(),
