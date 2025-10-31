@@ -38,17 +38,18 @@ public class Constants {
 
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
             .forwardTicksToInches(.0030135413641320823)
-            .strafeTicksToInches(.00307445594781)
-            .turnTicksToInches(.0020189063057597387)
+            .strafeTicksToInches(.003381839207377)
+            .turnTicksToInches(.0032552252158545945)
             .leftPodY(4)
             .rightPodY(-4)
             .strafePodX(-8)
             .leftEncoder_HardwareMapName("motor_shooter2")
             .rightEncoder_HardwareMapName("motor_direitatras")
             .strafeEncoder_HardwareMapName("motor_esquerda")
-            .leftEncoderDirection(Encoder.REVERSE)
+            .leftEncoderDirection(Encoder.FORWARD)
             .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.FORWARD)
+
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);

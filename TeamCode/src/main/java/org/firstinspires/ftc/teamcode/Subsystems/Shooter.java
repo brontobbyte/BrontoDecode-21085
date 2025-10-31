@@ -20,11 +20,11 @@ public class Shooter implements Subsystem {
 
     private final MotorGroup motors = new MotorGroup(motor1, motor2);
     private final ControlSystem controlSystem = ControlSystem.builder()
-            .velPid(0.000001, 0.0, 0.04)
-            .basicFF(0.05, 0.0007, 0.0006)
+            .velPid(0.0001, 0.0, 0.04)
+            .basicFF(0.07, 0.0007, 0.0006)
             .build();
 
-    public final Command shoot = new RunToVelocity(controlSystem, 2000, new KineticState(0, 50.0)).requires(this);
+    public final Command shoot = new RunToVelocity(controlSystem, 1000, new KineticState(0, 50.0)).requires(this);
     public final Command parado = new RunToVelocity(controlSystem, 0, new KineticState(0, 0.0)).requires(this);
 
     private Shooter() { }
