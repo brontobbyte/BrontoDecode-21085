@@ -42,8 +42,8 @@ public class ShooterSolvers extends SubsystemBase {
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         shooter.set(1);
-        telemetry.addData("vel", shooter.getVelocity());
-        telemetry.update();
+        //telemetry.addData("vel", shooter.getVelocity());
+        //telemetry.update();
     }
 
     /**

@@ -200,6 +200,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 intake(),
                 indexer(),
                 new WaitCommand(4000),
+                indexerOff(),
                 intakeoff(),
                 shootoff(),
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake2)),
