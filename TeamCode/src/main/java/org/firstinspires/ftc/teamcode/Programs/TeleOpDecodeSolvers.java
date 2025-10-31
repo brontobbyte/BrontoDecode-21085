@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Programs;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers.vel;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -15,6 +17,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IndexerSolvers;
+import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.TurretSolvers;
 
 
 @Config
@@ -68,12 +71,29 @@ public class TeleOpDecodeSolvers extends CommandOpMode {
         }
 
     }*/
+    private InstantCommand turretAutoAlign() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").autoAlign();
+        });
+    }
+    private InstantCommand turretOff() {
+        return new InstantCommand(() -> {
+            new TurretSolvers(hardwareMap, "motor_turret").Off();
+        });
+    }
 
     private IndexerSolvers indexer;
     @Override
     public void initialize() {
         CommandScheduler.getInstance().run();
         indexer = new IndexerSolvers(hardwareMap, "servo_indexer");
+
+        //exampleButton.whenReleased(new InstantCommand(indexer::release, indexer));
+        //exampleButton.whenPressed(new InstantCommand(indexer::grab, indexer));
+        register(indexer);
+
+    }
+    public void run(){
         GamepadEx toolOp = new GamepadEx(gamepad1);
         GamepadButton exampleButton = new GamepadButton(
                 toolOp, GamepadKeys.Button.A
@@ -83,11 +103,7 @@ public class TeleOpDecodeSolvers extends CommandOpMode {
         );
         toolOp.getGamepadButton(GamepadKeys.Button.A);
         toolOp.getGamepadButton(GamepadKeys.Button.B);
-        exampleButton2.whenPressed(new InstantCommand(() -> mechRotation.setPower(1)));
-        exampleButton2.whenReleased(new InstantCommand(() -> mechRotation.setPower(0)));
-        //exampleButton.whenReleased(new InstantCommand(indexer::release, indexer));
-        //exampleButton.whenPressed(new InstantCommand(indexer::grab, indexer));
-        register(indexer);
-
+        exampleButton2.whenPressed(turretAutoAlign());
+        exampleButton2.whenReleased(turretOff());
     }
 }

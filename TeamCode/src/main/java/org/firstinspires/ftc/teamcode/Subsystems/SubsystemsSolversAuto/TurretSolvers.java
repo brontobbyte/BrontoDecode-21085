@@ -54,6 +54,10 @@ public class TurretSolvers extends SubsystemBase {
         Turret.setRunMode(Motor.RunMode.RawPower);
         Turret.set(Heading);
     }
+    public void Off(){
+        Turret.setRunMode(Motor.RunMode.RawPower);
+        Turret.set(0);
+    }
 
     @Override
     public void periodic() {
