@@ -73,7 +73,7 @@ public class TeleOpDecodeSolvers extends CommandOpMode {
     }*/
     private InstantCommand turretAutoAlign() {
         return new InstantCommand(() -> {
-            new TurretSolvers(hardwareMap, "motor_turret").autoAlign();
+            //new TurretSolvers(hardwareMap, "motor_turret").autoAlign();
         });
     }
     private InstantCommand turretOff() {

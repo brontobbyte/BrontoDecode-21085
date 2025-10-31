@@ -24,16 +24,13 @@ import java.util.List;
 public class TurretSolvers extends SubsystemBase {
     public static double kp = 0.002;
     private Motor Turret;
+    double targetDouble;
+    int target;
     double Heading = 0;
-    Limelight3A limelight;
 
     public TurretSolvers(final HardwareMap hMap, final String name) {
         Turret = new Motor(hMap, name);
-        limelight = hMap.get(Limelight3A.class, "limelight");
-        //telemetry.setMsTransmissionInterval(11);
-        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.pipelineSwitch(1); // Switch to pipeline number 0
-        limelight.start();
+
     }
     /**
      * pos inical
@@ -50,9 +47,19 @@ public class TurretSolvers extends SubsystemBase {
             Turret.set(-0.15);
         }
     }
-    public void autoAlign(){
-        Turret.setRunMode(Motor.RunMode.RawPower);
-        Turret.set(Heading);
+    public void autoAlign(double velA){
+        targetDouble = (velA * 2.7778);
+        target = Math.toIntExact(Math.round(targetDouble));
+        Turret.setRunMode(Motor.RunMode.PositionControl);
+        Turret.setPositionTolerance(100);   // allowed maximum error
+        Turret.setPositionCoefficient(kp);
+        Turret.setTargetPosition(target);
+        //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
+        //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
+        Turret.set(0);
+        while (!Turret.atTargetPosition()) {
+            Turret.set(-0.15);
+        }
     }
     public void Off(){
         Turret.setRunMode(Motor.RunMode.RawPower);
@@ -61,18 +68,7 @@ public class TurretSolvers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        LLResult result = limelight.getLatestResult();
-        result.getPipelineIndex();
-        if (result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                //telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-                Heading = (-fr.getTargetXDegrees()/44);
-            }
-        }else{
-            Heading = 0;
-            //telemetry.addData("Limelight", "No data available");
-        }
+
         // This method will be called once per scheduler run
     }
 }

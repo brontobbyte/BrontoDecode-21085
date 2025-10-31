@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
-
-import static org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers.vel;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -11,15 +8,23 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;
+import com.seattlesolvers.solverslib.command.CommandBase;
+
 
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IndexerSolvers;
@@ -28,6 +33,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSo
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.TurretSolvers;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import java.util.List;
+
 @Configurable
 @Autonomous
 public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
@@ -35,9 +42,12 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
     static TelemetryManager telemetryM;
     static PoseHistory poseHistory;
     private Follower follower;
+    private Motor Turret;
+
+    Limelight3A limelight;
 
     //TODO AUTONOMOUS - 12 ARTIFACTS + 5 PATTERN + 3 BASE - 21085 - BRONTOBYTE - BR
-
+    double vel;
     public static int Shoot1PosTurret = 1209;
     public static int Shoot2PosTurret = -700;
     public static int Shoot3PosTurret = -1200;
@@ -160,7 +170,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
     }
     private InstantCommand turretAutoAlign() {
         return new InstantCommand(() -> {
-            new TurretSolvers(hardwareMap, "motor_turret").autoAlign();
+            //new TurretSolvers(hardwareMap, "motor_turret").autoAlign();
         });
     }
     private InstantCommand turretShoot1() {
@@ -193,7 +203,54 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             new IndexerSolvers(hardwareMap, "servo_indexer").Off();
         });
     }
+    public class autoAlign extends CommandBase {
 
+        private Motor motorTurret;
+        // The subsystem the command runs on
+        private TurretSolvers turretSolvers;
+        boolean end = false;
+        @Override
+        public void initialize() {
+            motorTurret = new Motor(hardwareMap, "motor_turret");
+            limelight = hardwareMap.get(Limelight3A.class, "limelight");
+            //telemetry.setMsTransmissionInterval(11);
+            limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+            limelight.pipelineSwitch(1); // Switch to pipeline number 0
+            limelight.start();
+        }
+
+        @Override
+        public void execute() {
+            motorTurret = new Motor(hardwareMap, "motor_turret");
+            LLResult result = limelight.getLatestResult();
+            result.getPipelineIndex();
+            if (result.isValid()) {
+                List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+                for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                    //telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                    vel = (-fr.getTargetXDegrees()/44);
+                }
+            }else{
+                vel = 0;
+                //telemetry.addData("Limelight", "No data available");
+            }
+            motorTurret.setRunMode(Motor.RunMode.RawPower);
+            motorTurret.set(vel);
+            if (vel >= -0.1 || vel <= 0.1){
+                vel = 0;
+                end = true;
+            }
+            telemetryData.addData("vel", vel);
+            telemetryData.update();
+        }
+
+
+        @Override
+        public boolean isFinished() {
+            return end;
+        }
+
+    }
 
     @Override
     public void initialize() {
@@ -202,8 +259,9 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             follower.setStartingPose(PoseInicial);
             buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), /*turretShoot1(),*/ shoot()),
-                turretAutoAlign(),
+                new autoAlign(),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), shoot()),
+                //turretAutoAlign(),
                 intake(),
                 indexer(),
                 new WaitCommand(2000),
