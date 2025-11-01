@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Configurable
 public class TurretSolvers extends SubsystemBase {
-    public static double kp = 0.002;
+    public static double kp = 0.02;
     private Motor Turret;
     double targetDouble;
     int target;
