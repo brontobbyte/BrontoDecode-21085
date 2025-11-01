@@ -21,19 +21,22 @@ public class AnguladorSolvers extends SubsystemBase {
      * Alto.(+Perto)
      */
     public void On() {
-        angulador.setPosition(-1);
-        angulador2.setPosition(2);
+        angulador.setPosition(0.25);
+        angulador2.setPosition(0.75);
     }
     /**
      * Baixo.(+Longe)
      */
     public void Off() {
-        angulador.setPosition(0.35);
-        angulador2.setPosition(0.65);
+        angulador.setPosition(0.45);
+        angulador2.setPosition(0.55);
     }
     /**
      * Baixo.(+Longe)
      */
-    
+    public void medio() {
+        angulador.setPosition(-0.2);
+        angulador2.setPosition(1.2);
+    }
 
 }

@@ -144,7 +144,6 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
     }
     private InstantCommand intakeshoot() {
         return new InstantCommand(() -> {
-
             new IntakeSolvers(hardwareMap, "motor_intake").IntakeShoot();
 
         });
@@ -215,6 +214,11 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
             new AnguladorSolvers(hardwareMap, "baba").On();
         });
     }
+    private InstantCommand anguladorMedio() {
+        return new InstantCommand(() -> {
+            new AnguladorSolvers(hardwareMap, "baba").medio();
+        });
+    }
     private InstantCommand anguladorBaixo() {
         return new InstantCommand(() -> {
             new AnguladorSolvers(hardwareMap, "baba").Off();
@@ -279,24 +283,26 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 anguladorAlto(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), shoot()),
                 new RepeatCommand(new autoAlign(), 50),
-                anguladorBaixo(),
-                new WaitCommand(150),
-                intake(),
+                intakeshoot(),
                 indexer(),
                 new WaitCommand(2000),
                 indexerOff(),
                 intakeoff(),
                 shootoff(),
-                indexerReverse(),
+                anguladorBaixo(),
                 new ParallelCommandGroup(intake(),new FollowPathCommand(follower, Intake2)),
                 turretShoot1(),
-                new RepeatCommand(new autoAlign(), 50),
                 indexerOff(),
                 intakeoff(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), shoot()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                new RepeatCommand(new autoAlign(), 50),
+                intakeshoot(),
+                indexer(),
+                new WaitCommand(2000),
+                indexerOff(),
                 intakeoff(),
                 shootoff(),
+                anguladorBaixo(),
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake3)),
                 intakeoff(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot3), turretShoot3(), shoot()),

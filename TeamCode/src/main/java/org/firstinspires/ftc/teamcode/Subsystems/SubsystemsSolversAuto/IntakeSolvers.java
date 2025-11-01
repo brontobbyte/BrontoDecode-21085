@@ -29,7 +29,7 @@ public class IntakeSolvers extends SubsystemBase {
      */
     public void IntakeShoot() {
         intake.setRunMode(Motor.RunMode.RawPower);
-        intake.set(0.3);
+        intake.set(0.5);
     }
 
     /**
