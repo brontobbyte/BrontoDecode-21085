@@ -23,6 +23,8 @@ import java.util.List;
 @Configurable
 public class TurretSolvers extends SubsystemBase {
     public static double kp = 0.02;
+    public static double velo = 0.15;
+
     private Motor Turret;
     double targetDouble;
     int target;
@@ -44,7 +46,7 @@ public class TurretSolvers extends SubsystemBase {
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         Turret.set(0);
         while (!Turret.atTargetPosition()) {
-            Turret.set(-0.15);
+            Turret.set(velo);
         }
     }
     public void Off(){

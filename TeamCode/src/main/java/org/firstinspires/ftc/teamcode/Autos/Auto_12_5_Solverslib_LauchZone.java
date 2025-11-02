@@ -50,21 +50,21 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
     //TODO AUTONOMOUS - 12 ARTIFACTS + 5 PATTERN + 3 BASE - 21085 - BRONTOBYTE - BR
     double vel;
-    public static int Shoot1PosTurret = -125;
-    public static int Shoot2PosTurret = -250;
-    public static int Shoot3PosTurret = -250;
-    public static int Shoot4PosTurret = -1200;
+    public static int Shoot1PosTurret = 250;
+    public static int Shoot2PosTurret = 250;
+    public static int Shoot3PosTurret = 300;
+    public static int Shoot4PosTurret = 300;
     private Motor motorTurret;
     // COORDENADAS PARA O PANELS
 
         // POSES COM AS COORDENADAS
-        public static Pose PoseInicial = new Pose(21.577981651376145, 124.1834862385321, Math.toRadians(145));
+        public static Pose PoseInicial = new Pose(21.577981651376145, 121.1834862385321, Math.toRadians(145));
         public static Pose Intake2Pose = new Pose(18.495412844036704, 80);
         public static Pose ShootPose = new Pose(59, 84);
         public static Pose Intake3CurvedPose = new Pose(58.128440366972484, 59.0091743119266);
-        public static Pose Intake3Pose = new Pose(19.596, 58.789);
+        public static Pose Intake3Pose = new Pose(7.596, 58.789);
         public static Pose Intake4CurvedPose = new Pose(56.587, 36.330);
-        public static Pose Intake4Pose = new Pose(21.358, 35.009);
+        public static Pose Intake4Pose = new Pose(7.358, 35.009);
         private PathChain Intake2, Shoot1, Shoot2, Intake3, Shoot3, Intake4, Shoot4, teste;
 
 
@@ -101,8 +101,8 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                     .build();
 
             Intake3 = follower.pathBuilder()
-                    .addPath(new BezierLine(ShootPose, Intake3Pose))
-                    .setTangentHeadingInterpolation()
+                    .addPath(new BezierCurve(ShootPose,Intake3CurvedPose, Intake3Pose))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
             Shoot3 = follower.pathBuilder()
@@ -124,7 +124,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                                     Intake4Pose
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
             Shoot4 = follower.pathBuilder()
@@ -152,6 +152,13 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         return new InstantCommand(() -> {
 
             new IntakeSolvers(hardwareMap, "motor_intake").Off();
+
+        });
+    }
+    private InstantCommand intakevel() {
+        return new InstantCommand(() -> {
+
+            new IntakeSolvers(hardwareMap, "motor_intake").vel();
 
         });
     }
@@ -280,39 +287,52 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         motorTurret.resetEncoder();
         buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                anguladorAlto(),
+                turretShoot1(),
+                anguladorMedio(),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot1), shoot()),
                 new RepeatCommand(new autoAlign(), 50),
                 intakeshoot(),
                 indexer(),
-                new WaitCommand(2000),
+                new WaitCommand(1700),
                 indexerOff(),
                 intakeoff(),
                 shootoff(),
                 anguladorBaixo(),
                 new ParallelCommandGroup(intake(),new FollowPathCommand(follower, Intake2)),
-                turretShoot1(),
                 indexerOff(),
                 intakeoff(),
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), shoot()),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot2), shoot(), turretShoot2()),
+                anguladorMedio(),
                 new RepeatCommand(new autoAlign(), 50),
                 intakeshoot(),
                 indexer(),
-                new WaitCommand(2000),
-                indexerOff(),
-                intakeoff(),
-                shootoff(),
+                new WaitCommand(1700),
                 anguladorBaixo(),
+                shootoff(),
+                //indexer(),
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake3)),
                 intakeoff(),
-                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot3), turretShoot3(), shoot()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                shoot(),
+                new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot3), turretShoot3()),
+                anguladorMedio(),
+                new RepeatCommand(new autoAlign(), 50),
+                intakeshoot(),
+                indexer(),
+                new WaitCommand(1700),
+                anguladorBaixo(),
+                indexerOff(),
                 intakeoff(),
                 shootoff(),
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake4)),
                 intakeoff(),
+                anguladorBaixo(),
+                new WaitCommand(500),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot4), turretShoot4(), shoot()),
-                new ParallelDeadlineGroup(new WaitCommand(4000), intakeshoot()),
+                anguladorMedio(),
+                new RepeatCommand(new autoAlign(), 50),
+                intakeshoot(),
+                indexer(),
+                new WaitCommand(2000),
                 intakeoff(),
                 shootoff()
                 );
