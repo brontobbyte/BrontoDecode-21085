@@ -50,21 +50,21 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
 
     //TODO AUTONOMOUS - 12 ARTIFACTS + 5 PATTERN + 3 BASE - 21085 - BRONTOBYTE - BR
     double vel;
-    public static int Shoot1PosTurret = 250;
-    public static int Shoot2PosTurret = 250;
-    public static int Shoot3PosTurret = 300;
-    public static int Shoot4PosTurret = 300;
+    public static int Shoot1PosTurret = 100;
+    public static int Shoot2PosTurret = 210;
+    public static int Shoot3PosTurret = 210;
+    public static int Shoot4PosTurret = 210;
     private Motor motorTurret;
     // COORDENADAS PARA O PANELS
 
         // POSES COM AS COORDENADAS
-        public static Pose PoseInicial = new Pose(21.577981651376145, 121.1834862385321, Math.toRadians(145));
-        public static Pose Intake2Pose = new Pose(18.495412844036704, 80);
+        public static Pose PoseInicial = new Pose(21.577981651376145, 129.1834862385321, Math.toRadians(145));
+        public static Pose Intake2Pose = new Pose(16.495412844036704, 80);
         public static Pose ShootPose = new Pose(59, 84);
-        public static Pose Intake3CurvedPose = new Pose(58.128440366972484, 59.0091743119266);
-        public static Pose Intake3Pose = new Pose(7.596, 58.789);
-        public static Pose Intake4CurvedPose = new Pose(56.587, 36.330);
-        public static Pose Intake4Pose = new Pose(7.358, 35.009);
+        public static Pose Intake3CurvedPose = new Pose(68, 54);
+        public static Pose Intake3Pose = new Pose(7.596, 55.789);
+        public static Pose Intake4CurvedPose = new Pose(70.587, 24);
+        public static Pose Intake4Pose = new Pose(7.358, 28);
         private PathChain Intake2, Shoot1, Shoot2, Intake3, Shoot3, Intake4, Shoot4, teste;
 
 
@@ -276,6 +276,8 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
     @Override
     public void initialize() {
         motorTurret = new Motor(hardwareMap, "motor_turret");
+        telemetryData.addData("pos", motorTurret.getCurrentPosition());
+        telemetry.update();
         super.reset();
             follower = Constants.createFollower(hardwareMap);
             follower.setStartingPose(PoseInicial);
@@ -286,6 +288,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         limelight.start();
         motorTurret.resetEncoder();
         buildPaths();
+        waitForStart();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 turretShoot1(),
                 anguladorMedio(),
@@ -293,7 +296,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 new RepeatCommand(new autoAlign(), 50),
                 intakeshoot(),
                 indexer(),
-                new WaitCommand(1700),
+                new WaitCommand(2000),
                 indexerOff(),
                 intakeoff(),
                 shootoff(),
@@ -306,7 +309,8 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 new RepeatCommand(new autoAlign(), 50),
                 intakeshoot(),
                 indexer(),
-                new WaitCommand(1700),
+                new WaitCommand(2000),
+                indexerOff(),
                 anguladorBaixo(),
                 shootoff(),
                 //indexer(),
@@ -318,7 +322,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 new RepeatCommand(new autoAlign(), 50),
                 intakeshoot(),
                 indexer(),
-                new WaitCommand(1700),
+                new WaitCommand(2000),
                 anguladorBaixo(),
                 indexerOff(),
                 intakeoff(),
@@ -326,7 +330,6 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                 new ParallelCommandGroup(intake(),  new FollowPathCommand(follower, Intake4)),
                 intakeoff(),
                 anguladorBaixo(),
-                new WaitCommand(500),
                 new ParallelDeadlineGroup(new FollowPathCommand(follower, Shoot4), turretShoot4(), shoot()),
                 anguladorMedio(),
                 new RepeatCommand(new autoAlign(), 50),

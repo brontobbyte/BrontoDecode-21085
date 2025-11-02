@@ -22,8 +22,8 @@ import java.util.List;
  */
 @Configurable
 public class TurretSolvers extends SubsystemBase {
-    public static double kp = 0.02;
-    public static double velo = 0.15;
+    public static double kp = 0.018;
+    public static double velo = 0.43;
 
     private Motor Turret;
     double targetDouble;
@@ -39,7 +39,7 @@ public class TurretSolvers extends SubsystemBase {
      */
     public void ShootAuto(int target) {
         Turret.setRunMode(Motor.RunMode.PositionControl);
-        Turret.setPositionTolerance(100);   // allowed maximum error
+        Turret.setPositionTolerance(20);   // allowed maximum error
         Turret.setPositionCoefficient(kp);
         Turret.setTargetPosition(target);
         //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
