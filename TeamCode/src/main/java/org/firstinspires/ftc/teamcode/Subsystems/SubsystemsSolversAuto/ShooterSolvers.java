@@ -19,8 +19,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 @Configurable
 public class ShooterSolvers extends SubsystemBase {
-    public static double kp = 1;
-    public static double kv = 0;
+    public static double kp = 20;
+    public static double kv = 0.7;
     public static double vel;
 
     private Motor flywheel, flywheel2;
@@ -29,6 +29,9 @@ public class ShooterSolvers extends SubsystemBase {
         flywheel = new Motor(hMap, name);
         flywheel2 = new Motor(hMap, name2);
         shooter = new MotorGroup(flywheel, flywheel2);
+        //List<LynxModule> hubs =  hMap.getAll(LynxModule.class);
+        //
+        // hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
 
         //intake = hMap.get(com.seattlesolvers.solverslib.hardware.motors.Motor.class, "motor_direita");
     }
@@ -41,7 +44,6 @@ public class ShooterSolvers extends SubsystemBase {
         shooter.setVeloCoefficients(kp, 0, 0);
         shooter.setFeedforwardCoefficients(0, kv);
         //shooter.setRunMode(Motor.RunMode.RawPower);
-        //List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         shooter.set(1);
         vel = shooter.getVelocity();

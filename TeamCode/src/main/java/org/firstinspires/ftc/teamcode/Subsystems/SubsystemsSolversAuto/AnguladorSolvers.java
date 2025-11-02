@@ -13,7 +13,7 @@ public class AnguladorSolvers extends SubsystemBase {
     private final Servo angulador;
     private final Servo angulador2;
 
-    private static double angulo = 0.7;
+    private static double angulo = 0.685;
 
     public AnguladorSolvers(final HardwareMap hMap, final String name) {
         angulador = hMap.get(Servo.class, "servo_angulador");
