@@ -12,7 +12,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -24,10 +23,7 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;
-import com.seattlesolvers.solverslib.command.CommandBase;
 
-
-import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.AnguladorSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IndexerSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IntakeSolvers;
@@ -39,7 +35,7 @@ import java.util.List;
 
 @Configurable
 @Autonomous
-public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
+public class RedAlliance12Auto extends CommandOpMode {
     TelemetryData telemetryData = new TelemetryData(telemetry);
     static TelemetryManager telemetryM;
     static PoseHistory poseHistory;
@@ -61,6 +57,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
         public static Pose PoseInicial = new Pose(21.577981651376145, 129.1834862385321, Math.toRadians(145));
         public static Pose Intake2Pose = new Pose(16.495412844036704, 80);
         public static Pose ShootPose = new Pose(59, 84);
+        public static Pose ShootPoseFinal = new Pose(59, 129);
         public static Pose Intake3CurvedPose = new Pose(68, 54);
         public static Pose Intake3Pose = new Pose(7.596, 55.789);
         public static Pose Intake4CurvedPose = new Pose(70.587, 24);
@@ -128,7 +125,7 @@ public class Auto_12_5_Solverslib_LauchZone extends CommandOpMode {
                     .build();
 
             Shoot4 = follower.pathBuilder()
-                    .addPath(new BezierLine(Intake4Pose, ShootPose))
+                    .addPath(new BezierLine(Intake4Pose, ShootPoseFinal))
                     .setTangentHeadingInterpolation()
                     .setReversed()
                     .build();

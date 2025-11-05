@@ -1,59 +1,61 @@
 package org.firstinspires.ftc.teamcode.Programs;
 
 import static dev.nextftc.bindings.Bindings.button;
+import static dev.nextftc.bindings.Bindings.range;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Angulador;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.indexer;
 import org.firstinspires.ftc.teamcode.Subsystems.intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.driving.FieldCentric;
-import dev.nextftc.hardware.driving.MecanumDriverControlled;
+import dev.nextftc.hardware.driving.DriverControlledCommand;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
-import dev.nextftc.hardware.impl.MotorEx;
 
+@Configurable
 @TeleOp(name = "NextFTC TeleOp Program Java")
 public class TeleOpProgram extends NextFTCOpMode {
+
     public TeleOpProgram() {
         addComponents(
-                new SubsystemComponent(indexer.INSTANCE, intake.INSTANCE, Shooter.INSTANCE),
+                new SubsystemComponent(indexer.INSTANCE, intake.INSTANCE, Shooter.INSTANCE, Turret.INSTANCE, Angulador.INSTANCE),
                 BulkReadComponent.INSTANCE,
-                BindingsComponent.INSTANCE
+                BindingsComponent.INSTANCE,
+                new PedroComponent(Constants::createFollower)
         );
     }
-
-    private final MotorEx frontLeftMotor = new MotorEx("motor_esquerda").reversed();
-    private final MotorEx frontRightMotor = new MotorEx("motor_direita");
-    private final MotorEx backLeftMotor = new MotorEx("motor_esquerdatras").reversed();
-    private final MotorEx backRightMotor = new MotorEx("motor_direitatras");
-
     private final IMUEx imu = new IMUEx("imu", Direction.LEFT, Direction.UP).zeroed();
 
     @Override
+    public void onInit() {
+        Turret.INSTANCE.init(hardwareMap);
+        Turret.INSTANCE.enableLimelightTracking();
+    }
+    @Override
     public void onStartButtonPressed() {
-        // Movimento base
-        new MecanumDriverControlled(
-                frontLeftMotor,
-                frontRightMotor,
-                backLeftMotor,
-                backRightMotor,
+        DriverControlledCommand driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY().negate(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
-                new FieldCentric(imu)
-        ).schedule();
+                Gamepads.gamepad1().leftStickX().negate(),
+                Gamepads.gamepad1().rightStickX().negate(),
+                false
+        );
+        driverControlled.schedule();
 
-        button(() -> gamepad2.b)
+        button(() -> gamepad1.b)
                 .whenBecomesTrue(() -> imu.getImu().resetYaw());
 
         button(() -> gamepad2.left_bumper)
@@ -65,32 +67,30 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesTrue(() ->
                         new ParallelGroup(
                                 Shooter.INSTANCE.shoot,
-                                new SequentialGroup(
-                                        intake.INSTANCE.prepara.and(indexer.INSTANCE.empurra),
-                                        new Delay(0.6),
-                                        intake.INSTANCE.shooting.and(indexer.INSTANCE.puxa),
-                                        new Delay(0.2),
-                                        intake.INSTANCE.shooting.and(indexer.INSTANCE.puxa),
-                                        new Delay(0.2),
-                                        intake.INSTANCE.prepara.and(indexer.INSTANCE.para)
-                                )
+                                Angulador.INSTANCE.medio,
+                                Angulador.INSTANCE.medio2
                         ).schedule()
                 )
                 .whenBecomesFalse(() ->
                         new ParallelGroup(
                                 Shooter.INSTANCE.parado,
-                                intake.INSTANCE.stop,
+                                Angulador.INSTANCE.lock,
+                                Angulador.INSTANCE.lock2,
                                 indexer.INSTANCE.para
                         ).schedule()
                 );
 
         button(() -> gamepad2.a)
-                .whenTrue(() -> indexer.INSTANCE.puxa.schedule())
-                .whenFalse(() -> indexer.INSTANCE.para.schedule());
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(() ->
+                        new ParallelGroup(
+                                indexer.INSTANCE.puxa
+                        ).schedule()
+                );
     }
-
     @Override
     public void onUpdate() {
         super.onUpdate();
+        Turret.INSTANCE.periodic();
     }
 }
