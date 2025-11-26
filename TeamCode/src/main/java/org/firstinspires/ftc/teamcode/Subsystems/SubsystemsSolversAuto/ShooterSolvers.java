@@ -40,10 +40,10 @@ public class ShooterSolvers extends SubsystemBase {
      * Grabs a stone.
      */
     public void On() {
-        shooter.setRunMode(Motor.RunMode.VelocityControl);
-        shooter.setVeloCoefficients(kp, 0, 0);
-        shooter.setFeedforwardCoefficients(0, kv);
-        //shooter.setRunMode(Motor.RunMode.RawPower);
+        //shooter.setRunMode(Motor.RunMode.VelocityControl);
+        //shooter.setVeloCoefficients(kp, 0, 0);
+        //shooter.setFeedforwardCoefficients(0, kv);
+        shooter.setRunMode(Motor.RunMode.RawPower);
         //hubs.forEach(hub -> hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
         shooter.set(1);
         vel = shooter.getVelocity();

@@ -54,7 +54,7 @@ public class RedAlliance12Auto extends CommandOpMode {
     // COORDENADAS PARA O PANELS
 
         // POSES COM AS COORDENADAS
-        public static Pose PoseInicial = new Pose(21.577981651376145, 129.1834862385321, Math.toRadians(145));
+        public static Pose PoseInicial = new Pose(21.577981651376145, 129.1834862385321, Math.toRadians(35));
         public static Pose Intake2Pose = new Pose(16.495412844036704, 80);
         public static Pose ShootPose = new Pose(59, 84);
         public static Pose ShootPoseFinal = new Pose(59, 129);
@@ -75,7 +75,7 @@ public class RedAlliance12Auto extends CommandOpMode {
                                     ShootPose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(0))
                     .build();
             Intake2 = follower.pathBuilder()
                     .addPath(
@@ -84,7 +84,7 @@ public class RedAlliance12Auto extends CommandOpMode {
                                     Intake2Pose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             Shoot2 = follower.pathBuilder()
@@ -94,7 +94,7 @@ public class RedAlliance12Auto extends CommandOpMode {
                                     ShootPose
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(230))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(230))
                     .build();
 
             Intake3 = follower.pathBuilder()
@@ -255,7 +255,7 @@ public class RedAlliance12Auto extends CommandOpMode {
             motorTurret.setRunMode(Motor.RunMode.RawPower);
             motorTurret.set(vel);
             if (vel >= -0.1 || vel <= 0.1){
-                vel = 0;
+                vel = 0; 
                 end = true;
             }
             telemetryData.addData("vel", vel);
