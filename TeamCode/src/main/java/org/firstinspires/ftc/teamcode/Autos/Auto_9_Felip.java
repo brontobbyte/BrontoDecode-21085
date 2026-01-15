@@ -3,21 +3,15 @@ package org.firstinspires.ftc.teamcode.Autos;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
-import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
@@ -30,8 +24,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.IntakeSol
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.ShooterSolvers;
 import org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto.TurretSolvers;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.List;
 
 @Configurable
 @Autonomous
@@ -58,10 +50,10 @@ public class Auto_9_Felip extends CommandOpMode {
 
     // POSES PARA COORDENADAS
 
-    public static Pose PoseInicial = new Pose (21.577981651376145, 129.1834862385321, Math.toRadians(145));
+    public static Pose PoseInicial = new Pose (17.723076923076924, 130.7076923076923, Math.toRadians(145));
     public static Pose VaiIntake1 = new Pose (48.33391304347826, 83.14434782608694);
     public static Pose IntakePose1 = new Pose (48.08347826086957, 56.59826086956522);
-    public static Pose ShootPose = new Pose (72.12521739130435, 95.66608695652174);
+    public static Pose ShootPose = new Pose (55.38461538461539, 104.12307692307692);
     public static Pose VaiAteLa = new Pose (72.12521739130435, 40.820869565217386);
     public static Pose VaiIntake2 = new Pose (96.66782608695652, 40.820869565217386);
     public static Pose IntakePose2 = new Pose (96.16695652173914, 70.37217391304348);
@@ -77,7 +69,7 @@ public class Auto_9_Felip extends CommandOpMode {
                                 ShootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(139))
+                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(145))
                 .build();
 
         GoIntake1 = follower.pathBuilder()
@@ -87,7 +79,7 @@ public class Auto_9_Felip extends CommandOpMode {
                                 VaiIntake1
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(270))
+                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(270))
                 .build();
 
         Intake1 = follower.pathBuilder()
@@ -107,7 +99,7 @@ public class Auto_9_Felip extends CommandOpMode {
                                 ShootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians (139))
+                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians (145))
                 .build();
 
         VaiLa = follower.pathBuilder()
@@ -117,7 +109,7 @@ public class Auto_9_Felip extends CommandOpMode {
                                 VaiAteLa
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(0))
                 .build();
 
         GoIntake2 = follower.pathBuilder()
@@ -147,7 +139,7 @@ public class Auto_9_Felip extends CommandOpMode {
                                 ShootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(139))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(145))
                 .build();
     }
 

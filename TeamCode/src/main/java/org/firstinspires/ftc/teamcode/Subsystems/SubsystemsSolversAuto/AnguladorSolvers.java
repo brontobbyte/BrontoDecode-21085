@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 @Configurable
 public class AnguladorSolvers extends SubsystemBase {

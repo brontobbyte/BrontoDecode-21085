@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

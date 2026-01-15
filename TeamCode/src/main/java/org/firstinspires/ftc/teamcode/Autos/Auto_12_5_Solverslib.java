@@ -1,27 +1,18 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrent;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrentAndHistory;
-
-import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.field.Drawable;
-import com.bylazar.field.Style;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.Localizer;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
-import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;

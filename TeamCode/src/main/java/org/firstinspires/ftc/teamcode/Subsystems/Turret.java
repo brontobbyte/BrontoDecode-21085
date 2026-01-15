@@ -9,10 +9,7 @@ import java.util.List;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.AngleType;
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.hardware.controllable.RunToPosition;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
@@ -45,17 +42,14 @@ public class Turret implements Subsystem {
     public void disableLimelightTracking() {
         limelightTracking = false;
         motor.setPower(0);
-
     }
     public Limelight3A getLimelight() {
 
         return limelight;
-
     }
     public MotorEx getMotor() {
 
         return motor;
-
     }
 
     @Override

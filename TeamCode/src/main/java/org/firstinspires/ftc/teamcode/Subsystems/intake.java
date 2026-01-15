@@ -4,8 +4,6 @@ import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.core.commands.utility.LambdaCommand;
-import dev.nextftc.hardware.controllable.RunToPosition;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 

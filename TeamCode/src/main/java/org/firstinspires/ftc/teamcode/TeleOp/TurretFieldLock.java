@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Programs;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -53,7 +53,7 @@ public class TurretFieldLock extends LinearOpMode {
             double posicaoAtualGraus = (motorTurret.getCurrentPosition() / TICKS_POR_REVOLUCAO) * 360.0;
 
             double erro = angleWrap(setpointGraus - posicaoAtualGraus);
-            double saida = Range.clip(kP * erro, -0.7, 0.7);
+            double saida = Range.clip(kP * erro, -0.4, 0.4);
             motorTurret.setPower(saida);
 
             telemetry.addData("Heading Inicial", "%.2f", headingInicial);

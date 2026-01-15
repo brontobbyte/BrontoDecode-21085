@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 
 import dev.nextftc.control.ControlSystem;
@@ -8,10 +7,8 @@ import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
-import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 @Configurable
 public class Shooter implements Subsystem {

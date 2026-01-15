@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;

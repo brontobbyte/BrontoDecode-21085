@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.Subsystems.SubsystemsSolversAuto;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
-import com.sun.tools.javac.util.List;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * A gripper mechanism that grabs a stone from the quarry.
