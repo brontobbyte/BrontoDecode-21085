@@ -17,8 +17,9 @@ public class intake implements Subsystem {
     private intake() { }
     private MotorEx motor = new MotorEx("motor_intake");
 
-    public Command pega = new SetPower(motor, 1).requires(this);
-    public Command shooting = new SetPower(motor, 0.7).requires(this);
+    public Command intake = new SetPower(motor, 1).requires(this);
+    public Command shooting = new SetPower(motor, 1).requires(this);
+    public Command expelir = new SetPower(motor, -1).requires(this);
     public Command stop = new SetPower(motor, 0).requires(this);
 
     public Command runContinuously = new LambdaCommand()

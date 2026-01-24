@@ -4,43 +4,75 @@ import com.bylazar.configurables.annotations.Configurable;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @Configurable
 public class Shooter implements Subsystem {
+
     public static final Shooter INSTANCE = new Shooter();
-    public static double kp;
-    public static double velShoot;
+
+    public static double tolerancia = 300;
+
+    private double robotX = 0;
+    private double robotY = 0;
+
+    private double targetX = 144;
+    private double targetY = 72;
+
+    private double velTarget = 0;
 
     private final MotorEx motor1 = new MotorEx("motor_shooter").reversed();
     private final MotorEx motor2 = new MotorEx("motor_shooter2").reversed();
     private final MotorGroup motors = new MotorGroup(motor1, motor2);
+
     private final ControlSystem controlSystem = ControlSystem.builder()
             .velPid(0.001, 0.0, 0.006)
             .basicFF(0.00043, 0.0001, 0.08)
             .build();
 
-    public final Command shoot = new RunToVelocity(controlSystem, -2200, 200).requires(this);
-    public final Command parado = new RunToVelocity(controlSystem, 0, new KineticState(0, 0.0)).requires(this);
+    private Shooter() {}
 
-    private Shooter() { }
+    private double flywheelSpeed(double dist) {
+        return Math.max(
+                Math.min(
+                        0.0204772 * Math.pow(dist, 2)
+                                + 0.643162 * dist
+                                + 712.90909,
+                        2200
+                ),
+                0
+        );
+    }
+
+    public void updateRobotPosition(double x, double y) {
+        this.robotX = x;
+        this.robotY = y;
+    }
+
+    public void setTargetPosition(double x, double y) {
+        this.targetX = x;
+        this.targetY = y;
+    }
+
+    private void updateVelocityFromPosition() {
+        double distance = Math.hypot(targetX - robotX, targetY - robotY);
+        this.velTarget = flywheelSpeed(distance);
+    }
 
     public boolean isAtTargetVelocity() {
-        double targetVelocity = -2200;
         double currentVelocity = motors.getVelocity();
-        double tolerance = 300;
-
-        return Math.abs(currentVelocity - targetVelocity) < tolerance;
+        return Math.abs(currentVelocity - velTarget) < tolerancia;
     }
 
     @Override
     public void periodic() {
-        velShoot = motors.getVelocity();
-        double power = controlSystem.calculate(motors.getState());
+        updateVelocityFromPosition();
+
+        double power = controlSystem.calculate(
+                new KineticState(velTarget, motors.getVelocity())
+        );
         motors.setPower(power);
     }
 }

@@ -29,14 +29,12 @@ public class Turret implements Subsystem {
     private double targetDegrees = 0;
 
     public void init(HardwareMap hardwareMap) {
-
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(50);
         limelight.pipelineSwitch(4);
         limelight.start();
     }
     public void enableLimelightTracking() {
-
         limelightTracking = true;
     }
     public void disableLimelightTracking() {
@@ -44,11 +42,9 @@ public class Turret implements Subsystem {
         motor.setPower(0);
     }
     public Limelight3A getLimelight() {
-
         return limelight;
     }
     public MotorEx getMotor() {
-
         return motor;
     }
 
