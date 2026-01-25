@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.localization.Localizer;
+
+import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
@@ -8,8 +12,10 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
 
+
 @Configurable
 public class Shooter implements Subsystem {
+    private Localizer localizer;
 
     public static final Shooter INSTANCE = new Shooter();
 
@@ -74,5 +80,6 @@ public class Shooter implements Subsystem {
                 new KineticState(velTarget, motors.getVelocity())
         );
         motors.setPower(power);
+        motors.setPower(ShooterConstants.flywheelSpeed(localizer.getPose().distanceFrom(new Pose(132, 137))));
     }
 }
