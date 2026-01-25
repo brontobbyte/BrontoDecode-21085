@@ -11,7 +11,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Autos.Auto_12_5_NextFTC_LauchZoneMov;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
