@@ -21,6 +21,15 @@ public class Shooter implements Subsystem {
 
     public static double tolerancia = 300;
 
+    public static double kp = 0;
+    public static double ki = 0;
+    public static double kd = 0;
+
+    public static double kv = 0;
+    public static double ka = 0;
+    public static double ks = 0;
+
+
     private double robotX = 0;
     private double robotY = 0;
 
@@ -34,8 +43,8 @@ public class Shooter implements Subsystem {
     private final MotorGroup motors = new MotorGroup(motor1, motor2);
 
     private final ControlSystem controlSystem = ControlSystem.builder()
-            .velPid(0.001, 0.0, 0.006)
-            .basicFF(0.00043, 0.0001, 0.08)
+            .velPid(kp, ki, kd)
+            .basicFF(kv, ka, ks)
             .build();
 
     private Shooter() {}
