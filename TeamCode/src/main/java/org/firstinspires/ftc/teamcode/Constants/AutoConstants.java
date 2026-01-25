@@ -11,8 +11,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Autos.Auto_12_5_NextFTC_LauchZoneMov;
-
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -54,65 +52,7 @@ public class AutoConstants {
         }
 
     }
-    @Configurable
-    public static class Comandos {
-        public static class WaitForStopCommand extends Command {
-            private final Follower follower;
-            private final double velocityThreshold;
-            private final long stableTimeMs;
-            private final ElapsedTime timer;
-            private boolean isTimerValid;
-            private boolean Done = false;
 
-            public WaitForStopCommand(Follower follower, double velocityThreshold, long stableTimeMs) {
-                this.follower = follower;
-                this.velocityThreshold = velocityThreshold;
-                this.stableTimeMs = stableTimeMs;
-                this.timer = new ElapsedTime();
-                this.isTimerValid = false;
-            }
-
-            public void init() {
-                timer.reset();
-                isTimerValid = false;
-            }
-
-            public void loop() {
-                double currentSpeed = follower.getVelocity().getMagnitude();
-
-                if (currentSpeed > velocityThreshold) {
-                    timer.reset();
-                    isTimerValid = false;
-                } else {
-                    if (!isTimerValid) {
-                        timer.reset();
-                        isTimerValid = true;
-                    }
-                }
-
-                telemetry.addData("WaitForStop", "Vel: %.2f, Timer: %dms",
-                        currentSpeed, (int) timer.milliseconds());
-
-                if (isTimerValid && timer.milliseconds() >= stableTimeMs) {
-                    isDone();
-                    Done = true;
-                }
-            }
-
-            public boolean isFinished() {
-                return isTimerValid && timer.milliseconds() >= stableTimeMs;
-            }
-
-            public void end() {
-            }
-
-            @Override
-            public boolean isDone() {
-                return Done;
-            }
-        }
-        public static Command waitForStop = new WaitForStopCommand(follower, 0.5, 200);
-    }
 
 
 

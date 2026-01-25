@@ -16,7 +16,6 @@ import dev.nextftc.hardware.impl.MotorEx;
 @Configurable
 public class Shooter implements Subsystem {
     private Localizer localizer;
-
     public static final Shooter INSTANCE = new Shooter();
 
     public static double tolerancia = 300;
@@ -75,11 +74,9 @@ public class Shooter implements Subsystem {
     @Override
     public void periodic() {
         updateVelocityFromPosition();
-
         double power = controlSystem.calculate(
-                new KineticState(velTarget, motors.getVelocity())
+                new KineticState(ShooterConstants.flywheelSpeed(localizer.getPose().distanceFrom(new Pose(132, 137))), motors.getVelocity())
         );
         motors.setPower(power);
-        motors.setPower(ShooterConstants.flywheelSpeed(localizer.getPose().distanceFrom(new Pose(132, 137))));
     }
 }
