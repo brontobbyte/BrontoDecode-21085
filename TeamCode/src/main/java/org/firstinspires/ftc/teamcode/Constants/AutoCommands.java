@@ -6,7 +6,11 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Localizer;
+import com.pedropathing.localization.PoseTracker;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 import dev.nextftc.core.commands.Command;
 @Configurable
@@ -14,15 +18,15 @@ public class AutoCommands {
     @Configurable
     public static class Comandos {
         public static class WaitForStopCommand extends Command {
-            private final Follower follower;
+            private final Localizer localizer;
             private final double velocityThreshold;
             private final long stableTimeMs;
             private final ElapsedTime timer;
             private boolean isTimerValid;
             private boolean Done = false;
 
-            public WaitForStopCommand(Follower follower, double velocityThreshold, long stableTimeMs) {
-                this.follower = follower;
+            public WaitForStopCommand(Localizer localizer, double velocityThreshold, long stableTimeMs) {
+                this.localizer = localizer;
                 this.velocityThreshold = velocityThreshold;
                 this.stableTimeMs = stableTimeMs;
                 this.timer = new ElapsedTime();
@@ -35,9 +39,9 @@ public class AutoCommands {
             }
 
             public void loop() {
-                double currentSpeed = follower.getVelocity().getMagnitude();
+                Vector currentSpeed = new PoseTracker(localizer).getVelocity();
 
-                if (currentSpeed > velocityThreshold) {
+                if (currentSpeed.getMagnitude() > velocityThreshold) {
                     timer.reset();
                     isTimerValid = false;
                 } else {
@@ -68,6 +72,5 @@ public class AutoCommands {
                 return Done;
             }
         }
-        public static Command waitForStop = new WaitForStopCommand(follower, 0.5, 200);
     }
 }
