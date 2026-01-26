@@ -1,0 +1,20 @@
+package org.firstinspires.ftc.teamcode.Subsystems;
+
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.impl.ServoEx;
+import dev.nextftc.hardware.positionable.SetPosition;
+public class Lock implements Subsystem {
+
+    public static final Lock INSTANCE = new Lock();
+    private Lock() { }
+    private ServoEx servo = new ServoEx("sLock");
+
+    public Command open = new SetPosition(servo, -1.0).requires(this);
+
+    public Command closed = new SetPosition(servo, 1.0).requires(this);
+
+    @Override
+    public void periodic() {
+    }
+}
