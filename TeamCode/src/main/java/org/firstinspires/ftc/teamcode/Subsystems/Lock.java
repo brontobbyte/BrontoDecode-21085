@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
+import dev.nextftc.hardware.powerable.SetPower;
 public class Lock implements Subsystem {
-
     public static final Lock INSTANCE = new Lock();
     private Lock() { }
     private ServoEx servo = new ServoEx("sLock");

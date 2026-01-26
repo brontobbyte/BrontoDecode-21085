@@ -29,8 +29,11 @@ public class Shooter implements Subsystem {
     public static double ks = 0;
 
 
-    private double robotX = 0;
-    private double robotY = 0;
+    private double robotX;
+    private double robotY;
+    private double heading;
+    private Pose poseAtual;
+
 
     private double targetX = 144;
     private double targetY = 72;
@@ -80,11 +83,17 @@ public class Shooter implements Subsystem {
         return Math.abs(currentVelocity - velTarget) < tolerancia;
     }
 
+    public void setPoseTracker(Pose poseAtual) {
+        //this.poseTracker = poseTracker;
+        this.poseAtual  =  poseAtual;
+
+    }
+
     @Override
     public void periodic() {
-        updateVelocityFromPosition();
+        //updateVelocityFromPosition();
         double power = controlSystem.calculate(
-                new KineticState(ShooterConstants.flywheelSpeed(localizer.getPose().distanceFrom(new Pose(132, 137))), motors.getVelocity())
+                new KineticState(ShooterConstants.flywheelSpeed(poseAtual.distanceFrom(new Pose(132, 137))), motors.getVelocity())
         );
         motors.setPower(power);
     }

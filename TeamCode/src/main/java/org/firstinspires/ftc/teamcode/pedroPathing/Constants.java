@@ -26,10 +26,10 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("motor_direita")
-            .rightRearMotorName("motor_direitatras")
-            .leftRearMotorName("motor_esquerdatras")
-            .leftFrontMotorName("motor_esquerda")
+            .rightFrontMotorName("fr")
+            .rightRearMotorName("br")
+            .leftRearMotorName("bl")
+            .leftFrontMotorName("fl")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
@@ -44,13 +44,12 @@ public class Constants {
             .leftPodY(4)
             .rightPodY(-4)
             .strafePodX(-8)
-            .leftEncoder_HardwareMapName("motor_shooter2")
-            .rightEncoder_HardwareMapName("motor_direitatras")
-            .strafeEncoder_HardwareMapName("motor_esquerda")
+            .leftEncoder_HardwareMapName("fl")
+            .rightEncoder_HardwareMapName("fr")
+            .strafeEncoder_HardwareMapName("f2")
             .leftEncoderDirection(Encoder.REVERSE)
-            .rightEncoderDirection(Encoder.REVERSE)
-            .strafeEncoderDirection(Encoder.FORWARD)
-
+            .rightEncoderDirection(Encoder.FORWARD)
+            .strafeEncoderDirection(Encoder.REVERSE)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);

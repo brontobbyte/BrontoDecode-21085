@@ -15,7 +15,7 @@ public class Intake implements Subsystem {
             .build();
 
     private Intake() { }
-    private MotorEx motor = new MotorEx("intake");
+    private MotorEx motor = new MotorEx("motor_intake");
     public Command intake = new SetPower(motor, 1).requires(this);
     public Command shooting = new SetPower(motor, 1).requires(this);
     public Command expelir = new SetPower(motor, -1).requires(this);

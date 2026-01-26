@@ -11,7 +11,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -24,9 +23,9 @@ public class AutoConstants {
     @Configurable
     public static class Calculos {
         private static ControlSystem controller;
-        private static MotorEx turretMotor = new MotorEx("fr");
+        private static MotorEx turretMotor = new MotorEx("turret");
         private static IMU imu;
-        public static double scalingFactor = 0.05;
+        public static double scalingFactor = 0.1969365427;
         public static double encoderTicksToAngle(double ticks) {
             return (ticks * scalingFactor);
         }
@@ -41,8 +40,7 @@ public class AutoConstants {
             //turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //turretMotor.setPower(1);
             controller = ControlSystem.builder()
-                    .posPid(0.1, 0.0, 0.0)
-                    .elevatorFF(0.04)
+                    .posPid(0.01, 0.0, 0)
                     .build();
             controller.setGoal(new KineticState(TARGET_TICK_VALUE));
             return (controller.calculate(new KineticState(
@@ -53,65 +51,7 @@ public class AutoConstants {
         }
 
     }
-    @Configurable
-    public static class Comandos {
-        public static class WaitForStopCommand extends Command {
-            private final Follower follower;
-            private final double velocityThreshold;
-            private final long stableTimeMs;
-            private final ElapsedTime timer;
-            private boolean isTimerValid;
-            private boolean Done = false;
 
-            public WaitForStopCommand(Follower follower, double velocityThreshold, long stableTimeMs) {
-                this.follower = follower;
-                this.velocityThreshold = velocityThreshold;
-                this.stableTimeMs = stableTimeMs;
-                this.timer = new ElapsedTime();
-                this.isTimerValid = false;
-            }
-
-            public void init() {
-                timer.reset();
-                isTimerValid = false;
-            }
-
-            public void loop() {
-                double currentSpeed = follower.getVelocity().getMagnitude();
-
-                if (currentSpeed > velocityThreshold) {
-                    timer.reset();
-                    isTimerValid = false;
-                } else {
-                    if (!isTimerValid) {
-                        timer.reset();
-                        isTimerValid = true;
-                    }
-                }
-
-                telemetry.addData("WaitForStop", "Vel: %.2f, Timer: %dms",
-                        currentSpeed, (int) timer.milliseconds());
-
-                if (isTimerValid && timer.milliseconds() >= stableTimeMs) {
-                    isDone();
-                    Done = true;
-                }
-            }
-
-            public boolean isFinished() {
-                return isTimerValid && timer.milliseconds() >= stableTimeMs;
-            }
-
-            public void end() {
-            }
-
-            @Override
-            public boolean isDone() {
-                return Done;
-            }
-        }
-        public static Command waitForStop = new WaitForStopCommand(follower, 0.5, 200);
-    }
 
 
 

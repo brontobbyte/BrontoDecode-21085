@@ -11,7 +11,6 @@ import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 public class Hood implements Subsystem {
     private Localizer localizer;
-
     public static final Hood INSTANCE = new Hood();
     private Hood() { }
     private final ServoEx servoHood = new ServoEx("sHood");
