@@ -17,6 +17,7 @@ public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
     private static Localizer localizer;
     public HardwareMap hardwareMap;
+    double protecao;
     private double robotY;
     private double robotX;
     private double angleLL;
@@ -69,10 +70,11 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        double proteção = 1;
-        if (turretAngle > 180)||(turretAngle < -180){
-
+        if ((turretAngle > 180)||(turretAngle < -180)){
+            protecao = 0;
+        } else {
+            protecao = 1;
         }
-        motor.setPower(turnTurretBy(aimToObject(), angleLL));
+        motor.setPower(protecao*(turnTurretBy(aimToObject(), angleLL)));
     }
 }
