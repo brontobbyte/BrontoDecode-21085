@@ -70,11 +70,6 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        if ((turretAngle > 180)||(turretAngle < -180)){
-            protecao = 0;
-        } else {
-            protecao = 1;
-        }
-        motor.setPower(protecao*(turnTurretBy(aimToObject(), angleLL)));
+        motor.setPower((turnTurretBy(aimToObject(), angleLL)));
     }
 }
