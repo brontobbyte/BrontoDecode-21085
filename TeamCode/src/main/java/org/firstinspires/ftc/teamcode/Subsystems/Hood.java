@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 
-import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
+//import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -20,7 +20,7 @@ public class Hood implements Subsystem {
 
     @Override
     public void periodic() {
-        servoHood.setPosition(ShooterConstants.hoodAngle(localizer.getPose().distanceFrom(new Pose(132, 137))));
+       // servoHood.setPosition(ShooterConstants.hoodAngle(localizer.getPose().distanceFrom(new Pose(132, 137))));
     }
 
 }

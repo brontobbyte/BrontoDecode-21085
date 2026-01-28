@@ -4,7 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 @Configurable
 public class AutoPoses {
-    public static Pose poseInicial       = new Pose(19.209, 121.202, Math.toRadians(0));
+    public static Pose poseInicial       = new Pose(19.209, 121.202, Math.toRadians(90));
     public static Pose intakeCurvedPose  = new Pose(87.102, 58.520, Math.toRadians(0));
     public static Pose intakePose        = new Pose(19.644, 59.764, Math.toRadians(0));
     public static Pose shootPose1        = new Pose(56.726, 75.225, Math.toRadians(0));
