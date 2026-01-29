@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.angleToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
@@ -70,7 +71,7 @@ public class Auto21 extends NextFTCOpMode{
 
     }
     @Override public void onInit() {
-        Turret.INSTANCE.getMotor().setCurrentPosition(encoderTicksToAngle(180));
+        Turret.INSTANCE.getMotor().setCurrentPosition(angleToEncoderTicks(180));
         Pose poseAtual = PedroComponent.follower().getPose();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
@@ -90,7 +91,7 @@ public class Auto21 extends NextFTCOpMode{
 
             }
         }else{
-            angleLL = Math.toDegrees(-poseAtual.getHeading());
+            angleLL = 1000;
             telemetry.addData("Limelight", "No data available");
         }
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.angleToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.turnTurretBy;
 
@@ -7,6 +8,8 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.localization.Localizer;
 import com.pedropathing.localization.PoseTracker;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import dev.nextftc.control.ControlSystem;
 
@@ -30,7 +33,7 @@ public class Turret implements Subsystem {
     private Turret() {
     }
     public void setPoseTracker(double robotX, double robotY, double heading, double angleLL) {
-        //this.poseTracker = poseTracker;
+
         this.robotX  =  robotX;
         this.robotY  =  robotY;
         this.heading = heading;
@@ -40,23 +43,20 @@ public class Turret implements Subsystem {
     private static MotorEx motor = new MotorEx("turret");
     private final double ticks360 = 1000.0;
     private boolean limelightTracking = false;
-    private final ControlSystem controlSystem = ControlSystem.builder()
-            //.angular(AngleType.DEGREES, feedback -> feedback.posPid(0.043, 0.000, 0.0))
-            .posPid(0.2,0,0)
-            .build();
-
     private double targetDegrees = 0;
 
     @Override
     public void initialize() {
-        motor.setCurrentPosition(encoderTicksToAngle(180));
-    }
+        motor.getMotor().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motor.getMotor().setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setCurrentPosition(angleToEncoderTicks(180));     }
+
     public MotorEx getMotor() {
         return motor;
     }
     public double aimToObject(){
         double robotYPosition = robotY, robotXPosition = robotX;
-        destinationAngle = -Math.toDegrees(Math.atan2(robotYPosition - 137,
+        destinationAngle = -Math.toDegrees(Math.atan2(137 - robotYPosition,
                 10 - robotXPosition));
 
         turretAngle = encoderTicksToAngle(motor.getRawTicks());

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
+import static androidx.core.math.MathUtils.clamp;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 
@@ -17,12 +19,12 @@ public class AutoConstants {
     public static class Calculos {
         private static ControlSystem controller;
 
-        public static double Tkp = 0.01;
+        public static double Tkp = 0.02;
         public static double Tki = 0;
-        public static double Tkd = 0.0002;
+        public static double Tkd = 0.0003;
         public static double pesoLL = 5;
         public static double pesoHeading = 1;
-
+        public static double destinationAngleLL;
         private static MotorEx turretMotor = new MotorEx("turret");
         private static IMU imu;
         public static double scalingFactor = 0.1969365427;
@@ -34,10 +36,13 @@ public class AutoConstants {
         }
         public static double turnTurretBy(double degrees, double angleLL) {
             double currentPosition = turretMotor.getCurrentPosition();
-            double destinationAngleLL = angleToEncoderTicks(angleLL);
+            if (angleLL != 1000) {
+                destinationAngleLL = angleToEncoderTicks(angleLL);
+            }else{
+                destinationAngleLL = angleToEncoderTicks(degrees);
+            }
             double destinationAngleHeading = angleToEncoderTicks(degrees);
-            double TARGET_TICK_VALUE = (((destinationAngleHeading*pesoHeading) + (destinationAngleLL*pesoLL))/(pesoHeading+pesoLL)) + currentPosition;
-
+            double TARGET_TICK_VALUE = (((((destinationAngleHeading*pesoHeading) + (destinationAngleLL*pesoLL))/(pesoHeading+pesoLL)) + currentPosition)%angleToEncoderTicks(360));
             //turretMotor.setTargetPosition(TARGET_TICK_VALUE);
             //turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             //turretMotor.setPower(1);
