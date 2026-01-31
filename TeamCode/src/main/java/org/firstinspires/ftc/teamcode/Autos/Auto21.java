@@ -36,6 +36,7 @@ import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
 import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.Constants.AutoCommands;
 import org.firstinspires.ftc.teamcode.Constants.AutoPaths;
+import org.firstinspires.ftc.teamcode.Constants.AutoPoses;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Lock;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
@@ -57,7 +58,7 @@ public class Auto21 extends NextFTCOpMode{
     private Follower follower;
     private Localizer localizer;
     Limelight3A limelight;
-    private double angleLL;
+    private double angleLL = 0;
     private PathChain InicialIntake, Shoot1, Shoot2, Shoot3, Gate, ShootDoGate, Intake2, Intake3;
     public void buildPaths() {
         InicialIntake = AutoPaths.InicialIntake;
@@ -71,11 +72,12 @@ public class Auto21 extends NextFTCOpMode{
 
     }
     @Override public void onInit() {
-        Turret.INSTANCE.getMotor().setCurrentPosition(angleToEncoderTicks(180));
+        angleLL = 0;
+        PedroComponent.follower().setStartingPose(poseInicial);
         Pose poseAtual = PedroComponent.follower().getPose();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.pipelineSwitch(4); // Switch to pipeline number 0
+        limelight.setPollRateHz(400); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.pipelineSwitch(1); // Switch to pipeline number 0
         limelight.start();
     }
     @Override public void onWaitForStart() {
@@ -87,11 +89,10 @@ public class Auto21 extends NextFTCOpMode{
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
                 telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-                angleLL = (-fr.getTargetXDegrees());
+                this.angleLL = (-fr.getTargetXDegrees());
 
             }
         }else{
-            angleLL = 1000;
             telemetry.addData("Limelight", "No data available");
         }
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
@@ -183,7 +184,6 @@ public class Auto21 extends NextFTCOpMode{
 
             }
         }else{
-            angleLL = Math.toDegrees(-poseAtual.getHeading());
             telemetry.addData("Limelight", "No data available");
         }
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);

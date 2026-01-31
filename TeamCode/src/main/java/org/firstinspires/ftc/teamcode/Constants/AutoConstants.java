@@ -19,10 +19,10 @@ public class AutoConstants {
     public static class Calculos {
         private static ControlSystem controller;
 
-        public static double Tkp = 0.02;
+        public static double Tkp = 0.01;
         public static double Tki = 0;
-        public static double Tkd = 0.0003;
-        public static double pesoLL = 5;
+        public static double Tkd = 0.0004;
+        public static double pesoLL = 0;
         public static double pesoHeading = 1;
         public static double destinationAngleLL;
         private static MotorEx turretMotor = new MotorEx("turret");
@@ -34,18 +34,11 @@ public class AutoConstants {
         public static int angleToEncoderTicks(double degrees) {
             return (int) (degrees / scalingFactor);
         }
-        public static double turnTurretBy(double degrees, double angleLL) {
+        public static double turnTurretBy(double degrees) {
             double currentPosition = turretMotor.getCurrentPosition();
-            if (angleLL != 1000) {
-                destinationAngleLL = angleToEncoderTicks(angleLL);
-            }else{
-                destinationAngleLL = angleToEncoderTicks(degrees);
-            }
             double destinationAngleHeading = angleToEncoderTicks(degrees);
-            double TARGET_TICK_VALUE = (((((destinationAngleHeading*pesoHeading) + (destinationAngleLL*pesoLL))/(pesoHeading+pesoLL)) + currentPosition)%angleToEncoderTicks(360));
-            //turretMotor.setTargetPosition(TARGET_TICK_VALUE);
-            //turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //turretMotor.setPower(1);
+            //destinationAngleLL = angleToEncoderTicks(angleLL);
+            double TARGET_TICK_VALUE = ((destinationAngleHeading + currentPosition)%angleToEncoderTicks(360));
             controller = ControlSystem.builder()
                     .posPid(Tkp, Tki, Tkd)
                     .build();
@@ -56,10 +49,5 @@ public class AutoConstants {
             );
 
         }
-
     }
-
-
-
-
 }

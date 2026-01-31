@@ -25,20 +25,21 @@ public class Turret implements Subsystem {
     private double robotX;
     private double angleLL;
     public static double destinationAngle;
+    public static double destinationAngleLL;
+
     private double heading;
     public static double toTurn;
-
+    public static double goalx = 10;
+    public static double goaly = 137;
     public static double turretAngle;
     private PoseTracker poseTracker;
     private Turret() {
     }
     public void setPoseTracker(double robotX, double robotY, double heading, double angleLL) {
-
         this.robotX  =  robotX;
         this.robotY  =  robotY;
         this.heading = heading;
         this.angleLL = angleLL;
-
     }
     private static MotorEx motor = new MotorEx("turret");
     private final double ticks360 = 1000.0;
@@ -47,22 +48,21 @@ public class Turret implements Subsystem {
 
     @Override
     public void initialize() {
-        motor.getMotor().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        motor.getMotor().setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setCurrentPosition(angleToEncoderTicks(180));     }
+    }
 
     public MotorEx getMotor() {
         return motor;
     }
+
     public double aimToObject(){
         double robotYPosition = robotY, robotXPosition = robotX;
-        destinationAngle = -Math.toDegrees(Math.atan2(137 - robotYPosition,
-                10 - robotXPosition));
-
+        destinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition,
+                goalx - robotXPosition));
+        //destinationAngleLL = (turretAngle-robotAngle) + angleLL;
+        destinationAngleLL = destinationAngle + angleLL;
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
         double robotAngle = heading;
-
-        toTurn = destinationAngle - (turretAngle + robotAngle);
+        toTurn = destinationAngleLL - (turretAngle + robotAngle);
         return (toTurn);
         // take the mod/remainder of toTurn/360
         // to keep the angle in the range of [0,360]
@@ -70,6 +70,6 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        motor.setPower((turnTurretBy(aimToObject(), angleLL)));
+        motor.setPower((turnTurretBy(aimToObject())));
     }
 }
