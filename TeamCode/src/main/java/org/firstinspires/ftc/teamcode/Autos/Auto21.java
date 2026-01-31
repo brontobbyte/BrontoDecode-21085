@@ -76,8 +76,8 @@ public class Auto21 extends NextFTCOpMode{
         PedroComponent.follower().setStartingPose(poseInicial);
         Pose poseAtual = PedroComponent.follower().getPose();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(400); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.pipelineSwitch(1); // Switch to pipeline number 0
+        limelight.setPollRateHz(400);
+        limelight.pipelineSwitch(4);
         limelight.start();
     }
     @Override public void onWaitForStart() {
@@ -106,8 +106,6 @@ public class Auto21 extends NextFTCOpMode{
         //follower = Constants.createFollower(hardwareMap);
         //follower.setStartingPose(poseInicial);
         //buildPaths();
-        CommandManager.INSTANCE.scheduleCommand(new AutoCommands.Comandos.WaitForStopCommand(localizer, 5, 2500));
-
         /*CommandManager.INSTANCE.scheduleCommand(
                 new ParallelGroup(
                         new SequentialGroup(
