@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
 
+import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
+
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -14,9 +16,9 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Shooter implements Subsystem {
     public static final Shooter INSTANCE = new Shooter();
 
-    public static double Fkp = 0;
+    public static double Fkp = 2;
     public static double Fki = 0;
-    public static double Fkd = 0;
+    public static double Fkd = 10;
     public static double Fks = 0;
     public static double Fka = 0;
     public static double Fkv = 0;
@@ -40,6 +42,7 @@ public class Shooter implements Subsystem {
 
     @Override
     public void periodic() {
+        controlSystem.setGoal(new KineticState(1050));
         double power = controlSystem.calculate(new KineticState(
                 Flywheel.getCurrentPosition(),
                 Flywheel.getVelocity()));

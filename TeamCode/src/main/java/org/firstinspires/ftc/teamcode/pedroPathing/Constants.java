@@ -16,12 +16,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .centripetalScaling(0.00005)
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.005, 0.001, 0.001,0,0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0.007, 0.08, 0))
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.14, 0.0007, 0.03, 0))
-            .lateralZeroPowerAcceleration(-70.018816)
-            .forwardZeroPowerAcceleration(-41.241598)
-            .mass(9);
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0075, 0.001, 0.001,0,0.0001))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.0, 0.001, 0.06, 0.001))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.15, 0.0005, 0.0002, 0.0003))
+            .lateralZeroPowerAcceleration(-57.482201)
+            .forwardZeroPowerAcceleration(-50.8618072)
+            .mass(10.425);
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -31,11 +31,11 @@ public class Constants {
             .leftRearMotorName("bl")
             .leftFrontMotorName("fl")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(60.166272)
-            .yVelocity(40.58628468);
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .xVelocity(76.9793)
+            .yVelocity(42.2676756);
 
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
             .forwardTicksToInches(.0029862794353981642)
@@ -45,10 +45,10 @@ public class Constants {
             .rightPodY(-4)
             .strafePodX(-8)
             .leftEncoder_HardwareMapName("fl")
-            .rightEncoder_HardwareMapName("fr")
+            .rightEncoder_HardwareMapName("br")
             .strafeEncoder_HardwareMapName("f2")
             .leftEncoderDirection(Encoder.REVERSE)
-            .rightEncoderDirection(Encoder.FORWARD)
+            .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.REVERSE)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));

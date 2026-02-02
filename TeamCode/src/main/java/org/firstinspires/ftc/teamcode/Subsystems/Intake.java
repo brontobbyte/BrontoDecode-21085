@@ -13,11 +13,12 @@ public class Intake implements Subsystem {
             .velPid(1, 0.0, 0.0)
             .basicFF(0.0, 0.0, 0.0)
             .build();
+    public double power;
 
     private Intake() { }
-    private MotorEx motor = new MotorEx("motor_intake");
+    private MotorEx motor = new MotorEx("intake");
     public Command intake = new SetPower(motor, 1).requires(this);
-    public Command shooting = new SetPower(motor, 1).requires(this);
+    public Command shooting = new SetPower(motor, 0.8).requires(this);
     public Command expelir = new SetPower(motor, -1).requires(this);
     public Command stop = new SetPower(motor, 0).requires(this);
 

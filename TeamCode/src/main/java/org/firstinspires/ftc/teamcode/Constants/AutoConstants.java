@@ -17,7 +17,7 @@ public class AutoConstants {
     private static Follower follower;
     @Configurable
     public static class Calculos {
-        private static ControlSystem controller;
+        private static ControlSystem controllerauto;
 
         public static double Tkp = 0.01;
         public static double Tki = 0;
@@ -39,11 +39,11 @@ public class AutoConstants {
             double destinationAngleHeading = angleToEncoderTicks(degrees);
             //destinationAngleLL = angleToEncoderTicks(angleLL);
             double TARGET_TICK_VALUE = ((destinationAngleHeading + currentPosition)%angleToEncoderTicks(360));
-            controller = ControlSystem.builder()
+            controllerauto = ControlSystem.builder()
                     .posPid(Tkp, Tki, Tkd)
                     .build();
-            controller.setGoal(new KineticState(TARGET_TICK_VALUE));
-            return (controller.calculate(new KineticState(
+            controllerauto.setGoal(new KineticState(TARGET_TICK_VALUE));
+            return (controllerauto.calculate(new KineticState(
                     turretMotor.getCurrentPosition(),
                     turretMotor.getVelocity()))
             );

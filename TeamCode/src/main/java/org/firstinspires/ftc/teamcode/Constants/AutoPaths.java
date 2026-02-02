@@ -36,7 +36,6 @@ public class AutoPaths {
                             AutoPoses.intakeGatePose
                     )
             )
-            .setVelocityConstraint(0.5)
             .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(115))
             .build();
     public static PathChain ShootDoGate = follower.pathBuilder()
