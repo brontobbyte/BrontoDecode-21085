@@ -19,8 +19,8 @@ public class ShooterConstants {
     public static double hoodAngle(double goalDist) {
         return MathFunctions.clamp(
                 -2.34831e-7 * Math.pow(goalDist, 3) + 0.0000936893 * Math.pow(goalDist, 2) - 0.0165033 * goalDist + 1.25724,
-                0.11,
-                0.904
+                0,
+                0.53
         ) + hoodOffset;
     }
 

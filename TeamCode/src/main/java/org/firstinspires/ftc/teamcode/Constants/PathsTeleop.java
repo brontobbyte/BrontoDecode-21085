@@ -16,17 +16,17 @@ public class PathsTeleop {
     public PathsTeleop(Follower follower) {
         Gate = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(26.936, 65.908),
-                                new Pose(14.826, 65.725)
+                                new Pose(29.51, 71.55),
+                                new Pose(19.4545, 70.65)
                         )
                 ).setTangentHeadingInterpolation()
                 .build();
 
         Intake = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(14.826, 65.725),
-                                new Pose(10.752, 54.009),
-                                new Pose(5.358, 58.862)
+                                new Pose(19.4545, 70.65),
+                                new Pose(14.98, 39.13),
+                                new Pose(5.81, 58.58)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
                 .build();

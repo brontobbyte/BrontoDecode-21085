@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autos;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.angleToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.contador;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
@@ -67,7 +68,7 @@ public class Auto21 extends NextFTCOpMode {
     private Localizer localizer;
     Limelight3A limelight;
     private double angleLL = 0;
-    private PathChain InicialIntake, Shoot1, Shoot2, Shoot3, Gate, ShootDoGate, Intake2, Intake3;
+    private PathChain InicialIntake, Shoot1, Shoot2, Shoot3, AbrirGate, Gate, ShootDoGate, Intake2, Intake3;
 
     public void buildPaths() {
         InicialIntake = PedroComponent.follower().pathBuilder()
@@ -89,21 +90,27 @@ public class Auto21 extends NextFTCOpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
-        Gate = PedroComponent.follower().pathBuilder()
-
-                .addPath(
-                        new BezierLine(
-                                AutoPoses.shootPose1,
-                                AutoPoses.intakeGatePose
+        AbrirGate = PedroComponent.follower().pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(29.51, 71.55),
+                                new Pose(-5, 71.55),
+                                new Pose(19.4545, 71.55)
                         )
-                )
-                .setConstraints(new PathConstraints(3, 100, 1, 1))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(148))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+
+        Gate = PedroComponent.follower().pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(19.4545, 71.55),
+                                new Pose(14.98, 39.13),
+                                new Pose(5.81, 58.58)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
                 .build();
         ShootDoGate = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakeGatePose,
+                                new Pose(5.81, 58.58),
                                 AutoPoses.shootPose2
                         )
                 )
@@ -152,6 +159,7 @@ public class Auto21 extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        Turret.INSTANCE.reset();
         angleLL = 0;
         PedroComponent.follower().setStartingPose(poseInicial);
         Pose poseAtual = PedroComponent.follower().getPose();
@@ -181,6 +189,7 @@ public class Auto21 extends NextFTCOpMode {
         }
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
         Turret.INSTANCE.periodic();
+        telemetry.addData("contador", contador);
         telemetry.addData("heading", poseAtual.getHeading());
         telemetry.addData("x", poseAtual.getX());
         telemetry.update();
@@ -203,9 +212,9 @@ public class Auto21 extends NextFTCOpMode {
                                 new SequentialGroup(
                                         new FollowPath(Shoot1),
                                         Lock.INSTANCE.open.and(Intake.INSTANCE.shooting)),
-
+                                new FollowPath(AbrirGate, true, 0.9).setInterruptible(true),
                                 new ParallelGroup(
-                                        new FollowPath(Gate, true, 0.9).setInterruptible(true),
+                                        new FollowPath(Gate, true, 1.0).setInterruptible(true),
                                         Intake.INSTANCE.intake
                                 ),
                                 /*
@@ -222,14 +231,16 @@ public class Auto21 extends NextFTCOpMode {
                                         Lock.INSTANCE.open
                                 ),
                                 Intake.INSTANCE.shooting,
-                                new FollowPath(Gate, true, 0.9).setInterruptible(true),
+                                new FollowPath(AbrirGate, true, 0.9).setInterruptible(true),
+                                new FollowPath(Gate, true, 1.0).setInterruptible(true),
                                 //new Delay(1000),
                                 new ParallelGroup(
                                         new FollowPath(ShootDoGate),
                                         Lock.INSTANCE.open
                                 ),
                                 Intake.INSTANCE.shooting,
-                                new FollowPath(Gate, true, 0.9).setInterruptible(true),
+                                new FollowPath(AbrirGate, true, 0.9).setInterruptible(true),
+                                new FollowPath(Gate, true, 1.0).setInterruptible(true),
                                 Intake.INSTANCE.stop.afterTime(1),
                                 new ParallelGroup(
                                         new FollowPath(ShootDoGate),
@@ -275,6 +286,7 @@ public class Auto21 extends NextFTCOpMode {
         Turret.INSTANCE.periodic();
         telemetry.addData("heading", poseAtual.getHeading());
         telemetry.addData("turretAngle", turretAngle);
+        telemetry.addData("contador", contador);
         telemetry.addData("destinationAngle", Turret.destinationAngle);
         telemetry.addData("y", poseAtual.getY());
         telemetry.addData("x", poseAtual.getX());

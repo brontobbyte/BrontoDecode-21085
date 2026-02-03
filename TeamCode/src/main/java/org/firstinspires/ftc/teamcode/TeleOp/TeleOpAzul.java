@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
+import static org.firstinspires.ftc.teamcode.Constants.PoseManager.currentPose;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -16,12 +20,13 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
-import dev.nextftc.hardware.impl.MotorEx;
 
 import org.firstinspires.ftc.teamcode.Constants.PoseManager;
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Lock;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Hood;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Constants.PathsTeleop;
 
@@ -35,30 +40,28 @@ public class TeleOpAzul extends NextFTCOpMode {
                 new SubsystemComponent(Turret.INSTANCE),
                 new SubsystemComponent(Intake.INSTANCE),
                 new SubsystemComponent(Lock.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE),
+                new SubsystemComponent(Hood.INSTANCE),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
     }
-
-    private final MotorEx frontLeftMotor = new MotorEx("fl");
-    private final MotorEx frontRightMotor = new MotorEx("fr").reversed();
-    private final MotorEx backLeftMotor = new MotorEx("bl");
-    private final MotorEx backRightMotor = new MotorEx("br").reversed();
-
     private Limelight3A limelight;
     private double angleLL = 0;
     private boolean intakeRunning = false;
-
     private PathsTeleop paths;
     private boolean followingPath1 = false;
     private boolean followingPath2 = false;
     private DriverControlledCommand driverControlled;
 
+    public static double goalx = 10;
+    public static double goaly = 137;
+
     @Override
     public void onInit() {
         angleLL = 0;
-        PedroComponent.follower().setStartingPose(PoseManager.currentPose);
+        PedroComponent.follower().setStartingPose(poseInicial);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(400);
         limelight.pipelineSwitch(4);
@@ -71,8 +74,8 @@ public class TeleOpAzul extends NextFTCOpMode {
     public void onStartButtonPressed() {
         driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX().negate(),
+                Gamepads.gamepad1().leftStickX().negate(),
+                Gamepads.gamepad1().rightStickX(),
                 false
         );
         driverControlled.schedule();
@@ -81,6 +84,7 @@ public class TeleOpAzul extends NextFTCOpMode {
             intakeRunning = !intakeRunning;
             if (intakeRunning) {
                 Intake.INSTANCE.intake.schedule();
+                Lock.INSTANCE.closed.schedule();
             } else {
                 Intake.INSTANCE.stop.schedule();
             }
@@ -88,7 +92,7 @@ public class TeleOpAzul extends NextFTCOpMode {
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             intakeRunning = false;
-            Intake.INSTANCE.stop.schedule();
+            Intake.INSTANCE.intake.schedule();
             Lock.INSTANCE.open.schedule();
         });
 
@@ -116,14 +120,25 @@ public class TeleOpAzul extends NextFTCOpMode {
         } else {
             telemetry.addData("Limelight", "No data available");
         }
+
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
         Turret.INSTANCE.periodic();
+
+        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose) * 2.54;
+        Shooter.INSTANCE.setGoalDistance(distanceToGoal);
+        Hood.INSTANCE.setGoalDistance(distanceToGoal);
+
+        Shooter.INSTANCE.periodic();
+        Hood.INSTANCE.periodic();
+
         telemetry.addData("heading", poseAtual.getHeading());
         telemetry.addData("turretAngle", Turret.turretAngle);
         telemetry.addData("destinationAngle", Turret.destinationAngle);
         telemetry.addData("y", poseAtual.getY());
         telemetry.addData("x", poseAtual.getX());
-        telemetry.addData("intakeRunninggo", intakeRunning);
+        telemetry.addData("intakeRunning", intakeRunning);
+        telemetry.addData("distanceToGoal", distanceToGoal);
+        telemetry.addData("flywheelVelocity", Shooter.INSTANCE.getVelocity());
 
         double leftStickY = Gamepads.gamepad1().leftStickY().get();
         double leftStickX = Gamepads.gamepad1().leftStickX().get();
