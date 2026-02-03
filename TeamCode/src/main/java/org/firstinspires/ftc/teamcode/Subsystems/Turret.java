@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.angleToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.turnTurretBy;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.localization.Localizer;
 import com.pedropathing.localization.PoseTracker;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import dev.nextftc.control.ControlSystem;
 
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -17,7 +14,6 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
     public HardwareMap hardwareMap;
-    double protecao;
     private double robotY;
     private double robotX;
     private double angleLL;
@@ -39,9 +35,6 @@ public class Turret implements Subsystem {
         this.angleLL = angleLL;
     }
     private static MotorEx motor = new MotorEx("turret");
-    private final double ticks360 = 1000.0;
-    private boolean limelightTracking = false;
-    private double targetDegrees = 0;
 
     @Override
     public void initialize() {

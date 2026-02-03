@@ -14,8 +14,7 @@ public class AutoPoses {
     public static Pose intake2Pose       = new Pose(18.096, 83.838, Math.toRadians(0));
     public static Pose intake3CurvedPose = new Pose(88.015, 30.053, Math.toRadians(0));
     public static Pose intake3Pose       = new Pose(17.651, 35.303, Math.toRadians(0));
-    public static Pose goalPose       = new Pose(10, 137, Math.toRadians(0));
-    public static Pose poseteleopteste     = new Pose(60.262, 83.14, Math.toRadians(0));
+    public static Pose goalPose          = new Pose(10, 137, Math.toRadians(0));
 
 }
 
