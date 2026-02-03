@@ -27,14 +27,11 @@ public class Hood implements Subsystem {
 
     @Override
     public void periodic() {
-        telemetry.addData("Hood Goal Distance", goalDistance);
 
         if (goalDistance > 0) {
             double hoodAngle = ShooterConstants.hoodAngle(goalDistance);
-            telemetry.addData("hood angle", hoodAngle);
             servoHood.setPosition(hoodAngle);
         } else {
-            telemetry.addData("Hood", "Goal Distance <=0");
         }
     }
 

@@ -32,31 +32,21 @@ public class Shooter implements Subsystem {
             new MotorEx("f2")
     );
 
-    private ControlSystem controlSystem = ControlSystem.builder()
-            .velPid(Fkp, Fki, Fkd)
-            .basicFF(Fkv, Fka, Fks)
-            .build();
 
-    public Command off  = new RunToVelocity(controlSystem, 0).requires(this);
-    public Command mid  = new RunToVelocity(controlSystem, 7000).requires(this);
-    public Command mid2 = new RunToVelocity(controlSystem, 2000).requires(this);
-    public Command high = new RunToVelocity(controlSystem, 2500).requires(this);
 
     @Override
     public void periodic() {
         double targetVelocity = ShooterConstants.flywheelSpeed(goalDistance);
+        ControlSystem controlSystem = ControlSystem.builder()
+                .velPid(Fkp, Fki, Fkd)
+                .basicFF(Fkv, Fka, Fks)
+                .build();
 
-        telemetry.addData("Shooter Goal Distance", goalDistance);
-        telemetry.addData("Shooter Target Velocity", targetVelocity);
-
-        controlSystem.setGoal(new KineticState(targetVelocity));
+        controlSystem.setGoal(new KineticState(0, targetVelocity));
 
         double power = controlSystem.calculate(new KineticState(
                 Flywheel.getCurrentPosition(),
                 Flywheel.getVelocity()));
-
-        telemetry.addData("Shooter Calculated Power", power);
-        telemetry.addData("Shooter Current Velocity", Flywheel.getVelocity());
 
         Flywheel.setPower(power);
     }

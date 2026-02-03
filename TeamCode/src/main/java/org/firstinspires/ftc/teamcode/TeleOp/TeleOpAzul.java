@@ -74,7 +74,7 @@ public class TeleOpAzul extends NextFTCOpMode {
     public void onStartButtonPressed() {
         driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().leftStickX().negate(),
+                Gamepads.gamepad1().leftStickX(),
                 Gamepads.gamepad1().rightStickX(),
                 false
         );
@@ -124,7 +124,7 @@ public class TeleOpAzul extends NextFTCOpMode {
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
         Turret.INSTANCE.periodic();
 
-        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose) * 2.54;
+        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         Hood.INSTANCE.setGoalDistance(distanceToGoal);
 
@@ -139,6 +139,8 @@ public class TeleOpAzul extends NextFTCOpMode {
         telemetry.addData("intakeRunning", intakeRunning);
         telemetry.addData("distanceToGoal", distanceToGoal);
         telemetry.addData("flywheelVelocity", Shooter.INSTANCE.getVelocity());
+        telemetry.addData("Shooter Goal Distance", distanceToGoal);
+
 
         double leftStickY = Gamepads.gamepad1().leftStickY().get();
         double leftStickX = Gamepads.gamepad1().leftStickX().get();

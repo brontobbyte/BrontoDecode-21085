@@ -38,19 +38,16 @@ public class FlywheelExample extends NextFTCOpMode {
 
     private ControlSystem controller;
 
-    public static double Fkp = 0.000145;
-    public static double Fki = 0;
+    public static double Fkp = 0.00099;
+    public static double Fki = 0.00000000001;
     public static double Fkd = 0.00001;
     public static double Fks = 0.3;
-    public static double Fka = 1.5;
-    public static double Fkv = 0.00065;
+    public static double Fka = 2;
+    public static double Fkv = 0.000236;
     public static double goal = 500;
     public static double hood = 0.28;
     public static double poselegalimportantex = 60;
-    public static double poselegalimportantey = 108;
-    public static double poselegalimportantex1 = 60;
-    public static double poselegalimportantey1 = 84;
-
+    public static double poselegalimportantey = 11.77981651376144;
 
     public DcMotorEx flywheelMotor1;
     public DcMotorEx flywheelMotor2;
@@ -87,9 +84,10 @@ public class FlywheelExample extends NextFTCOpMode {
                 flywheelMotor2.getCurrentPosition(),
                 flywheelMotor2.getVelocity()))
         );
-        PedroComponent.follower().setStartingPose(new Pose(poselegalimportantex, poselegalimportantey, 2*100-20));
+        PedroComponent.follower().setStartingPose(new Pose(poselegalimportantex, poselegalimportantey,Math.toRadians(180)));
         PedroComponent.follower().update();
         telemetry.addData("velo", flywheelMotor2.getVelocity());
+        telemetry.addData("velo2", flywheelMotor1.getVelocity());
         telemetry.addData("dist", PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose));
         telemetry.addData("x", PedroComponent.follower().poseTracker.getPose().getX());
         telemetry.addData("y", PedroComponent.follower().poseTracker.getPose().getY());
