@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
-import static com.rowanmcalpin.nextftc.ftc.OpModeData.telemetry;
-
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.bylazar.configurables.annotations.Configurable;

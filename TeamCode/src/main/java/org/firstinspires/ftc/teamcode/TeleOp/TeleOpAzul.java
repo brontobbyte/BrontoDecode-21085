@@ -73,8 +73,8 @@ public class TeleOpAzul extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         driverControlled = new PedroDriverControlled(
-                Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().leftStickX(),
+                Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().rightStickX(),
                 false
         );
@@ -152,8 +152,8 @@ public class TeleOpAzul extends NextFTCOpMode {
             followingPath1 = false;
             followingPath2 = false;
             driverControlled = new PedroDriverControlled(
-                    Gamepads.gamepad1().leftStickY(),
                     Gamepads.gamepad1().leftStickX(),
+                    Gamepads.gamepad1().leftStickY(),
                     Gamepads.gamepad1().rightStickX(),
                     false
             );

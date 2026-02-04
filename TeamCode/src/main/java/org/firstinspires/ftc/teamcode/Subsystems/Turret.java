@@ -47,7 +47,7 @@ public class Turret implements Subsystem {
         destinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition,
                 goalx - robotXPosition));
         contador ++;
-        if (contador % 100 == 0) {
+        if ((contador % 100 == 0) && (angleLL != 0.0)) {
             realAngleLL = angleLL;
             contador = 0;
         }
