@@ -137,7 +137,7 @@ public class Auto21 extends NextFTCOpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(40, 54),
-                                new Pose(16, 63)
+                                new Pose(18, 63)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(115), Math.toRadians(180))

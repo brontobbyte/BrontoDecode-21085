@@ -73,9 +73,9 @@ public class TeleOpAzul extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         driverControlled = new PedroDriverControlled(
-                Gamepads.gamepad1().leftStickX(),
                 Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().rightStickX(),
+                Gamepads.gamepad1().leftStickX(),
+                Gamepads.gamepad1().rightStickX().negate(),
                 false
         );
         driverControlled.schedule();
@@ -118,6 +118,8 @@ public class TeleOpAzul extends NextFTCOpMode {
                 angleLL = (-fr.getTargetXDegrees());
             }
         } else {
+            angleLL = 0;
+
             telemetry.addData("Limelight", "No data available");
         }
 
@@ -140,6 +142,9 @@ public class TeleOpAzul extends NextFTCOpMode {
         telemetry.addData("distanceToGoal", distanceToGoal);
         telemetry.addData("flywheelVelocity", Shooter.INSTANCE.getVelocity());
         telemetry.addData("Shooter Goal Distance", distanceToGoal);
+        telemetry.addData("leftStickY", Gamepads.gamepad1().leftStickY().get());
+        telemetry.addData("leftStickX", Gamepads.gamepad1().leftStickX().get());
+        telemetry.addData("rightStickX", Gamepads.gamepad1().rightStickX().get());
 
 
         double leftStickY = Gamepads.gamepad1().leftStickY().get();
@@ -152,9 +157,9 @@ public class TeleOpAzul extends NextFTCOpMode {
             followingPath1 = false;
             followingPath2 = false;
             driverControlled = new PedroDriverControlled(
-                    Gamepads.gamepad1().leftStickX(),
                     Gamepads.gamepad1().leftStickY(),
-                    Gamepads.gamepad1().rightStickX(),
+                    Gamepads.gamepad1().leftStickX(),
+                    Gamepads.gamepad1().rightStickX().negate(),
                     false
             );
             driverControlled.schedule();
