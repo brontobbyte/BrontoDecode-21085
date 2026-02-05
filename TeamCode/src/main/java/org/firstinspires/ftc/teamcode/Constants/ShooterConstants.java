@@ -12,13 +12,13 @@ public class ShooterConstants {
 
     public static double flywheelSpeed(double goalDist) {
         return MathFunctions.clamp(
-                -0.000119446 * Math.pow(goalDist, 4) + 0.0374223 * Math.pow(goalDist, 3) - 3.96361 * Math.pow(goalDist, 2) + 176.31759 * goalDist - 2468.71978, 0, 1500
-        );
+                0.0259107  * Math.pow(goalDist, 2) + 0.879444 * goalDist + 619.2700, 0, 1400
+        )+ flywheeloffset;
     }
 
     public static double hoodAngle(double goalDist) {
         return MathFunctions.clamp(
-                9.47472e-8 * Math.pow(goalDist,4) - 0.0000340158 * Math.pow(goalDist, 3) + 0.00437277 * Math.pow(goalDist, 2) - 0.241482 * goalDist + 5.13899,
+                0.0000912618 * Math.pow(goalDist, 2) - 0.0223322 * goalDist + 1.33875,
                 0,
                 0.6
         ) + hoodOffset;

@@ -67,21 +67,28 @@ public class FlywheelExample extends NextFTCOpMode {
         } else {
             motor.setPower(0);
         }
+        double power;
+        double power2;
+
         controller = ControlSystem.builder()
                 .velPid(Fkp, Fki, Fkd)
                 .basicFF(Fkv, Fka, Fks)
                 .build();
-
         controller.setGoal(new KineticState(0.0, goal));
         servoHood.setPosition(hood);
-        flywheelMotor1.setPower(controller.calculate(new KineticState(
-                flywheelMotor1.getCurrentPosition(),
-                flywheelMotor1.getVelocity()))
-        );
-        flywheelMotor2.setPower(controller.calculate(new KineticState(
-                flywheelMotor2.getCurrentPosition(),
-                flywheelMotor2.getVelocity()))
-        );
+        if (gamepad1 .a) {
+             power = controller.calculate(new KineticState(
+                    flywheelMotor1.getCurrentPosition(),
+                    flywheelMotor1.getVelocity()));
+             power2 = controller.calculate(new KineticState(
+                    flywheelMotor2.getCurrentPosition(),
+                    flywheelMotor2.getVelocity()));
+        } else {
+            power = 0;
+            power2 = 0;
+        }
+        flywheelMotor1.setPower(power);
+        flywheelMotor2.setPower(power2);
         PedroComponent.follower().setStartingPose(new Pose(poselegalimportantex, poselegalimportantey,Math.toRadians(180)));
         PedroComponent.follower().update();
         telemetry.addData("velo", flywheelMotor2.getVelocity());

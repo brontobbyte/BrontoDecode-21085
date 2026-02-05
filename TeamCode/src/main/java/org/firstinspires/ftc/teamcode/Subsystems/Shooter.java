@@ -16,12 +16,12 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Shooter implements Subsystem {
     public static final Shooter INSTANCE = new Shooter();
 
-    public static double Fkp = 0.0001;
+    public static double Fkp = 0.00036;
     public static double Fki = 0.000000000001;
     public static double Fkd = 0.00001;
     public static double Fks = 0.3;
-    public static double Fka = 1;
-    public static double Fkv = 0.0003789;
+    public static double Fka = 6;
+    public static double Fkv = 0.00026;
 
     private double goalDistance = 0;
 

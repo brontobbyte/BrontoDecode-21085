@@ -34,11 +34,11 @@ public class AutoConstants {
         public static int angleToEncoderTicks(double degrees) {
             return (int) (degrees / scalingFactor);
         }
-        public static double turnTurretBy(double degrees) {
+        public static double turnTurretBy(double degrees, double angleLL) {
             double currentPosition = turretMotor.getCurrentPosition();
             double destinationAngleHeading = angleToEncoderTicks(degrees);
-            //destinationAngleLL = angleToEncoderTicks(angleLL);
-            double TARGET_TICK_VALUE = ((destinationAngleHeading + currentPosition)%angleToEncoderTicks(360));
+            destinationAngleLL = angleToEncoderTicks(angleLL);
+            double TARGET_TICK_VALUE = ((((destinationAngleHeading + destinationAngleLL)/2) + currentPosition)%angleToEncoderTicks(360));
             controllerauto = ControlSystem.builder()
                     .posPid(Tkp, Tki, Tkd)
                     .build();

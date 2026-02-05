@@ -6,8 +6,11 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.tu
 import com.bylazar.configurables.annotations.Configurable;
 
 
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
+
 @Configurable
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
@@ -46,7 +49,7 @@ public class Turret implements Subsystem {
         double robotYPosition = robotY, robotXPosition = robotX;
         destinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition,
                 goalx - robotXPosition));
-        contador ++;
+        //contador ++;
         if ((contador % 100 == 0) && (angleLL != 0.0)) {
             realAngleLL = angleLL;
             contador = 0;
@@ -54,12 +57,12 @@ public class Turret implements Subsystem {
         destinationAngleLL = destinationAngle + realAngleLL;
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
         double robotAngle = heading;
-        toTurn = destinationAngleLL - (turretAngle + robotAngle);
+        toTurn = destinationAngle - (turretAngle + robotAngle);
         return (toTurn);
     }
 
     @Override
     public void periodic() {
-        motor.setPower((turnTurretBy(aimToObject())));
+        motor.setPower(turnTurretBy(aimToObject(), angleLL));
     }
 }

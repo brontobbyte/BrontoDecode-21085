@@ -12,6 +12,9 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
@@ -29,7 +32,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Hood;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Constants.PathsTeleop;
-
 import java.util.List;
 
 @Configurable
@@ -49,7 +51,6 @@ public class TeleOpAzul extends NextFTCOpMode {
     }
     private Limelight3A limelight;
     private double angleLL = 0;
-    private boolean intakeRunning = false;
     private PathsTeleop paths;
     private boolean followingPath1 = false;
     private boolean followingPath2 = false;
@@ -74,26 +75,29 @@ public class TeleOpAzul extends NextFTCOpMode {
     public void onStartButtonPressed() {
         driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX().negate(),
+                Gamepads.gamepad1().rightStickX(),
+                Gamepads.gamepad1().leftStickX().negate(),
                 false
         );
         driverControlled.schedule();
 
         Gamepads.gamepad1().leftBumper().whenBecomesTrue(() -> {
-            intakeRunning = !intakeRunning;
-            if (intakeRunning) {
-                Intake.INSTANCE.intake.schedule();
-                Lock.INSTANCE.closed.schedule();
-            } else {
-                Intake.INSTANCE.stop.schedule();
-            }
+            Lock.INSTANCE.closed.schedule();
+        });
+        Gamepads.gamepad1().leftBumper().whenTrue(() -> {
+            Intake.INSTANCE.intake.schedule();
+        });
+        Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> {
+            Intake.INSTANCE.stop.schedule();
         });
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
-            intakeRunning = false;
-            Intake.INSTANCE.intake.schedule();
-            Lock.INSTANCE.open.schedule();
+            new SequentialGroup(
+                    Lock.INSTANCE.open,
+                    Intake.INSTANCE.intake,
+                    new Delay(0.7),
+                    Intake.INSTANCE.stop
+            ).schedule();
         });
 
         Gamepads.gamepad1().b().whenBecomesTrue(() -> {
@@ -138,7 +142,6 @@ public class TeleOpAzul extends NextFTCOpMode {
         telemetry.addData("destinationAngle", Turret.destinationAngle);
         telemetry.addData("y", poseAtual.getY());
         telemetry.addData("x", poseAtual.getX());
-        telemetry.addData("intakeRunning", intakeRunning);
         telemetry.addData("distanceToGoal", distanceToGoal);
         telemetry.addData("flywheelVelocity", Shooter.INSTANCE.getVelocity());
         telemetry.addData("Shooter Goal Distance", distanceToGoal);
@@ -169,6 +172,8 @@ public class TeleOpAzul extends NextFTCOpMode {
             followingPath1 = false;
             followingPath2 = true;
             PedroComponent.follower().followPath(paths.Intake);
+
+            PedroComponent.follower().update();
         }
 
         telemetry.update();
