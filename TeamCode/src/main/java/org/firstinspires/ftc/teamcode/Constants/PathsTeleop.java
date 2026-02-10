@@ -24,11 +24,10 @@ public class PathsTeleop {
 
         Intake = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(19.4545, 70.65),
-                                new Pose(14.98, 39.13),
-                                new Pose(5.81, 58.58)
+                                new Pose(56, 87),
+                                new Pose(48, 95)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
+                ).setLinearHeadingInterpolation(Math.toRadians(-40), Math.toRadians(140))
                 .build();
     }
 }

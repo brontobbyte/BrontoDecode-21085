@@ -5,19 +5,12 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.tu
 
 import com.bylazar.configurables.annotations.Configurable;
 
-
-import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
-
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 @Configurable
-public class Turret implements Subsystem {
-    public static final Turret INSTANCE = new Turret();
+public class TurretVermelho implements Subsystem {
+    public static final TurretVermelho INSTANCE = new TurretVermelho();
     private double robotY;
     private double robotX;
     private double angleLL;
@@ -26,22 +19,20 @@ public class Turret implements Subsystem {
     public static double destinationAngle;
     public static double destinationAngleLL;
 
-    private static ControlSystem controllerauto;
-
-    public static double Tkp = 0.01;
-    public static double Tki = 0;
-    public static double Tkd = 0.0004;
     private double heading;
     public static double toTurn;
-    public static double goalx = 10;
+    public static double goalx = 134;
     public static double goaly = 137;
     public static double turretAngle;
     private double offset = 0;
 
     public static int contador;
 
-    private Turret() {
+    private boolean isAiming = false;
+
+    private TurretVermelho() {
     }
+
     public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, double offset) {
         this.robotX  =  robotX;
         this.robotY  =  robotY;
@@ -49,45 +40,43 @@ public class Turret implements Subsystem {
         this.angleLL = angleLL;
         this.offset = offset;
     }
+
     private static final MotorEx motor = new MotorEx("turret");
 
     @Override
     public void initialize() {
     }
+
     public void reset() {
         motor.zeroed();
     }
+
     public double aimToObject(){
         double robotYPosition = robotY, robotXPosition = robotX;
         destinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition,
                 goalx - robotXPosition));
-        if (angleLL != 0.0) {
+        //contador ++;
+        if ((contador % 100 == 0) && (angleLL != 0.0)) {
             realAngleLL = angleLL;
+            contador = 0;
         }
         destinationAngleLL = destinationAngle + realAngleLL;
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
         double robotAngle = heading;
         toTurn = (destinationAngleLL + offset) - (turretAngle + robotAngle);
-        toTurn = toTurn % 360;
-        if (toTurn > 180) {
-            toTurn -= 360;
-        } else if (toTurn < -180) {
-            toTurn += 360;
-        }
         return (toTurn);
+    }
+
+    public void setAiming(boolean aiming) {
+        this.isAiming = aiming;
     }
 
     @Override
     public void periodic() {
-        double power;
-        controllerauto = ControlSystem.builder()
-                .posPid(Tkp, Tki, Tkd)
-                .build();
-        controllerauto.setGoal(new KineticState(ShooterConstants.getTurretOffset()));
-        power =  (controllerauto.calculate(new KineticState(
-                motor.getCurrentPosition(),
-                motor.getVelocity()))
-        );
-        motor.setPower(power);
+        if (isAiming) {
+            motor.setPower(turnTurretBy(aimToObject(), angleLL));
+        } else {
+            motor.setPower(0);
+        }
     }
 }

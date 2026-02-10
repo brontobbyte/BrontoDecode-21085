@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -19,8 +18,10 @@ import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 
 import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 
@@ -30,29 +31,33 @@ public class FlywheelExample extends NextFTCOpMode {
 
     {
         addComponents(
-                new PedroComponent(Constants::createFollower)
+                new PedroComponent(Constants::createFollower),
+                BulkReadComponent.INSTANCE,
+                BindingsComponent.INSTANCE
         );
     }
 
     private ControlSystem controller;
 
-    public static double Fkp = 0.00099;
-    public static double Fki = 0.00000000001;
-    public static double Fkd = 0.00001;
-    public static double Fks = 0.3;
-    public static double Fka = 2;
-    public static double Fkv = 0.000236;
-    public static double goal = 500;
-    public static double hood = 0.28;
+    public static double Fkp = 0.000011;
+    public static double Fki = 0.0000000018;
+    public static double Fkd = 0.0007;
+    public static double Fks = 0.179;
+    public static double Fka = 1;
+    public static double Fkv = 0.000299;
+    public static double goal = 1200;
+    public static double hood = 0.6;
     public static double poselegalimportantex = 60;
     public static double poselegalimportantey = 11.77981651376144;
 
     public DcMotorEx flywheelMotor1;
     public DcMotorEx flywheelMotor2;
 
-
     private final ServoEx servoHood = new ServoEx("sHood");
     private MotorEx motor = new MotorEx("intake");
+
+    private boolean flywheelOn = false;
+    private boolean aWasPressed = false;
 
     @Override
     public void onInit() {
@@ -62,11 +67,12 @@ public class FlywheelExample extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        if (gamepad1.a) {
+        if (gamepad1.b) {
             motor.setPower(1);
         } else {
             motor.setPower(0);
         }
+
         double power;
         double power2;
 
@@ -76,11 +82,18 @@ public class FlywheelExample extends NextFTCOpMode {
                 .build();
         controller.setGoal(new KineticState(0.0, goal));
         servoHood.setPosition(hood);
-        if (gamepad1 .a) {
-             power = controller.calculate(new KineticState(
+
+        boolean aPressed = gamepad1.a;
+        if (aPressed && !aWasPressed) {
+            flywheelOn = !flywheelOn;
+        }
+        aWasPressed = aPressed;
+
+        if (flywheelOn) {
+            power = controller.calculate(new KineticState(
                     flywheelMotor1.getCurrentPosition(),
                     flywheelMotor1.getVelocity()));
-             power2 = controller.calculate(new KineticState(
+            power2 = controller.calculate(new KineticState(
                     flywheelMotor2.getCurrentPosition(),
                     flywheelMotor2.getVelocity()));
         } else {
@@ -89,14 +102,14 @@ public class FlywheelExample extends NextFTCOpMode {
         }
         flywheelMotor1.setPower(power);
         flywheelMotor2.setPower(power2);
-        PedroComponent.follower().setStartingPose(new Pose(poselegalimportantex, poselegalimportantey,Math.toRadians(180)));
+        PedroComponent.follower().setStartingPose(new Pose(poselegalimportantex, poselegalimportantey, Math.toRadians(180)));
         PedroComponent.follower().update();
         telemetry.addData("velo", flywheelMotor2.getVelocity());
         telemetry.addData("velo2", flywheelMotor1.getVelocity());
         telemetry.addData("dist", PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose));
         telemetry.addData("x", PedroComponent.follower().poseTracker.getPose().getX());
         telemetry.addData("y", PedroComponent.follower().poseTracker.getPose().getY());
-
+        telemetry.addData("Flywheel On", flywheelOn);
 
         telemetry.update();
     }

@@ -38,7 +38,8 @@ public class AutoConstants {
             double currentPosition = turretMotor.getCurrentPosition();
             double destinationAngleHeading = angleToEncoderTicks(degrees);
             destinationAngleLL = angleToEncoderTicks(angleLL);
-            double TARGET_TICK_VALUE = ((((destinationAngleHeading + destinationAngleLL)/2) + currentPosition)%angleToEncoderTicks(360));
+            double TARGET_TICK_VALUE = destinationAngleHeading + currentPosition;
+            TARGET_TICK_VALUE = clamp(TARGET_TICK_VALUE, angleToEncoderTicks(-180), angleToEncoderTicks(180));
             controllerauto = ControlSystem.builder()
                     .posPid(Tkp, Tki, Tkd)
                     .build();

@@ -2,40 +2,39 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
-import static org.firstinspires.ftc.teamcode.Constants.PoseManager.currentPose;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.localization.Localizer;
+import com.pedropathing.localization.PoseTracker;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.Subsystems.Hood;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Lock;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import java.util.List;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
+import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
-import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
-import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.MotorEx;
-
-import org.firstinspires.ftc.teamcode.Constants.PoseManager;
-import org.firstinspires.ftc.teamcode.Subsystems.Turret;
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Lock;
-import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.Subsystems.Hood;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import java.util.List;
 
 @Configurable
 @TeleOp(name = "TeleOpAzul")
@@ -54,9 +53,11 @@ public class TeleOpAzul extends NextFTCOpMode {
     }
 
     private Limelight3A limelight;
+    public Localizer localizer;
     private double angleLL = 0;
-    
+    private double offset = 0;
     private DriverControlledCommand driverControlled;
+    private static final MotorEx motor = new MotorEx("turret");
 
     public static double goalx = 10;
     public static double goaly = 137;
@@ -64,17 +65,13 @@ public class TeleOpAzul extends NextFTCOpMode {
     @Override
     public void onInit() {
         angleLL = 0;
+
         PedroComponent.follower().setStartingPose(poseInicial);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(400);
         limelight.pipelineSwitch(4);
         limelight.start();
     }
-
-    private final MotorEx frontLeftMotor = new MotorEx("fl").reversed();
-    private final MotorEx frontRightMotor = new MotorEx("fr");
-    private final MotorEx backLeftMotor = new MotorEx("bl").reversed();
-    private final MotorEx backRightMotor = new MotorEx("br");
 
     @Override
     public void onStartButtonPressed() {
@@ -95,13 +92,13 @@ public class TeleOpAzul extends NextFTCOpMode {
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> {
             Intake.INSTANCE.stop.schedule();
         });
-        Gamepad
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             new SequentialGroup(
                     Lock.INSTANCE.open,
+                    new Delay(0.5),
                     Intake.INSTANCE.intake,
-                    new Delay(0.7),
+                    new Delay(1),
                     Intake.INSTANCE.stop
             ).schedule();
         });
@@ -125,27 +122,53 @@ public class TeleOpAzul extends NextFTCOpMode {
             telemetry.addData("Limelight", "No data available");
         }
 
-        //Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
-        //Turret.INSTANCE.periodic();
 
-        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
-        Shooter.INSTANCE.setGoalDistance(distanceToGoal);
-        Hood.INSTANCE.setGoalDistance(distanceToGoal);
+        Hood.INSTANCE.setGoalDistance(poseAtual.distanceFrom(goalPose));
+
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, offset);
+        Turret.INSTANCE.periodic();
+        if (gamepad1.dpad_right)  {
+            ShooterConstants.turretOffset(-40);
+            sleep(100);
+        }
+        if (gamepad1.dpad_left) {
+            ShooterConstants.turretOffset(40);
+            sleep(100);
+        }
+        if (gamepad1.a) {
+            ShooterConstants.hoodOffset(0.1);
+            new Delay(0.5);
+        }
+        if (gamepad1.b) {
+            ShooterConstants.hoodOffset(-0.1);
+            new Delay(0.5);
+        }
+        if (gamepad1.x) {
+            ShooterConstants.flywheelOffset(100);
+            sleep(100);
+        }
+        if (gamepad1.y) {
+            ShooterConstants.flywheelOffset(-100);
+            sleep(100);
+        }
+        if (gamepad1.start) {
+            PedroComponent.follower().setPose(poseInicial);
+        }
 
         Shooter.INSTANCE.periodic();
         Hood.INSTANCE.periodic();
 
-        telemetry.addData("heading", poseAtual.getHeading());
+        /*telemetry.addData("heading", poseAtual.getHeading());
         telemetry.addData("turretAngle", Turret.turretAngle);
         telemetry.addData("destinationAngle", Turret.destinationAngle);
         telemetry.addData("y", poseAtual.getY());
         telemetry.addData("x", poseAtual.getX());
-        telemetry.addData("distanceToGoal", distanceToGoal);
         telemetry.addData("flywheelVelocity", Shooter.INSTANCE.getVelocity());
-        telemetry.addData("Shooter Goal Distance", distanceToGoal);
         telemetry.addData("leftStickY", Gamepads.gamepad1().leftStickY().get());
         telemetry.addData("leftStickX", Gamepads.gamepad1().leftStickX().get());
-        telemetry.addData("rightStickX", Gamepads.gamepad1().rightStickX().get());
+        telemetry.addData("rightStickX", Gamepads.gamepad1().rightStickX().get());*/
+        telemetry.addData("velOffset", ShooterConstants.getFlywheelOffset());
+        //  telemetry.addData("offset", offset);
 
         telemetry.update();
     }

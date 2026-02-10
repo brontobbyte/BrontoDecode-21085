@@ -1,27 +1,37 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.angleToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
-import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.Fka;
-import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.Fkd;
-import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.Fki;
-import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.Fkp;
-import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.Fks;
-import static org.firstinspires.ftc.teamcode.Subsystems.Shooter.Fkv;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicialV;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.contador;
-import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
+import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.localization.Localizer;
+import com.pedropathing.paths.PathChain;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.LLStatus;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.Constants.AutoPoses;
+import org.firstinspires.ftc.teamcode.Constants.PoseManager;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Lock;
+import org.firstinspires.ftc.teamcode.Subsystems.Turret;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import java.util.List;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -30,47 +40,11 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
-import com.bylazar.telemetry.PanelsTelemetry;
-
-import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.ftc.localization.localizers.ThreeWheelIMULocalizer;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.Localizer;
-import com.pedropathing.localization.PoseTracker;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.paths.PathConstraints;
-import com.pedropathing.paths.callbacks.ParametricCallback;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
-
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.teamcode.Constants.AutoCommands;
-import org.firstinspires.ftc.teamcode.Constants.AutoPaths;
-import org.firstinspires.ftc.teamcode.Constants.AutoPoses;
-import org.firstinspires.ftc.teamcode.Constants.PoseManager;
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Lock;
-import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.Subsystems.Turret;
-import org.firstinspires.ftc.teamcode.Subsystems.Hood;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.time.Duration;
-import java.util.List;
 
 //TODO AUTONOMOUS - 21 ARTIFACTS CLASSIFIED + 3 BASE - 21085 - BRONTOBYTE - BR
 @Configurable
 @Autonomous
-public class Auto21 extends NextFTCOpMode {
+public class Auto21Vermelho extends NextFTCOpMode {
     {
         addComponents(
                 new SubsystemComponent(Intake.INSTANCE, Lock.INSTANCE),
@@ -91,7 +65,8 @@ public class Auto21 extends NextFTCOpMode {
     public static double Fkv1 = 0.000607;
     private Follower follower;
     private Localizer localizer;
-    public static double vel = 1150;
+    public static double vel = 985;
+
     Limelight3A limelight;
     private double angleLL = 0;
     private PathChain InicialIntake, preintake, Shoot1, Shoot2, Shoot3, AbrirGate, Gate, ShootDoGate, Intake2, Intake3, preintake2, Intake4, Shoot4, Intake5;
@@ -100,128 +75,128 @@ public class Auto21 extends NextFTCOpMode {
         InicialIntake = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                poseInicial,
+                                poseInicial.mirror(),
                                 //AutoPoses.intakeCurvedPose,
-                                new Pose(39, 103)
+                                new Pose(39, 103).mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(55), Math.toRadians(0))
                 .build();
         Shoot1 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakePose,
-                                AutoPoses.shootPose1
+                                AutoPoses.intakePose.mirror(),
+                                AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         AbrirGate = PedroComponent.follower().pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(29.51,  65),
-                                new Pose(2, 65),
-                                new Pose(29, 65)
+                                new Pose(29.51,  65).mirror(),
+                                new Pose(2, 65).mirror(),
+                                new Pose(29, 65).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
         Gate = PedroComponent.follower().pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(17.641, 54),
-                                new Pose(40, 54)
+                                new Pose(17.641, 54).mirror(),
+                                new Pose(40, 54).mirror()
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         ShootDoGate = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(40, 54),
-                                new Pose(18, 63)
+                                new Pose(40, 54).mirror(),
+                                new Pose(18, 63).mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(115), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(25), Math.toRadians(0))
                 .build();
         preintake = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                AutoPoses.intakePose,
-                                new Pose(60, 70)
+                                AutoPoses.intakePose.mirror(),
+                                new Pose(60, 70).mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Intake2 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                AutoPoses.shootPose2,
-                                AutoPoses.intake2Pose
+                                AutoPoses.shootPose2.mirror(),
+                                AutoPoses.intake2Pose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Shoot2 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intake2Pose,
-                                AutoPoses.intakePose
+                                AutoPoses.intake2Pose.mirror(),
+                                AutoPoses.intakePose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Intake3 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(42, 60),
-                                AutoPoses.intake3Pose
+                                new Pose(42, 60).mirror(),
+                                AutoPoses.intake3Pose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Shoot3 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intake3Pose,
-                                AutoPoses.intakePose
+                                AutoPoses.intake3Pose.mirror(),
+                                AutoPoses.intakePose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Intake4 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(49, 35),
-                                new Pose(9, 35)
+                                new Pose(49, 35).mirror(),
+                                new Pose(9, 35).mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Shoot4 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(15, 35),
-                                AutoPoses.intakePose
+                                new Pose(15, 35).mirror(),
+                                AutoPoses.intakePose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         preintake2 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakePose,
-                                new Pose(49, 35)
+                                AutoPoses.intakePose.mirror(),
+                                new Pose(49, 35).mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
         Intake5 = PedroComponent.follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(30, 45),
-                                new Pose(10, 45),
-                                new Pose(10, 0)
+                                new Pose(30, 45).mirror(),
+                                new Pose(10, 45).mirror(),
+                                new Pose(10, 0).mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
 
@@ -236,7 +211,7 @@ public class Auto21 extends NextFTCOpMode {
         Lock.INSTANCE.open.invoke();
         //Turret.INSTANCE.reset();
         angleLL = 0;
-        PedroComponent.follower().setStartingPose(poseInicial);
+        PedroComponent.follower().setStartingPose(poseInicialV.mirror());
         Pose poseAtual = PedroComponent.follower().getPose();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(400);
@@ -291,15 +266,13 @@ public class Auto21 extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         vel = 985;
-
         buildPaths();
-        PedroComponent.follower().setStartingPose(poseInicial);
+        PedroComponent.follower().setStartingPose(poseInicialV.mirror());
         CommandManager.INSTANCE.scheduleCommand(
                 new SequentialGroup(
                         new ParallelGroup(
                                 Lock.INSTANCE.open,
                                 new FollowPath(InicialIntake)
-
                         ),
                         new Delay(1),
                         Intake.INSTANCE.intake,

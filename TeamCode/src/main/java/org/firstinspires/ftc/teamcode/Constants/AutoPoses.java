@@ -5,6 +5,8 @@ import com.pedropathing.geometry.Pose;
 @Configurable
 public class AutoPoses {
     public static Pose poseInicial       = new Pose(23, 121, Math.toRadians(90));
+
+    public static Pose poseInicialV       = new Pose(20, 121, Math.toRadians(90));
     public static Pose PoseInicialfar    = new Pose(56, 8, -Math.toRadians(180));
     public static Pose intakeCurvedPose  = new Pose(94, 50, Math.toRadians(0));
     public static Pose intakePose        = new Pose(36, 106, Math.toRadians(0));
