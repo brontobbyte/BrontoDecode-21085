@@ -5,15 +5,15 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Constants.PoseManager.currentPose;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.CoordinateSystem;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -24,15 +24,16 @@ import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
-import org.firstinspires.ftc.teamcode.Constants.PoseManager;
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Lock;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Hood;
+import org.firstinspires.ftc.teamcode.Constants.LimelightHelper;
+import org.firstinspires.ftc.teamcode.Constants.TelemetryHelper;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.Constants.PathsTeleop;
-import java.util.List;
+
+import java.util.Objects;
 
 @Configurable
 @TeleOp(name = "TeleOpAzul")
@@ -49,34 +50,32 @@ public class TeleOpAzul extends NextFTCOpMode {
                 BindingsComponent.INSTANCE
         );
     }
+
     private Limelight3A limelight;
     private double angleLL = 0;
-    private PathsTeleop paths;
-    private boolean followingPath1 = false;
-    private boolean followingPath2 = false;
     private DriverControlledCommand driverControlled;
-
-    public static double goalx = 10;
-    public static double goaly = 137;
+    public static double goalx = 15;
+    public static double goaly = 160;
+    public static boolean debugMode = true;
+    public static boolean align = false;
+    FTCCoordinates ftccoords;
 
     @Override
     public void onInit() {
         angleLL = 0;
-        PedroComponent.follower().setStartingPose(poseInicial);
+        PedroComponent.follower().setStartingPose(currentPose);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(400);
         limelight.pipelineSwitch(4);
         limelight.start();
-
-        paths = new PathsTeleop(PedroComponent.follower());
     }
 
     @Override
     public void onStartButtonPressed() {
         driverControlled = new PedroDriverControlled(
                 Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().rightStickX(),
-                Gamepads.gamepad1().leftStickX().negate(),
+                Gamepads.gamepad1().leftStickX(),
+                Gamepads.gamepad1().rightStickX().negate(),
                 false
         );
         driverControlled.schedule();
@@ -95,87 +94,43 @@ public class TeleOpAzul extends NextFTCOpMode {
             new SequentialGroup(
                     Lock.INSTANCE.open,
                     Intake.INSTANCE.intake,
-                    new Delay(0.7),
+                    new Delay(1),
                     Intake.INSTANCE.stop
             ).schedule();
-        });
-
-        Gamepads.gamepad1().b().whenBecomesTrue(() -> {
-            if (driverControlled != null) {
-                driverControlled.cancel();
-            }
-            followingPath1 = true;
-            PedroComponent.follower().followPath(paths.Gate);
         });
     }
 
     @Override
     public void onUpdate() {
+
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        LLStatus status = limelight.getStatus();
-        LLResult result = limelight.getLatestResult();
-        result.getPipelineIndex();
-        if (result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
-                angleLL = (-fr.getTargetXDegrees());
-            }
-        } else {
-            angleLL = 0;
-
-            telemetry.addData("Limelight", "No data available");
+        if (LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading()) != null) {
+            Pose pedroPose = LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading());
+            assert pedroPose != null;
+            Pose pedroRealPose = pedroPose.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+            telemetry.addData("x2", (pedroRealPose.getX()));
+            telemetry.addData("y2", (pedroRealPose.getY()));
+            //PedroComponent.follower().setPose(LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading()));
+        }else{
+            PedroComponent.follower().update();
         }
-
+        angleLL = LimelightHelper.updateAngleLL(limelight);
+        LLResult result = limelight.getLatestResult();
+        telemetry.update();
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
         Turret.INSTANCE.periodic();
 
         double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
-        Hood.INSTANCE.setGoalDistance(distanceToGoal);
-
-        Shooter.INSTANCE.periodic();
         Hood.INSTANCE.periodic();
-
-        telemetry.addData("heading", poseAtual.getHeading());
-        telemetry.addData("turretAngle", Turret.turretAngle);
-        telemetry.addData("destinationAngle", Turret.destinationAngle);
-        telemetry.addData("y", poseAtual.getY());
-        telemetry.addData("x", poseAtual.getX());
-        telemetry.addData("distanceToGoal", distanceToGoal);
-        telemetry.addData("flywheelVelocity", Shooter.INSTANCE.getVelocity());
-        telemetry.addData("Shooter Goal Distance", distanceToGoal);
-        telemetry.addData("leftStickY", Gamepads.gamepad1().leftStickY().get());
-        telemetry.addData("leftStickX", Gamepads.gamepad1().leftStickX().get());
-        telemetry.addData("rightStickX", Gamepads.gamepad1().rightStickX().get());
-
 
         double leftStickY = Gamepads.gamepad1().leftStickY().get();
         double leftStickX = Gamepads.gamepad1().leftStickX().get();
         double rightStickX = Gamepads.gamepad1().rightStickX().get();
-        boolean joystickMoved = Math.abs(leftStickY) > 0.1 || Math.abs(leftStickX) > 0.1 || Math.abs(rightStickX) > 0.1;
 
-        if ((followingPath1 || followingPath2) && joystickMoved) {
-            PedroComponent.follower().breakFollowing();
-            followingPath1 = false;
-            followingPath2 = false;
-            driverControlled = new PedroDriverControlled(
-                    Gamepads.gamepad1().leftStickY(),
-                    Gamepads.gamepad1().leftStickX(),
-                    Gamepads.gamepad1().rightStickX().negate(),
-                    false
-            );
-            driverControlled.schedule();
-        }
-
-        if (followingPath1 && !PedroComponent.follower().isBusy()) {
-            followingPath1 = false;
-            followingPath2 = true;
-            PedroComponent.follower().followPath(paths.Intake);
-
-            PedroComponent.follower().update();
-        }
-
+        TelemetryHelper.addCommonTelemetry(telemetry, poseAtual, Shooter.INSTANCE.getVelocity(),
+                Turret.turretAngle, Turret.destinationAngle, Turret.INSTANCE.toTurn,
+                limelight, angleLL, debugMode, distanceToGoal, leftStickY, leftStickX, rightStickX);
         telemetry.update();
     }
 }

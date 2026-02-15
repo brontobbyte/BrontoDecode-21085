@@ -18,7 +18,6 @@ public class AutoConstants {
     @Configurable
     public static class Calculos {
         private static ControlSystem controllerauto;
-
         public static double Tkp = 0.01;
         public static double Tki = 0;
         public static double Tkd = 0.0004;
@@ -27,7 +26,7 @@ public class AutoConstants {
         public static double destinationAngleLL;
         private static MotorEx turretMotor = new MotorEx("turret");
         private static IMU imu;
-        public static double scalingFactor = 0.1969365427;
+        public static double scalingFactor = 0.2684563758;
         public static double encoderTicksToAngle(double ticks) {
             return (ticks * scalingFactor);
         }
@@ -38,16 +37,14 @@ public class AutoConstants {
             double currentPosition = turretMotor.getCurrentPosition();
             double destinationAngleHeading = angleToEncoderTicks(degrees);
             destinationAngleLL = angleToEncoderTicks(angleLL);
-            double TARGET_TICK_VALUE = ((((destinationAngleHeading + destinationAngleLL)/2) + currentPosition)%angleToEncoderTicks(360));
+            double TARGET_TICK_VALUE = clamp((destinationAngleHeading + currentPosition), angleToEncoderTicks(-170), angleToEncoderTicks(170));
             controllerauto = ControlSystem.builder()
                     .posPid(Tkp, Tki, Tkd)
                     .build();
             controllerauto.setGoal(new KineticState(TARGET_TICK_VALUE));
-            return (controllerauto.calculate(new KineticState(
+            return controllerauto.calculate(new KineticState(
                     turretMotor.getCurrentPosition(),
-                    turretMotor.getVelocity()))
-            );
-
+                    turretMotor.getVelocity()));
         }
     }
 }

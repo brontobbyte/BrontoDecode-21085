@@ -5,22 +5,19 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.PoseTracker;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Lock;
-import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 
-import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 
@@ -30,20 +27,22 @@ public class FlywheelExample extends NextFTCOpMode {
 
     {
         addComponents(
-                new PedroComponent(Constants::createFollower)
+                new PedroComponent(Constants::createFollower),
+                BulkReadComponent.INSTANCE,
+                BindingsComponent.INSTANCE
         );
     }
 
     private ControlSystem controller;
 
-    public static double Fkp = 0.00099;
-    public static double Fki = 0.00000000001;
-    public static double Fkd = 0.00001;
-    public static double Fks = 0.3;
-    public static double Fka = 2;
-    public static double Fkv = 0.000236;
-    public static double goal = 500;
-    public static double hood = 0.28;
+    public static double Fkp = 0;
+    public static double Fki = 0;
+    public static double Fkd = 0;
+    public static double Fks = 0;
+    public static double Fka = 0;
+    public static double Fkv = 0;
+    public static double goal = 0;
+    public static double hood = 0;
     public static double poselegalimportantex = 60;
     public static double poselegalimportantey = 11.77981651376144;
 
@@ -96,8 +95,6 @@ public class FlywheelExample extends NextFTCOpMode {
         telemetry.addData("dist", PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose));
         telemetry.addData("x", PedroComponent.follower().poseTracker.getPose().getX());
         telemetry.addData("y", PedroComponent.follower().poseTracker.getPose().getY());
-
-
         telemetry.update();
     }
 }

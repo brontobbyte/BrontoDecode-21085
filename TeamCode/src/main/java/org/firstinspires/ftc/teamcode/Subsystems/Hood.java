@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 
-import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.Constants.autoshoot;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -29,7 +29,7 @@ public class Hood implements Subsystem {
     public void periodic() {
 
         if (goalDistance > 0) {
-            double hoodAngle = ShooterConstants.hoodAngle(goalDistance);
+            double hoodAngle = autoshoot.hoodAngle(goalDistance);
             servoHood.setPosition(hoodAngle);
         } else {
         }

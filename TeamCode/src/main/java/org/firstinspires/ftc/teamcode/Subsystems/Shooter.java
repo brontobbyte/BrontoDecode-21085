@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.bylazar.configurables.annotations.Configurable;
-import org.firstinspires.ftc.teamcode.Constants.ShooterConstants;
+import org.firstinspires.ftc.teamcode.Constants.autoshoot;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -16,12 +16,12 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Shooter implements Subsystem {
     public static final Shooter INSTANCE = new Shooter();
 
-    public static double Fkp = 0.00036;
-    public static double Fki = 0.000000000001;
-    public static double Fkd = 0.00001;
-    public static double Fks = 0.3;
-    public static double Fka = 6;
-    public static double Fkv = 0.00026;
+    public static double Fkp = 0;
+    public static double Fki = 0;
+    public static double Fkd = 0;
+    public static double Fks = 0;
+    public static double Fka = 0;
+    public static double Fkv = 0;
 
     private double goalDistance = 0;
 
@@ -32,11 +32,9 @@ public class Shooter implements Subsystem {
             new MotorEx("f2")
     );
 
-
-
     @Override
     public void periodic() {
-        double targetVelocity = ShooterConstants.flywheelSpeed(goalDistance);
+        double targetVelocity = autoshoot.flywheelSpeed(goalDistance);
         ControlSystem controlSystem = ControlSystem.builder()
                 .velPid(Fkp, Fki, Fkd)
                 .basicFF(Fkv, Fka, Fks)
@@ -50,20 +48,13 @@ public class Shooter implements Subsystem {
 
         Flywheel.setPower(power);
     }
-
     public void setGoalDistance(double dist) {
         this.goalDistance = dist;
     }
-
     public double getVelocity() {
         return Flywheel.getVelocity();
     }
-
     public double getPower() {
         return Flywheel.getPower();
-    }
-
-    public void shoot() {
-        telemetry.addData("Shooting", ShooterConstants.launchTime(goalDistance));
     }
 }
