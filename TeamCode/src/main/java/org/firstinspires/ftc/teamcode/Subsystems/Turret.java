@@ -30,7 +30,7 @@ public class Turret implements Subsystem {
     public static double turretAngle;
     public static double offset = -4;
     public static double div = 1.2;
-    private static double originalDiv = 5;
+    private static double originalDiv = 1.2;
     private static double minDiv = 0.1;
     private static double soma = 0.01;
     private static double treshold = 1.0;
@@ -71,13 +71,12 @@ public class Turret implements Subsystem {
             isAligned = false;
             if (Math.abs(angleLL) > 2) {
                 div = Math.max(minDiv, div - soma);
-            }
-            if (Math.abs(angleLL) <= 2) {
-                div = 0;
-            }
-            else {
+            } else {
                 div = originalDiv;
             }
+        }
+        if (angleLL == 0){
+            div = originalDiv;
         }
 
         if (isAligned) {
