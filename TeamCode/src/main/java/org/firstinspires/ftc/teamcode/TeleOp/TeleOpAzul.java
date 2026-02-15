@@ -63,7 +63,7 @@ public class TeleOpAzul extends NextFTCOpMode {
     @Override
     public void onInit() {
         angleLL = 0;
-        PedroComponent.follower().setStartingPose(currentPose);
+        PedroComponent.follower().setStartingPose(poseInicial);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(400);
         limelight.pipelineSwitch(4);
@@ -106,17 +106,14 @@ public class TeleOpAzul extends NextFTCOpMode {
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
         if (LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading()) != null) {
             Pose pedroPose = LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading());
-            telemetry.addData("x2", (pedroPose.getX())+77);
-            telemetry.addData("y2", (pedroPose.getY())+77);
+            //telemetry.addData("x2", (pedroPose.getX())+77);
+            //telemetry.addData("y2", (pedroPose.getY())+77);
             //PedroComponent.follower().setPose(LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading()));
         }else{
             PedroComponent.follower().update();
         }
-        if (gamepad1.right_bumper) {
-            angleLL = LimelightHelper.updateAngleLL(limelight);
-        }else{
-            angleLL = 0;
-        }
+
+        angleLL = LimelightHelper.updateAngleLL(limelight);
         LLResult result = limelight.getLatestResult();
         telemetry.update();
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);

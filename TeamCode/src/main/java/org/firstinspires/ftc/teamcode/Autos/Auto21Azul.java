@@ -108,7 +108,7 @@ public class Auto21Azul extends NextFTCOpMode {
         PoseManager.currentPose = PedroComponent.follower().getPose();
     }
 
-    private SequentialGroup shoot() {
+    private SequentialGroup shootar() {
         return new SequentialGroup(
                 Lock.INSTANCE.open,
                 Intake.INSTANCE.shooting,

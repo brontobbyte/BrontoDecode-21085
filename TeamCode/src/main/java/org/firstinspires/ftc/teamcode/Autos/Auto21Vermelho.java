@@ -123,7 +123,6 @@ public class Auto21Vermelho extends NextFTCOpMode {
                 Intake.INSTANCE.intake
         );
     }
-
     private SequentialGroup stopintake() {
         return new SequentialGroup(
                 Intake.INSTANCE.stop

@@ -24,7 +24,7 @@ public class TelemetryHelper {
             telemetry.addData("turretAngle", turretAngle);
             telemetry.addData("destinationAngle", destinationAngle);
             telemetry.addData("toTurn", toTurn);
-            telemetry.addData("angleLL", Turret.angleLL);
+           // telemetry.addData("angleLL", Turret.angleLL);
             telemetry.addData("distanceToGoal", distanceToGoal);
             telemetry.addData("flywheelVelocity", flywheelVelocity);
             telemetry.addData("Shooter Goal Distance", distanceToGoal);

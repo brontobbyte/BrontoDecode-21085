@@ -62,7 +62,7 @@ public class FlywheelExample extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         if (gamepad1.a) {
-            motor.setPower(1);
+            motor.setPower(-1);
         } else {
             motor.setPower(0);
         }

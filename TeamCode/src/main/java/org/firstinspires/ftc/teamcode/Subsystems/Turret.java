@@ -17,24 +17,17 @@ public class Turret implements Subsystem {
     private double robotX;
     public static double angleLL;
     private double realAngleLL;
-    private double lockedRealAngleLL; // Novo: para armazenar o valor corrigido quando alinhado
-    private boolean isAligned = false; // Novo: flag para indicar se está alinhado
-
     public static double destinationAngle;
-    public static double destinationAngleLL;
-
+    private double lastValidDestinationAngle = 0.0;
+    private boolean hasValidLastAngle = false;
     private double heading;
     public static double toTurn;
     public static double goalx = 132;
-    public static double goaly = 137; // vermei
+    public static double goaly = 137;
     public static double turretAngle;
-    public static double offset = -4;
-    public static double div = 1.2;
-    private static double originalDiv = 1.2;
-    private static double minDiv = 0.1;
-    private static double soma = 0.01;
-    private static double treshold = 1.0;
-
+    public static double offset = 0;
+    private static double visionMultiplier = 0.380;
+    private static double offsetAdjustmentRate = -0.43;
 
     private boolean wrapped = false;
 
@@ -47,54 +40,52 @@ public class Turret implements Subsystem {
         this.heading = heading;
         this.angleLL = angleLL;
     }
+
     private static final MotorEx motor = new MotorEx("turret");
 
     @Override
     public void initialize() {
     }
+
     public void reset() {
         motor.zeroed();
+        hasValidLastAngle = false;
+        lastValidDestinationAngle = 0.0;
         wrapped = false;
-        isAligned = false;
     }
+
     public double aimToObject() {
         double robotYPosition = robotY, robotXPosition = robotX;
-        destinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition, goalx - robotXPosition));
 
-        if (Math.abs(angleLL) <= treshold) {
-            if (!isAligned) {
-                lockedRealAngleLL = realAngleLL;
-                isAligned = true;
-            }
-            div = originalDiv;
-        } else {
-            isAligned = false;
+        double calculatedDestinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition, goalx - robotXPosition));
+
+        boolean limelightActive = Math.abs(angleLL) > 0.1;
+
+        if (limelightActive) {
             if (Math.abs(angleLL) > 2) {
-                div = Math.max(minDiv, div - soma);
-            } else {
-                div = originalDiv;
+                offset += -Math.signum(angleLL) * offsetAdjustmentRate;
             }
-        }
-        if (angleLL == 0){
-            div = originalDiv;
-        }
 
-        if (isAligned) {
-            realAngleLL = lockedRealAngleLL;
+            realAngleLL = angleLL * visionMultiplier + offset;
+            destinationAngle = calculatedDestinationAngle + realAngleLL;
+
+            lastValidDestinationAngle = destinationAngle;
+            hasValidLastAngle = true;
         } else {
-            if (angleLL != 0.0) {
-                realAngleLL = angleLL / div + offset;
+            if (hasValidLastAngle) {
+                destinationAngle = lastValidDestinationAngle;
+            } else {
+                destinationAngle = calculatedDestinationAngle;
             }
         }
 
-        double correctedDestinationAngle = destinationAngle;
-        if (realAngleLL != 0.0) {
-            correctedDestinationAngle = destinationAngle + realAngleLL;
-        }
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
         double robotAngle = heading;
 
-        toTurn = correctedDestinationAngle - (turretAngle + robotAngle);
+        turretAngle = ((turretAngle + 170) % 360) - 170;
+        destinationAngle = ((destinationAngle + 170) % 360) - 170;
+
+        toTurn = destinationAngle - (turretAngle + robotAngle);
         toTurn = ((toTurn + 180) % 360) - 180;
 
         if (turretAngle > 170 || (toTurn > 0 && turretAngle + toTurn > 170)) {
@@ -112,6 +103,10 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        motor.setPower(turnTurretBy(aimToObject(), angleLL));
+        double power = turnTurretBy(aimToObject(), angleLL);
+        if (Math.abs(toTurn) < 1) {
+            power = 0;
+        }
+        motor.setPower(power);
     }
 }
