@@ -40,7 +40,7 @@ public class Shooter implements Subsystem {
                 .basicFF(Fkv, Fka, Fks)
                 .build();
 
-        controlSystem.setGoal(new KineticState(0, targetVelocity));
+        controlSystem.setGoal(new KineticState(0, 1050));
 
         double power = controlSystem.calculate(new KineticState(
                 Flywheel.getCurrentPosition(),

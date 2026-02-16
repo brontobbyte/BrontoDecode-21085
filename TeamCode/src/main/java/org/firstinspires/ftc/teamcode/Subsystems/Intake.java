@@ -36,8 +36,8 @@ public class Intake implements Subsystem {
         controlSystem.setGoal(new KineticState(0, velocity));
     }
 
-    public Command intake = new SetPower(motor, -1).requires(this);
-    public Command shooting = new SetPower(motor, -0.8).requires(this);
+    public Command intake = new SetPower(motor, 1).requires(this);
+    public Command shooting = new SetPower(motor, 0.8).requires(this);
     public Command stop = new SetPower(motor, 0).requires(this);
 
     //public Command stop = new SetPower(motor, 0).requires(this);

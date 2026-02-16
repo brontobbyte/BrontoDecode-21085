@@ -15,10 +15,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .centripetalScaling(0.00005)
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.0075, 0.001, 0.001,0,0.0001))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.0, 0.001, 0.06, 0.001))
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.15, 0.0005, 0.0002, 0.0003))
+            .centripetalScaling(0.0005)
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.003, 0.001, 0.0008,0.001,0.0001))
+            .headingPIDFCoefficients(new PIDFCoefficients(1, 0.0001, 0.001, 0.0001))
+            //.secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(1.2, 0.001, 0.05, 0.001,0.01))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.09, 0.0003, 0.008, 0.03))
+            //.secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0001, 0.01, 0.003))
             .lateralZeroPowerAcceleration(-57.482201)
             .forwardZeroPowerAcceleration(-50.8618072)
             .mass(11.840);
@@ -38,9 +40,9 @@ public class Constants {
             .yVelocity(42.2676756);
 
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
-            .forwardTicksToInches(0.00330470669251567)
-            .strafeTicksToInches(0.0029864258274636415)
-            .turnTicksToInches(.003310324617)
+            .forwardTicksToInches(0.0030029318414923315)
+            .strafeTicksToInches(0.0029361879034900417)
+            .turnTicksToInches(0.0028128936741553416)
             .leftPodY(4)
             .rightPodY(-4)
             .strafePodX(-8)

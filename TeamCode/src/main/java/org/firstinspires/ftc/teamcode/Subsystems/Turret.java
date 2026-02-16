@@ -28,19 +28,16 @@ public class Turret implements Subsystem {
     public static double offset = 0;
     private static double visionMultiplier = 0.380;
     private static double offsetAdjustmentRate = -0.43;
-
     private boolean wrapped = false;
 
     private Turret() {
     }
-
     public void setPoseTracker(double robotX, double robotY, double heading, double angleLL) {
         this.robotX = robotX;
         this.robotY = robotY;
         this.heading = heading;
         this.angleLL = angleLL;
     }
-
     private static final MotorEx motor = new MotorEx("turret");
 
     @Override
@@ -97,10 +94,8 @@ public class Turret implements Subsystem {
         } else {
             wrapped = false;
         }
-
         return toTurn;
     }
-
     @Override
     public void periodic() {
         double power = turnTurretBy(aimToObject(), angleLL);

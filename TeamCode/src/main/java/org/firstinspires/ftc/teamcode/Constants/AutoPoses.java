@@ -4,18 +4,19 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 @Configurable
 public class AutoPoses {
-    public static Pose poseInicial       = new Pose(108, 108, Math.toRadians(90));
-    public static Pose PoseInicialfar    = new Pose(56, 8, -Math.toRadians(180));
-    public static Pose intakeCurvedPose  = new Pose(94, 50, Math.toRadians(0));
-    public static Pose intakePose        = new Pose(36, 106, Math.toRadians(0));
-    public static Pose shootPose1        = new Pose(56.726, 75.225, Math.toRadians(0));
-    public static Pose intakeGatePose    = new Pose(11.820, 57.5, Math.toRadians(0));
-    public static Pose shootPose2        = new Pose(56.837, 75.410, Math.toRadians(0));
-    public static Pose intake2CurvedPose = new Pose(43.463, 86.782, Math.toRadians(0));
-    public static Pose intake2Pose       = new Pose(18.096, 80, Math.toRadians(0));
-    public static Pose intake3CurvedPose = new Pose(88.015, 30.053, Math.toRadians(0));
-    public static Pose intake3Pose       = new Pose(17.651, 54, Math.toRadians(0));
-    public static Pose goalPose          = new Pose(10, 137, Math.toRadians(0));
+    public static Pose poseInicial          = new Pose(20, 118, Math.toRadians(90));
+    public static Pose PoseInicialfar       = new Pose(56, 8, -Math.toRadians(180));
+    public static Pose intakeMeioCurvedPose = new Pose(63, 57, Math.toRadians(0));
+    public static Pose intakeMeioPose       = new Pose(15, 56, Math.toRadians(0));
+    public static Pose gatePose             = new Pose(14, 64, Math.toRadians(0));
+    public static Pose gateCiclePose        = new Pose(10.95412844036698, 53.47706422018349, Math.toRadians(0));
+    public static Pose gateCicleCurvedPose  = new Pose(28, 56, Math.toRadians(0));
+    public static Pose shootPose1           = new Pose(62, 68, Math.toRadians(0));
+    public static Pose shootPose2           = new Pose(51, 84, Math.toRadians(0));
+    public static Pose shootCurvedPose2     = new Pose(41, 55, Math.toRadians(0));
+    public static Pose shootPose3           = new Pose(60, 108, Math.toRadians(0));
+    public static Pose intakeCimaPose       = new Pose(20, 88, Math.toRadians(0));
+    public static Pose goalPose             = new Pose(10, 137, Math.toRadians(0));
 
 }
 

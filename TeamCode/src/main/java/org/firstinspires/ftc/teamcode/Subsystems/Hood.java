@@ -30,7 +30,7 @@ public class Hood implements Subsystem {
 
         if (goalDistance > 0) {
             double hoodAngle = autoshoot.hoodAngle(goalDistance);
-            servoHood.setPosition(hoodAngle);
+            //servoHood.setPosition(hoodAngle);
         } else {
         }
     }

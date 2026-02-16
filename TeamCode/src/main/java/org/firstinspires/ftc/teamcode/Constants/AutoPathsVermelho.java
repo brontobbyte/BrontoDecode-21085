@@ -3,156 +3,117 @@ package org.firstinspires.ftc.teamcode.Constants;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 @Configurable
 public class AutoPathsVermelho {
-    public static PathChain InicialIntake = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            AutoPoses.poseInicial.mirror(),
-                            AutoPoses.intakeCurvedPose.mirror(),
-                            AutoPoses.intakePose.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
-            .build();
+    public static PathChain ShootPreload(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.poseInicial.mirror(),
+                                AutoPoses.shootPose1.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain IntakeMeio(Follower follower){
+        return  follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.shootPose1.mirror(),
+                                AutoPoses.intakeMeioCurvedPose.mirror(),
+                                AutoPoses.intakeMeioPose.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain ShootMeio(Follower follower){
+        return  follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                AutoPoses.intakeMeioPose.mirror(),
+                                AutoPoses.shootPose1.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain Gate(Follower follower){
+        return  follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                AutoPoses.shootPose1.mirror(),
+                                AutoPoses.gatePose.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain GateCicle(Follower follower){
+        return  follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.gatePose.mirror(),
+                                AutoPoses.gateCicleCurvedPose.mirror(),
+                                AutoPoses.gateCiclePose.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .build();
+    }
+    public static PathChain ShootGate(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.gateCiclePose.mirror(),
+                                AutoPoses.shootPose1.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain ShootGateCima(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.gateCiclePose.mirror(),
+                                AutoPoses.shootCurvedPose2.mirror(),
+                                AutoPoses.shootPose2.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain IntakeCima(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.shootPose2.mirror(),
+                                AutoPoses.intakeCimaPose.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+    public static PathChain ShootCima(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.intakeCimaPose.mirror(),
+                                AutoPoses.shootPose3.mirror()
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
 
-    public static PathChain Shoot1 = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            AutoPoses.intakePose.mirror(),
-                            AutoPoses.shootPose1.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
 
-    public static PathChain Gate = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            AutoPoses.shootPose1.mirror(),
-                            AutoPoses.intakeGatePose.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(115))
-            .build();
-
-    public static PathChain ShootDoGate = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            AutoPoses.shootPose2.mirror(),
-                            AutoPoses.shootPose2.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(115), Math.toRadians(180))
-            .build();
-
-    public static PathChain Intake2 = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            AutoPoses.shootPose2.mirror(),
-                            AutoPoses.intake2CurvedPose.mirror(),
-                            AutoPoses.intake2Pose.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain Shoot2 = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            AutoPoses.intake2Pose.mirror(),
-                            AutoPoses.shootPose1.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain Intake3 = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            AutoPoses.shootPose2.mirror(),
-                            AutoPoses.intake3CurvedPose.mirror(),
-                            AutoPoses.intake3Pose.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain Shoot3 = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            AutoPoses.intake3Pose.mirror(),
-                            AutoPoses.shootPose1.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain preintake = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            AutoPoses.intakePose.mirror(),
-                            new Pose(60, 70).mirror(),
-                            new Pose(60, 70).mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain AbrirGate = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            new Pose(29.51, 65).mirror(),
-                            new Pose(2, 65).mirror(),
-                            new Pose(29, 65).mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain Intake4 = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            new Pose(49, 35).mirror(),
-                            new Pose(9, 35).mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain Shoot4 = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            new Pose(15, 35).mirror(),
-                            AutoPoses.intakePose.mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain preintake2 = follower.pathBuilder()
-            .addPath(
-                    new BezierLine(
-                            AutoPoses.intakePose.mirror(),
-                            new Pose(49, 35).mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-            .build();
-
-    public static PathChain Intake5 = follower.pathBuilder()
-            .addPath(
-                    new BezierCurve(
-                            new Pose(30, 45).mirror(),
-                            new Pose(10, 45).mirror(),
-                            new Pose(10, 0).mirror()
-                    )
-            )
-            .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(270))
-            .build();
 }

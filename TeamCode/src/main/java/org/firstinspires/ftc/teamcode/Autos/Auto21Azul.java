@@ -15,6 +15,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
@@ -80,10 +81,16 @@ public class Auto21Azul extends NextFTCOpMode {
         PedroComponent.follower().setStartingPose(poseInicial);
         CommandManager.INSTANCE.scheduleCommand(
                 new SequentialGroup(
-                        new FollowPath(AutoPathsAzul.InicialIntake),
-                        new FollowPath(AutoPathsAzul.Intake2),
-                        new FollowPath(AutoPathsAzul.Shoot3)
-                )
+                        preload(),
+                        intakeMeio(),
+                        shootMeio(),
+                        gateCicle(),
+                        gateCicle(),
+                        gateCicleCima(),
+                        shootar(),
+                        intakeCima(),
+                        lastShoot()
+                        )
         );
         PedroComponent.follower().update();
     }
@@ -91,7 +98,8 @@ public class Auto21Azul extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
-
+        Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 
@@ -113,14 +121,72 @@ public class Auto21Azul extends NextFTCOpMode {
                 Lock.INSTANCE.open,
                 Intake.INSTANCE.shooting,
                 new Delay(1),
-                Lock.INSTANCE.closed.and(Intake.INSTANCE.stop)
-        );
+                Lock.INSTANCE.closed,
+                Intake.INSTANCE.stop
+                );
     }
 
     private SequentialGroup intake() {
         return new SequentialGroup(
                 Lock.INSTANCE.closed,
                 Intake.INSTANCE.intake
+        );
+    }
+    private SequentialGroup stopintake() {
+        return new SequentialGroup(
+                Intake.INSTANCE.stop
+        );
+    }
+    private SequentialGroup gateCicle() {
+        return new SequentialGroup(
+                new FollowPath(AutoPathsAzul.Gate(PedroComponent.follower())),
+                intake(),
+                new FollowPath(AutoPathsAzul.GateCicle(PedroComponent.follower())),
+                stopintake(),
+                new FollowPath(AutoPathsAzul.ShootGate(PedroComponent.follower())),
+                shootar()
+        );
+    }
+    private SequentialGroup gateCicleCima() {
+        return new SequentialGroup(
+                new FollowPath(AutoPathsAzul.Gate(PedroComponent.follower())),
+                intake(),
+                new FollowPath(AutoPathsAzul.GateCicle(PedroComponent.follower())),
+                stopintake(),
+                new FollowPath(AutoPathsAzul.ShootGateCima(PedroComponent.follower())),
+                shootar()
+        );
+    }
+    private SequentialGroup shootMeio() {
+        return new SequentialGroup(
+                new FollowPath(AutoPathsAzul.ShootMeio(PedroComponent.follower())),
+                shootar()
+        );
+    }
+    private SequentialGroup intakeMeio(){
+        return new SequentialGroup(
+                intake(),
+                new FollowPath(AutoPathsAzul.IntakeMeio(PedroComponent.follower())),   //Vai pra fileira do meio
+                stopintake()
+        );
+    }
+    private SequentialGroup preload(){
+        return new SequentialGroup(
+                new FollowPath(AutoPathsAzul.ShootPreload(PedroComponent.follower())), //Shoot Preload
+                shootar()
+        );
+    }
+    private SequentialGroup intakeCima(){
+        return new SequentialGroup(
+                intake(),
+                new FollowPath(AutoPathsAzul.IntakeCima(PedroComponent.follower())),
+                stopintake()
+        );
+    }
+    private SequentialGroup lastShoot(){
+        return new SequentialGroup(
+                new FollowPath(AutoPathsAzul.ShootCima(PedroComponent.follower())),
+                shootar()
         );
     }
 }
