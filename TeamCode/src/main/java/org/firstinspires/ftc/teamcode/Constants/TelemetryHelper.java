@@ -11,7 +11,7 @@ public class TelemetryHelper {
 
     public static void addCommonTelemetry
             (Telemetry telemetry, Pose poseAtual, double flywheelVelocity,double turretAngle, double destinationAngle, double toTurn, Limelight3A limelight, double angleLL, boolean debugMode, double distanceToGoal, double leftStickY, double leftStickX, double rightStickX) {
-        telemetry.addData("heading", poseAtual.getHeading());
+       //telemetry.addData("heading", poseAtual.getHeading());
         telemetry.addData("x", poseAtual.getX());
         telemetry.addData("y", poseAtual.getY());
         telemetry.addData("velo", flywheelVelocity);

@@ -68,6 +68,10 @@ public class TeleOpAzul extends NextFTCOpMode {
         limelight.setPollRateHz(400);
         limelight.pipelineSwitch(4);
         limelight.start();
+        PedroComponent.follower().update();
+        Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
+        angleLL = LimelightHelper.updateAngleLL(limelight);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
     }
 
     @Override
@@ -92,7 +96,7 @@ public class TeleOpAzul extends NextFTCOpMode {
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             new SequentialGroup(
-                    //Lock.INSTANCE.open,
+                    Lock.INSTANCE.open,
                     Intake.INSTANCE.intake,
                     new Delay(1),
                     Intake.INSTANCE.stop
@@ -103,33 +107,26 @@ public class TeleOpAzul extends NextFTCOpMode {
     @Override
     public void onUpdate() {
 
+        PedroComponent.follower().update();
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        if (LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading()) != null) {
-            Pose pedroPose = LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading());
-            //telemetry.addData("x2", (pedroPose.getX())+77);
-            //telemetry.addData("y2", (pedroPose.getY())+77);
-            //PedroComponent.follower().setPose(LimelightHelper.getRobotPoseFromCamera(limelight, poseAtual.getHeading()));
-        }else{
-            PedroComponent.follower().update();
-        }
+        if (poseAtual != null) {
+            angleLL = LimelightHelper.updateAngleLL(limelight);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
+            Turret.INSTANCE.periodic();
+        } else {
 
-        angleLL = LimelightHelper.updateAngleLL(limelight);
-        LLResult result = limelight.getLatestResult();
-        telemetry.update();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
-        Turret.INSTANCE.periodic();
+            double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
+            Shooter.INSTANCE.setGoalDistance(distanceToGoal);
+            Hood.INSTANCE.periodic();
 
-        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
-        Shooter.INSTANCE.setGoalDistance(distanceToGoal);
-        Hood.INSTANCE.periodic();
-
-        double leftStickY = Gamepads.gamepad1().leftStickY().get();
-        double leftStickX = Gamepads.gamepad1().leftStickX().get();
-        double rightStickX = Gamepads.gamepad1().rightStickX().get();
+            double leftStickY = Gamepads.gamepad1().leftStickY().get();
+            double leftStickX = Gamepads.gamepad1().leftStickX().get();
+            double rightStickX = Gamepads.gamepad1().rightStickX().get();
 
         TelemetryHelper.addCommonTelemetry(telemetry, poseAtual, Shooter.INSTANCE.getVelocity(),
                 Turret.turretAngle, Turret.destinationAngle, Turret.INSTANCE.toTurn,
                 limelight, angleLL, debugMode, distanceToGoal, leftStickY, leftStickX, rightStickX);
         telemetry.update();
+        }
     }
 }

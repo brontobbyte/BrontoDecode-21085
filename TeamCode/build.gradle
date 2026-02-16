@@ -1,13 +1,19 @@
 //
 // build.gradle in TeamCode
 //
+// Most of the definitions for building your module reside in a common, shared
+// file 'build.common.gradle'. Being factored in this way makes it easier to
+// integrate updates to the FTC into your code. If you really need to customize
+// the build definitions, you can place those customizations in this file, but
+// please think carefully as to whether such customizations are really necessary
+// before doing so.
+
 
 // Custom definitions may go here
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
-apply plugin: 'kotlin-android'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -15,35 +21,21 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-repositories {
-    maven {
-        url "https://repo.dairy.foundation/releases"
-    }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation 'dev.nextftc:ftc:1.0.0'
-    implementation 'dev.nextftc:hardware:1.0.0' // Se quiser usar módulo hardware
+    implementation 'dev.nextftc:ftc:1.0.1'
+    implementation 'dev.nextftc:hardware:1.0.1'
     implementation 'dev.nextftc.extensions:pedro:1.0.0'
-    implementation 'dev.nextftc:bindings:1.0.1'
-    implementation "org.solverslib:core:0.3.3" // core
-    implementation "org.solverslib:pedroPathing:0.3.3" // Pedro Pathing
-    implementation 'com.pedropathing:ftc:2.0.3'
-    implementation 'com.pedropathing:telemetry:1.0.0'
-    implementation "com.bylazar:fullpanels:1.0.5"
-}
-
-// Configuração de JVM target do Kotlin
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+    implementation 'org.firstinspires.ftc:Inspection:11.1.0'
+    implementation 'org.firstinspires.ftc:Blocks:11.1.0'
+    implementation 'org.firstinspires.ftc:RobotCore:11.1.0'
+    implementation 'org.firstinspires.ftc:RobotServer:11.1.0'
+    implementation 'org.firstinspires.ftc:OnBotJava:11.1.0'
+    implementation 'org.firstinspires.ftc:Hardware:11.1.0'
+    implementation 'org.firstinspires.ftc:FtcCommon:11.1.0'
+    implementation 'org.firstinspires.ftc:Vision:11.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation "com.bylazar:telemetry:1.0.2"
 }

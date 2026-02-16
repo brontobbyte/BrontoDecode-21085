@@ -102,7 +102,6 @@ public class Auto21Azul extends NextFTCOpMode {
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
-
         Shooter.INSTANCE.periodic();
 
         TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),

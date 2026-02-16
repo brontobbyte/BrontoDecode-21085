@@ -10,7 +10,7 @@ public class AutoPoses {
     public static Pose intakeMeioPose       = new Pose(15, 56, Math.toRadians(0));
     public static Pose gatePose             = new Pose(14, 64, Math.toRadians(0));
     public static Pose gateCiclePose        = new Pose(10.95412844036698, 53.47706422018349, Math.toRadians(0));
-    public static Pose gateCicleCurvedPose  = new Pose(28, 56, Math.toRadians(0));
+    public static Pose gateCicleCurvedPose  = new Pose(10, 60, Math.toRadians(0));
     public static Pose shootPose1           = new Pose(62, 68, Math.toRadians(0));
     public static Pose shootPose2           = new Pose(51, 84, Math.toRadians(0));
     public static Pose shootCurvedPose2     = new Pose(41, 55, Math.toRadians(0));
