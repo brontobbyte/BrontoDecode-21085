@@ -15,7 +15,7 @@ public class AutoPathsVermelho {
     public static PathChain ShootPreload(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.poseInicial.mirror(),
                                 AutoPoses.shootPose1.mirror()
                         )
@@ -72,7 +72,7 @@ public class AutoPathsVermelho {
     public static PathChain ShootGate(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.gateCiclePose.mirror(),
                                 AutoPoses.shootPose1.mirror()
                         )
@@ -95,7 +95,7 @@ public class AutoPathsVermelho {
     public static PathChain IntakeCima(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.shootPose2.mirror(),
                                 AutoPoses.intakeCimaPose.mirror()
                         )
@@ -106,7 +106,7 @@ public class AutoPathsVermelho {
     public static PathChain ShootCima(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.intakeCimaPose.mirror(),
                                 AutoPoses.shootPose3.mirror()
                         )

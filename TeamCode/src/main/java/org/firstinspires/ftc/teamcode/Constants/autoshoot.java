@@ -16,8 +16,8 @@ public class autoshoot {
     public static double hoodAngle(double goalDist) {
         return MathFunctions.clamp(
                 0.0000912618 * Math.pow(goalDist, 2) - 0.0223322 * goalDist + 1.33875,
-                0,
-                0.6
+                0.1,
+                0.9
         ) + hoodOffset;
     }
     public static double launchTime(double goalDist) {

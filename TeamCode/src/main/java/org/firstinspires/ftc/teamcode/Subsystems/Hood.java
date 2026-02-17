@@ -16,21 +16,23 @@ public class Hood implements Subsystem {
     public static final Hood INSTANCE = new Hood();
 
     private double goalDistance = 0;
+    private double pos = 0.1;
 
     private Hood() { }
 
     private final ServoEx servoHood = new ServoEx("sHood");
 
-    public final Command alto = new SetPosition(servoHood, 0.85).requires(this);
-    public final Command medio = new SetPosition(servoHood, 0.685).requires(this);
+    public final Command alto = new SetPosition(servoHood, 0.6).requires(this);
+    public final Command medio = new SetPosition(servoHood, 0.45).requires(this);
     public final Command lock = new SetPosition(servoHood, 0.35).requires(this);
+
 
     @Override
     public void periodic() {
 
         if (goalDistance > 0) {
-            double hoodAngle = autoshoot.hoodAngle(goalDistance);
-            //servoHood.setPosition(hoodAngle);
+            //double hoodAngle = autoshoot.hoodAngle(goalDistance);
+            servoHood.setPosition(pos);
         } else {
         }
     }
@@ -38,4 +40,5 @@ public class Hood implements Subsystem {
     public void setGoalDistance(double dist) {
         this.goalDistance = dist;
     }
+
 }

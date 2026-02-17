@@ -35,12 +35,12 @@ public class FlywheelExample extends NextFTCOpMode {
 
     private ControlSystem controller;
 
-    public static double Fkp = 0;
-    public static double Fki = 0;
-    public static double Fkd = 0;
-    public static double Fks = 0;
-    public static double Fka = 0;
-    public static double Fkv = 0;
+    public static double Fkp = 0.00036;
+    public static double Fki = 0.000000000001;
+    public static double Fkd = 0.00001;
+    public static double Fks = 0.3;
+    public static double Fka = 6;
+    public static double Fkv = 0.00026;
     public static double goal = 0;
     public static double hood = 0;
     public static double poselegalimportantex = 60;
@@ -62,7 +62,7 @@ public class FlywheelExample extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         if (gamepad1.a) {
-            motor.setPower(-1);
+            motor.setPower(1);
         } else {
             motor.setPower(0);
         }

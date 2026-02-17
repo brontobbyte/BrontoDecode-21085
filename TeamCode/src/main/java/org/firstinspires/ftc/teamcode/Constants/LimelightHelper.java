@@ -38,24 +38,29 @@ public class LimelightHelper {
         }
         telemetry.addData("angleLL", angleLL);
     }
-    public static Pose getRobotPoseFromCamera(Limelight3A limelight, double heading) {
+    public static Pose megaTag(Limelight3A limelight, Telemetry telemetry) {
+        LLResult result = limelight.getLatestResult();
         double x = 0;
         double y = 0;
-        //Fill this out to get the robot Pose from the camera's output (apply any filters if you need to using follower.getPose() for fusion)
-        //Pedro Pathing has built-in KalmanFilter and LowPassFilter classes you can use for this
-        //Use this to convert standard FTC coordinates to standard Pedro Pathing coordinates
-        LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             Pose3D botpose = result.getBotpose();
             if (botpose != null) {
                 x = botpose.getPosition().x;
                 y = botpose.getPosition().y;
+                telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
+                return new Pose(x, y, 0, FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             }
-        }
-        if (x != 0 && y != 0) {
-            return new Pose(x, y, heading, FTCCoordinates.INSTANCE);
-        } else {
+        }else{
             return null;
         }
+        return null;
     }
+    public static boolean verifyLimelightPose(Pose newEstimate, double velo, double maxVelo) {
+        if (!(newEstimate.getX() < 144 && newEstimate.getY() < 144 && newEstimate.getX() > 0 && newEstimate.getY() > 0)) {
+            return false;
+        }
+
+        return !(Math.abs(velo) > maxVelo);
+    }
+
 }

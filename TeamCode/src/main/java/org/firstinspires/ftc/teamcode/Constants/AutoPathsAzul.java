@@ -15,7 +15,7 @@ public class AutoPathsAzul {
     public static PathChain ShootPreload(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.poseInicial,
                                 AutoPoses.shootPose1
                         )
@@ -72,7 +72,7 @@ public class AutoPathsAzul {
     public static PathChain ShootGate(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.gateCiclePose,
                                 AutoPoses.shootPose1
                         )
@@ -95,7 +95,7 @@ public class AutoPathsAzul {
     public static PathChain IntakeCima(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.shootPose2,
                                 AutoPoses.intakeCimaPose
                         )
@@ -106,7 +106,7 @@ public class AutoPathsAzul {
     public static PathChain ShootCima(Follower follower){
         return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 AutoPoses.intakeCimaPose,
                                 AutoPoses.shootPose3
                         )

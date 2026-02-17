@@ -68,7 +68,7 @@ public class Auto21Vermelho extends NextFTCOpMode {
     public void onWaitForStart() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 
@@ -102,7 +102,7 @@ public class Auto21Vermelho extends NextFTCOpMode {
         PedroComponent.follower().update();
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 

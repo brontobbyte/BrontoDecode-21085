@@ -27,16 +27,26 @@ public class Turret implements Subsystem {
     public static double turretAngle;
     public static double offset = 0;
     private static double visionMultiplier = 0.380;
-    private static double offsetAdjustmentRate = -0.43;
+    private static double offsetAdjustmentRate = 0.43;
+    private static boolean azul = true;
+    public static double LIMELIGHT_AXIS_COVARIANCE = 0.3608;
+    public static double ODOMETRY_AXIS_COVARIANCE = 0.1853;
     private boolean wrapped = false;
 
     private Turret() {
     }
-    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL) {
+    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, boolean azul) {
         this.robotX = robotX;
         this.robotY = robotY;
         this.heading = heading;
         this.angleLL = angleLL;
+        if (azul == true){
+            goalx = 10;
+            goaly = 137;
+        }else {
+            goalx = 124;
+            goaly = 137;
+        }
     }
     private static final MotorEx motor = new MotorEx("turret");
 
@@ -54,8 +64,8 @@ public class Turret implements Subsystem {
     public double aimToObject() {
         double robotYPosition = robotY, robotXPosition = robotX;
 
-        double calculatedDestinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition, goalx - robotXPosition));
-
+        double destinationAngle = Math.toDegrees(Math.atan2(robotYPosition - goaly, goalx - robotXPosition));
+        /*
         boolean limelightActive = Math.abs(angleLL) > 0.1;
 
         if (limelightActive) {
@@ -75,9 +85,10 @@ public class Turret implements Subsystem {
                 destinationAngle = calculatedDestinationAngle;
             }
         }
+        */
 
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
-        double robotAngle = heading;
+        double robotAngle = -heading;
 
         turretAngle = ((turretAngle + 170) % 360) - 170;
         destinationAngle = ((destinationAngle + 170) % 360) - 170;
