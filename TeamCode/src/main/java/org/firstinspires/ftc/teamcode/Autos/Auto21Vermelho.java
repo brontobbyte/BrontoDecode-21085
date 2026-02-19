@@ -87,11 +87,15 @@ public class Auto21Vermelho extends NextFTCOpMode {
                         intakeMeio(),
                         shootMeio(),
                         gateCicle(),
-                        gateCicle(),
+                       //gateCicle(),
                         gateCicleCima(),
                         shootar(),
                         intakeCima(),
-                        lastShoot()
+                        shootCima(),
+                        intakeBaixo(),
+                        shootfinal(),
+                        new FollowPath(AutoPathsVermelho.last(PedroComponent.follower()))
+
                 )
         );
         PedroComponent.follower().update();
@@ -105,7 +109,6 @@ public class Auto21Vermelho extends NextFTCOpMode {
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
-
         Shooter.INSTANCE.periodic();
 
         TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
@@ -122,13 +125,12 @@ public class Auto21Vermelho extends NextFTCOpMode {
     private SequentialGroup shootar() {
         return new SequentialGroup(
                 Lock.INSTANCE.open,
-                Intake.INSTANCE.shooting,
-                new Delay(1),
+                Intake.INSTANCE.intake,
+                new Delay(0.7),
                 Lock.INSTANCE.closed,
                 Intake.INSTANCE.stop
         );
     }
-
     private SequentialGroup intake() {
         return new SequentialGroup(
                 Lock.INSTANCE.closed,
@@ -145,6 +147,7 @@ public class Auto21Vermelho extends NextFTCOpMode {
                 new FollowPath(AutoPathsVermelho.Gate(PedroComponent.follower())),
                 intake(),
                 new FollowPath(AutoPathsVermelho.GateCicle(PedroComponent.follower())),
+                //new FollowPath(AutoPathsVermelho.GateCicleFinal(PedroComponent.follower())),
                 stopintake(),
                 new FollowPath(AutoPathsVermelho.ShootGate(PedroComponent.follower())),
                 shootar()
@@ -155,6 +158,7 @@ public class Auto21Vermelho extends NextFTCOpMode {
                 new FollowPath(AutoPathsVermelho.Gate(PedroComponent.follower())),
                 intake(),
                 new FollowPath(AutoPathsVermelho.GateCicle(PedroComponent.follower())),
+                //new FollowPath(AutoPathsVermelho.GateCicleFinal(PedroComponent.follower())),
                 stopintake(),
                 new FollowPath(AutoPathsVermelho.ShootGateCima(PedroComponent.follower())),
                 shootar()
@@ -186,9 +190,22 @@ public class Auto21Vermelho extends NextFTCOpMode {
                 stopintake()
         );
     }
-    private SequentialGroup lastShoot(){
+    private SequentialGroup shootCima(){
         return new SequentialGroup(
                 new FollowPath(AutoPathsVermelho.ShootCima(PedroComponent.follower())),
+                shootar()
+        );
+    }
+    private SequentialGroup intakeBaixo(){
+        return new SequentialGroup(
+                intake(),
+                new FollowPath(AutoPathsVermelho.IntakeBaixo(PedroComponent.follower())),
+                stopintake()
+        );
+    }
+    private SequentialGroup shootfinal(){
+        return new SequentialGroup(
+                new FollowPath(AutoPathsVermelho.shootPoselast(PedroComponent.follower())),
                 shootar()
         );
     }

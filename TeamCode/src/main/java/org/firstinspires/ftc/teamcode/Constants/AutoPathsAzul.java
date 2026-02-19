@@ -108,6 +108,41 @@ public class AutoPathsAzul {
                 .addPath(
                         new BezierLine(
                                 AutoPoses.intakeCimaPose,
+                                AutoPoses.shootPose1
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+    }
+    public static PathChain IntakeBaixo(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.shootPose1,
+                                AutoPoses.intakeBaixoCurvedPose,
+                                AutoPoses.intakeBaixoPose
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+    }
+    public static PathChain ShootBaixo(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                AutoPoses.intakeBaixoPose,
+                                AutoPoses.shootPose3
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+    }
+
+    public static PathChain saida(Follower follower){
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                AutoPoses.intakeBaixoPose,
                                 AutoPoses.shootPose3
                         )
                 )

@@ -24,7 +24,7 @@ public class Intake implements Subsystem {
     public Command stop = new SetPower(motor, 0).requires(this);
     public Command shooting = new SetPower(motor, 0.7).requires(this);
     public Command intake = new SetPower(motor, 1).requires(this);
-
+    public Command reversed = new SetPower(motor, -1).requires(this);
 
     @Override
     public void periodic() {

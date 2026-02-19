@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 
@@ -12,6 +13,7 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
+@Configurable
 public class Hood implements Subsystem {
     public static final Hood INSTANCE = new Hood();
 
@@ -24,7 +26,7 @@ public class Hood implements Subsystem {
 
     public final Command alto = new SetPosition(servoHood, 0.6).requires(this);
     public final Command medio = new SetPosition(servoHood, 0.45).requires(this);
-    public final Command lock = new SetPosition(servoHood, 0.35).requires(this);
+    public final Command baixo = new SetPosition(servoHood, 0.25).requires(this);
 
 
     @Override

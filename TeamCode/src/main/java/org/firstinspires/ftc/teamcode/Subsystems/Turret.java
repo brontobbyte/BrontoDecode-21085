@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static com.pedropathing.math.MathFunctions.clamp;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.turnTurretBy;
 
 import com.bylazar.configurables.annotations.Configurable;
 
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 @Configurable
 public class Turret implements Subsystem {
@@ -24,13 +23,16 @@ public class Turret implements Subsystem {
     public static double toTurn;
     public static double goalx = 132;
     public static double goaly = 137;
+    public static double multiMax = 5;
+    public static double multi = 1.5;
+
     public static double turretAngle;
+    public static double calculatedDestinationAngle;
+
     public static double offset = 0;
     private static double visionMultiplier = 0.380;
     private static double offsetAdjustmentRate = 0.43;
     private static boolean azul = true;
-    public static double LIMELIGHT_AXIS_COVARIANCE = 0.3608;
-    public static double ODOMETRY_AXIS_COVARIANCE = 0.1853;
     private boolean wrapped = false;
 
     private Turret() {
@@ -39,8 +41,8 @@ public class Turret implements Subsystem {
         this.robotX = robotX;
         this.robotY = robotY;
         this.heading = heading;
-        this.angleLL = angleLL;
-        if (azul == true){
+        Turret.angleLL = angleLL;
+        if (azul){
             goalx = 10;
             goaly = 137;
         }else {
@@ -53,26 +55,22 @@ public class Turret implements Subsystem {
     @Override
     public void initialize() {
     }
-
     public void reset() {
         motor.zeroed();
         hasValidLastAngle = false;
         lastValidDestinationAngle = 0.0;
         wrapped = false;
     }
-
     public double aimToObject() {
         double robotYPosition = robotY, robotXPosition = robotX;
 
-        double destinationAngle = Math.toDegrees(Math.atan2(robotYPosition - goaly, goalx - robotXPosition));
+        calculatedDestinationAngle = Math.toDegrees(Math.atan2(robotYPosition - goaly, goalx - robotXPosition));
+        boolean limelightActive = Math.abs(angleLL) > 0.3;
         /*
-        boolean limelightActive = Math.abs(angleLL) > 0.1;
-
         if (limelightActive) {
             if (Math.abs(angleLL) > 2) {
                 offset += -Math.signum(angleLL) * offsetAdjustmentRate;
             }
-
             realAngleLL = angleLL * visionMultiplier + offset;
             destinationAngle = calculatedDestinationAngle + realAngleLL;
 
@@ -85,10 +83,13 @@ public class Turret implements Subsystem {
                 destinationAngle = calculatedDestinationAngle;
             }
         }
-        */
-
+         */
+        if (Math.abs(angleLL) > 2 && Math.abs(angleLL) < multiMax){
+            angleLL = angleLL * multi;
+        }
+       destinationAngle = calculatedDestinationAngle - (clamp(angleLL, -10, 10));
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
-        double robotAngle = -heading;
+      double robotAngle = -heading;
 
         turretAngle = ((turretAngle + 170) % 360) - 170;
         destinationAngle = ((destinationAngle + 170) % 360) - 170;
@@ -99,6 +100,8 @@ public class Turret implements Subsystem {
         if (turretAngle > 170 || (toTurn > 0 && turretAngle + toTurn > 170)) {
             toTurn -= 360;
             wrapped = true;
+
+
         } else if (turretAngle < -170 || (toTurn < 0 && turretAngle + toTurn < -170)) {
             toTurn += 360;
             wrapped = true;

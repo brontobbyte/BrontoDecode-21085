@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoPathsAzul;
+import org.firstinspires.ftc.teamcode.Constants.AutoPathsVermelho;
 import org.firstinspires.ftc.teamcode.Constants.PoseManager;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Lock;
@@ -85,11 +86,13 @@ public class Auto21Azul extends NextFTCOpMode {
                         intakeMeio(),
                         shootMeio(),
                         gateCicle(),
-                        gateCicle(),
+//                      gateCicle(),
                         gateCicleCima(),
                         shootar(),
                         intakeCima(),
-                        lastShoot()
+                        shootCima(),
+                        intakeBaixo(),
+                        shootBaixo()
                         )
         );
         PedroComponent.follower().update();
@@ -182,9 +185,22 @@ public class Auto21Azul extends NextFTCOpMode {
                 stopintake()
         );
     }
-    private SequentialGroup lastShoot(){
+    private SequentialGroup shootCima(){
         return new SequentialGroup(
                 new FollowPath(AutoPathsAzul.ShootCima(PedroComponent.follower())),
+                shootar()
+        );
+    }
+    private SequentialGroup intakeBaixo(){
+        return new SequentialGroup(
+                intake(),
+                new FollowPath(AutoPathsAzul.IntakeBaixo(PedroComponent.follower())),
+                stopintake()
+        );
+    }
+    private SequentialGroup shootBaixo(){
+        return new SequentialGroup(
+                new FollowPath(AutoPathsAzul.ShootBaixo(PedroComponent.follower())),
                 shootar()
         );
     }

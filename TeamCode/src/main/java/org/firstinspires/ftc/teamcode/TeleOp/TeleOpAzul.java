@@ -100,7 +100,9 @@ public class TeleOpAzul extends NextFTCOpMode {
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> {
             Intake.INSTANCE.stop.schedule();
         });
-
+        Gamepads.gamepad1().b().whenTrue(() -> {
+            Intake.INSTANCE.reversed.schedule();
+        });
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             new SequentialGroup(
                     Lock.INSTANCE.open,
@@ -115,20 +117,11 @@ public class TeleOpAzul extends NextFTCOpMode {
     public void onUpdate() {
         PedroComponent.follower().update();
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        if (LimelightHelper.megaTag(limelight, telemetry) != null && LimelightHelper.verifyLimelightPose(LimelightHelper.megaTag(limelight, telemetry), PedroComponent.follower().getVelocity().getMagnitude(), 2))  {
-            megaX = (LimelightHelper.megaTag(limelight, telemetry)).getX();
-            megaY = (LimelightHelper.megaTag(limelight, telemetry)).getY();
-            currentX = poseAtual.getX() + K * (megaX - poseAtual.getX());
-            currentY = poseAtual.getY() + K * (megaY - poseAtual.getY());
-        }else{
-            currentX = currentX + K * (poseAtual.getX() - currentX);
-            currentY = currentY + K * (poseAtual.getY() - currentY);
-        }
         driverControlled.update();
         angleLL = LimelightHelper.updateAngleLL(limelight);
         LLResult result = limelight.getLatestResult();
         telemetry.update();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), 0, true);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true);
         Turret.INSTANCE.periodic();
 
         double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
