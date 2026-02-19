@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.last;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Constants.PoseManager.currentPose;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.calculatedDestinationAngle;
@@ -69,7 +70,7 @@ public class TeleOpVermelho extends NextFTCOpMode {
     public void onInit() {
         Lock.INSTANCE.closed.invoke();
         angleLL = 0;
-        PedroComponent.follower().setStartingPose(currentPose);
+        PedroComponent.follower().setStartingPose(poseInicial.mirror());
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(400);
         limelight.pipelineSwitch(4);
@@ -103,16 +104,20 @@ public class TeleOpVermelho extends NextFTCOpMode {
             Intake.INSTANCE.reversed.schedule();
         });
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
-            new SequentialGroup(
-                    Hood.INSTANCE.medio,
-                    Lock.INSTANCE.open,
-                    Intake.INSTANCE.intake,
-                    new Delay(0.4),
-                    //Hood.INSTANCE.medio,
-                    new Delay(0.6),
-                    Intake.INSTANCE.stop
-                    //Hood.INSTANCE.baixo
-                    ).schedule();
+            if (Math.abs(lastAngleLL) < 6) {
+                new SequentialGroup(
+                        Hood.INSTANCE.medio,
+                        Lock.INSTANCE.open,
+                        Intake.INSTANCE.intake,
+                        new Delay(0.4),
+                        //Hood.INSTANCE.medio,
+                        new Delay(0.6),
+                        Intake.INSTANCE.stop
+                        //Hood.INSTANCE.baixo
+                ).schedule();
+            }else{
+                Turret.addOffset(angleLL);
+            }
         });
     }
 
@@ -127,10 +132,10 @@ public class TeleOpVermelho extends NextFTCOpMode {
         LLResult result = limelight.getLatestResult();
         telemetry.update();
         if ((!(PedroComponent.follower().getAngularVelocity() > 1))&& angleLL != 0.0) {
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry);
             lastAngleLL = angleLL;
         }else{
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, false);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, false, telemetry);
         }
         Turret.INSTANCE.periodic();
         telemetry.addData("destination", calculatedDestinationAngle);

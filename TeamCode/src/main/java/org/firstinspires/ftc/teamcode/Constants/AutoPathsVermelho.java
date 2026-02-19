@@ -70,7 +70,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.gateCiclePose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(60))
                 .build();
     }
     public static PathChain GateCicleFinal(Follower follower) {

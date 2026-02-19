@@ -8,9 +8,9 @@ public class AutoPoses {
     public static Pose PoseInicialfar        = new Pose(56, 8, -Math.toRadians(180));
     public static Pose intakeMeioCurvedPose  = new Pose(63, 57, Math.toRadians(0));
     public static Pose intakeMeioPose        = new Pose(15, 53, Math.toRadians(0));
-    public static Pose gatePose              = new Pose(16, 60, Math.toRadians(0));
-    public static Pose gateCiclePose         = new Pose(8.95412844036698, 53.47706422018349, Math.toRadians(0));
-    public static Pose gateCicleCurvedPose   = new Pose(9, 60, Math.toRadians(0));
+    public static Pose gatePose              = new Pose(16, 64, Math.toRadians(0));
+    public static Pose gateCiclePose         = new Pose(9, 59, Math.toRadians(0));
+    public static Pose gateCicleCurvedPose   = new Pose(15, 60, Math.toRadians(0));
     public static Pose gateCiclePoseFinal    = new Pose(8, 64, Math.toRadians(0));
     public static Pose gateCicleCurvedPoseFinal    = new Pose(6, 53, Math.toRadians(0));
 

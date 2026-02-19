@@ -6,8 +6,14 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.tu
 
 import com.bylazar.configurables.annotations.Configurable;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.positionable.SetPosition;
 
 @Configurable
 public class Turret implements Subsystem {
@@ -15,33 +21,40 @@ public class Turret implements Subsystem {
     private double robotY;
     private double robotX;
     public static double angleLL;
-    private double realAngleLL;
+    private double realAngleLL = 0;
     public static double destinationAngle;
     private double lastValidDestinationAngle = 0.0;
     private boolean hasValidLastAngle = false;
     private double heading;
     public static double toTurn;
+    public static double div = 0;
+
     public static double goalx = 132;
     public static double goaly = 137;
     public static double multiMax = 5;
-    public static double multi = 1.5;
+    public static double alpha = 0.1;
+    public static double filteredVision = 0.1;
+
 
     public static double turretAngle;
     public static double calculatedDestinationAngle;
 
-    public static double offset = 0;
+    public static double offset = 3;
     private static double visionMultiplier = 0.380;
     private static double offsetAdjustmentRate = 0.43;
     private static boolean azul = true;
     private boolean wrapped = false;
+    public int contador = 0;
+    Telemetry telemetry;
 
     private Turret() {
     }
-    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, boolean azul) {
+    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, boolean azul, Telemetry telemetry) {
         this.robotX = robotX;
         this.robotY = robotY;
         this.heading = heading;
         Turret.angleLL = angleLL;
+        this.telemetry = telemetry;
         if (azul){
             goalx = 10;
             goaly = 137;
@@ -51,6 +64,9 @@ public class Turret implements Subsystem {
         }
     }
     private static final MotorEx motor = new MotorEx("turret");
+    public static void addOffset(double angle) {
+        offset += angle;
+    }
 
     @Override
     public void initialize() {
@@ -84,12 +100,22 @@ public class Turret implements Subsystem {
             }
         }
          */
+        filteredVision = alpha * angleLL + (1 - alpha) * filteredVision;
         if (Math.abs(angleLL) > 2 && Math.abs(angleLL) < multiMax){
-            angleLL = angleLL * multi;
+            //angleLL = angleLL * multi;
         }
-       destinationAngle = calculatedDestinationAngle - (clamp(angleLL, -10, 10));
+        contador++;
+        if (Math.abs(motor.getVelocity()) < 50 && Math.abs(angleLL) > 4 && (contador%50 == 0)){
+            realAngleLL = angleLL;
+            contador = 0;
+            //telemetry.addData("errado", "errado");
+            //telemetry.update();
+        }else{
+            div = 0;
+        }
+        destinationAngle = calculatedDestinationAngle - filteredVision - realAngleLL - offset;
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
-      double robotAngle = -heading;
+        double robotAngle = -heading;
 
         turretAngle = ((turretAngle + 170) % 360) - 170;
         destinationAngle = ((destinationAngle + 170) % 360) - 170;
@@ -112,7 +138,7 @@ public class Turret implements Subsystem {
     }
     @Override
     public void periodic() {
-        double power = turnTurretBy(aimToObject(), angleLL);
+        double power = turnTurretBy(aimToObject(), angleLL, div);
         if (Math.abs(toTurn) < 1) {
             power = 0;
         }

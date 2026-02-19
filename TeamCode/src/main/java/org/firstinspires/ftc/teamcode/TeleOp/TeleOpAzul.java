@@ -121,7 +121,7 @@ public class TeleOpAzul extends NextFTCOpMode {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         LLResult result = limelight.getLatestResult();
         telemetry.update();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry);
         Turret.INSTANCE.periodic();
 
         double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);

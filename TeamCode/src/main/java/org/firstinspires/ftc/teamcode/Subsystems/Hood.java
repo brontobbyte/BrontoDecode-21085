@@ -18,7 +18,7 @@ public class Hood implements Subsystem {
     public static final Hood INSTANCE = new Hood();
 
     private double goalDistance = 0;
-    private double pos = 0.1;
+    public static double pos = 0.1;
 
     private Hood() { }
 

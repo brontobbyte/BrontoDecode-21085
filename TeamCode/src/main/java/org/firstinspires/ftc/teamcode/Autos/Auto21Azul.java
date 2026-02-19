@@ -102,7 +102,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public void onUpdate() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         Shooter.INSTANCE.periodic();

@@ -21,7 +21,7 @@ public class AutoConstants {
         public static double Tkp = 0.01;
         public static double Tki = 0;
         public static double Tkd = 0.0004;
-        public static double pesoLL = 0;
+        public static double pesoLL = 2;
         public static double pesoHeading = 1;
         public static double destinationAngleLL;
         private static MotorEx turretMotor = new MotorEx("turret");
@@ -33,11 +33,11 @@ public class AutoConstants {
         public static int angleToEncoderTicks(double degrees) {
             return (int) (degrees / scalingFactor);
         }
-        public static double turnTurretBy(double degrees, double angleLL) {
+        public static double turnTurretBy(double degrees, double angleLL, double div) {
             double currentPosition = turretMotor.getCurrentPosition();
             double destinationAngleHeading = angleToEncoderTicks(degrees);
-            destinationAngleLL = angleToEncoderTicks(angleLL);
-            double TARGET_TICK_VALUE = clamp((destinationAngleHeading + currentPosition), angleToEncoderTicks(-170), angleToEncoderTicks(170));
+            destinationAngleLL = (destinationAngleHeading + angleToEncoderTicks(clamp(angleLL, -10, 10))) ;
+            double TARGET_TICK_VALUE = clamp(destinationAngleHeading + currentPosition, angleToEncoderTicks(-170), angleToEncoderTicks(170));
             controllerauto = ControlSystem.builder()
                     .posPid(Tkp, Tki, Tkd)
                     .build();
