@@ -85,8 +85,13 @@ public class TeleOpVermelho extends NextFTCOpMode {
         );
         driverControlled.schedule();
         Gamepads.gamepad1().x().whenTrue(() -> driverControlled.setScalar(0.5));
-
         Gamepads.gamepad1().x().whenFalse(() -> driverControlled.setScalar(1));
+
+        Gamepads.gamepad1().dpadUp().whenTrue(() -> Turret.addRecOffset());
+        Gamepads.gamepad1().dpadUp().whenFalse(() -> Turret.stopRecOffset());
+        Gamepads.gamepad1().dpadDown().whenTrue(() -> Turret.lessRecOffset());
+
+
 
         Gamepads.gamepad1().leftBumper().whenBecomesTrue(() -> {
             Lock.INSTANCE.closed.schedule();
