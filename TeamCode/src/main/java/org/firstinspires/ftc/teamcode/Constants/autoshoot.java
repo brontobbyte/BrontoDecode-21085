@@ -10,14 +10,16 @@ public class autoshoot {
     public static double hoodOffset = 0;
     public static double flywheelSpeed(double goalDist) {
         return MathFunctions.clamp(
-                0.0259107 * Math.pow(goalDist, 2) + 0.879444 * goalDist + 619.2700, 0, 1400
+                0.0219148 * Math.pow(goalDist, 3) - 6.84911 * Math.pow(goalDist, 2) + 712.23515 * goalDist - 23096.5164,
+                0,
+                1900
         ) + flywheeloffset;
     }
     public static double hoodAngle(double goalDist) {
         return MathFunctions.clamp(
-                0.0000912618 * Math.pow(goalDist, 2) - 0.0223322 * goalDist + 1.33875,
-                0.1,
-                0.9
+                -0.000002355408 * Math.pow(goalDist, 4) + 0.000945637 * Math.pow(goalDist, 3) - 0.1411955 * Math.pow(goalDist, 2) + 9.31183 * goalDist - 228.91371,
+                0,
+                0.85
         ) + hoodOffset;
     }
     public static double launchTime(double goalDist) {

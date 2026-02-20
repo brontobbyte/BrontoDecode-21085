@@ -15,16 +15,16 @@ public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
     private Intake() {
     }
-    private MotorEx motor = new MotorEx("intake");
+    private MotorEx motor = new MotorEx("intake").reversed();
 
     private ControlSystem controlSystem = ControlSystem.builder()
             .velPid(0.7, 0.00001, 0.001)
             .build();
 
     public Command stop = new SetPower(motor, 0).requires(this);
-    public Command shooting = new SetPower(motor, 0.7).requires(this);
+    public Command shooting = new SetPower(motor, 0.85).requires(this);
     public Command intake = new SetPower(motor, 1).requires(this);
-    public Command reversed = new SetPower(motor, -1).requires(this);
+    public Command reversed = new SetPower(motor, 1).requires(this);
 
     @Override
     public void periodic() {

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
-import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
@@ -68,7 +68,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public void onWaitForStart() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
 
-        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
+        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 
         TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
@@ -103,7 +103,7 @@ public class Auto21Azul extends NextFTCOpMode {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry);
-        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPose);
+        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         Shooter.INSTANCE.periodic();
 

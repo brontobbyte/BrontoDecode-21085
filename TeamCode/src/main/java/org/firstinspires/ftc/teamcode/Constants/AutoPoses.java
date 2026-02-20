@@ -21,7 +21,7 @@ public class AutoPoses {
     public static Pose intakeCimaPose        = new Pose(15, 78, Math.toRadians(0));
     public static Pose intakeBaixoPose       = new Pose(17, 32, Math.toRadians(0));
     public static Pose intakeBaixoCurvedPose = new Pose(75, 24, Math.toRadians(0));
-    public static Pose goalPose              = new Pose(10, 137, Math.toRadians(0));
+    public static Pose goalPoseazul             = new Pose(10, 137, Math.toRadians(0));
     public static Pose shootPoselast         = new Pose(60, 80, Math.toRadians(0));
     public static Pose last                  = new Pose(45, 63, Math.toRadians(0));
 }

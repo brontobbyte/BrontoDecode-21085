@@ -14,7 +14,7 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.positionable.SetPosition;
-
+ //bababa
 @Configurable
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
@@ -40,6 +40,8 @@ public class Turret implements Subsystem {
     public static double calculatedDestinationAngle;
 
     public static double offset = 3;
+    public static double RecoveryOffset = 0;
+
     private static double visionMultiplier = 0.380;
     private static double offsetAdjustmentRate = 0.43;
     private static boolean azul = true;
@@ -67,6 +69,16 @@ public class Turret implements Subsystem {
     public static void addOffset(double angle) {
         offset += angle;
     }
+    public static void addRecOffset() {
+        RecoveryOffset = 0.3;
+    }
+    public static void lessRecOffset() {
+        RecoveryOffset = -0.3;
+    }
+    public static void stopRecOffset() {
+        RecoveryOffset = 0;
+    }
+
 
     @Override
     public void initialize() {
@@ -80,7 +92,7 @@ public class Turret implements Subsystem {
     public double aimToObject() {
         double robotYPosition = robotY, robotXPosition = robotX;
 
-        calculatedDestinationAngle = Math.toDegrees(Math.atan2(robotYPosition - goaly, goalx - robotXPosition));
+        calculatedDestinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition,robotXPosition - goalx));
         boolean limelightActive = Math.abs(angleLL) > 0.3;
         /*
         if (limelightActive) {
@@ -115,7 +127,7 @@ public class Turret implements Subsystem {
         }
         destinationAngle = calculatedDestinationAngle - filteredVision - realAngleLL - offset;
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
-        double robotAngle = -heading;
+        double robotAngle = heading;
 
         turretAngle = ((turretAngle + 170) % 360) - 170;
         destinationAngle = ((destinationAngle + 170) % 360) - 170;
@@ -142,6 +154,6 @@ public class Turret implements Subsystem {
         if (Math.abs(toTurn) < 1) {
             power = 0;
         }
-        motor.setPower(power);
+        motor.setPower(power + RecoveryOffset);
     }
 }

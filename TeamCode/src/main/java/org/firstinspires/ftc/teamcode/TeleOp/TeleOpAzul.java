@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPose;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Constants.PoseManager.currentPose;
 
@@ -124,7 +124,7 @@ public class TeleOpAzul extends NextFTCOpMode {
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry);
         Turret.INSTANCE.periodic();
 
-        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
+        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPoseazul);
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         Hood.INSTANCE.periodic();
 
