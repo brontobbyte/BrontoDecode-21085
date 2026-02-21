@@ -114,7 +114,7 @@ public class AutoPathsVermelho {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.shootPose2.mirror(),
+                                AutoPoses.shootPose1.mirror(),
                                 AutoPoses.intakeCimaPose.mirror()
                         )
                 )
@@ -143,7 +143,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.intakeBaixoPose.mirror()
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
 
@@ -155,7 +155,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
     public static PathChain last (Follower follower){

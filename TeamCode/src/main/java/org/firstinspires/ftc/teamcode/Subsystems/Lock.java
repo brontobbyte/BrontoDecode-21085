@@ -10,7 +10,6 @@ public class Lock implements Subsystem {
     public static final Lock INSTANCE = new Lock();
     @Override
     public void initialize(){
-
     }
     private Lock() { }
     private ServoEx servo = new ServoEx("sLock");

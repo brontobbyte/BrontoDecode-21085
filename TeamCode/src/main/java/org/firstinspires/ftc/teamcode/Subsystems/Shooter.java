@@ -12,15 +12,14 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Shooter implements Subsystem {
     public static final Shooter INSTANCE = new Shooter();
 
-    public static double Fkp = 0.00003;
+    public static double Fkp = 0.000037;
     public static double Fki = 0.0000000;
-    public static double Fkd = 0.005;
-    public static double Fks = 0.1;
-    public static double Fka = 6;
-    public static double Fkv = 0.00039;
+    public static double Fkd = 0;
+    public static double Fks = 0.2;
+    public static double Fka = 0.4;
+    public static double Fkv = 0.0003001;
 
     private double goalDistance = 0;
-    public static double goal = 1400;
 
 
     private Shooter() { }
@@ -29,6 +28,10 @@ public class Shooter implements Subsystem {
             new MotorEx("f1"),
             new MotorEx("f2")
     );
+    @Override
+    public void initialize(){
+        Flywheel.setPower(0.5);
+    }
 
     @Override
     public void periodic() {
@@ -39,12 +42,11 @@ public class Shooter implements Subsystem {
                 .basicFF(Fkv, Fka, Fks)
                 .build();
 
-        controlSystem.setGoal(new KineticState(0, goal));
+        controlSystem.setGoal(new KineticState(0, targetVelocity));
 
         double power = controlSystem.calculate(new KineticState(
                 Flywheel.getCurrentPosition(),
                 Flywheel.getVelocity()));
-
 
         Flywheel.setPower(power);
     }

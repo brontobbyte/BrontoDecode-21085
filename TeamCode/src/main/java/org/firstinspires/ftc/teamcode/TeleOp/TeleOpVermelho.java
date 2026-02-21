@@ -57,8 +57,6 @@ public class TeleOpVermelho extends NextFTCOpMode {
 
     public static boolean debugMode = true;
 
-
-
     @Override
     public void onInit() {
         Lock.INSTANCE.closed.invoke();
@@ -69,11 +67,13 @@ public class TeleOpVermelho extends NextFTCOpMode {
         limelight.pipelineSwitch(4);
         limelight.start();
         PedroComponent.follower().update();
-
     }
 
     @Override
     public void onStartButtonPressed() {
+        Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
+
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry);
         PedroComponent.follower().setStartingPose(poseInicial.mirror());
         PedroComponent.follower().update();
 
@@ -83,6 +83,7 @@ public class TeleOpVermelho extends NextFTCOpMode {
                 Gamepads.gamepad1().rightStickX().negate(),
                 false
         );
+
         driverControlled.schedule();
         Gamepads.gamepad1().x().whenTrue(() -> driverControlled.setScalar(0.5));
         Gamepads.gamepad1().x().whenFalse(() -> driverControlled.setScalar(1));
@@ -90,8 +91,6 @@ public class TeleOpVermelho extends NextFTCOpMode {
         Gamepads.gamepad1().dpadUp().whenTrue(() -> Turret.addRecOffset());
         Gamepads.gamepad1().dpadUp().whenFalse(() -> Turret.stopRecOffset());
         Gamepads.gamepad1().dpadDown().whenTrue(() -> Turret.lessRecOffset());
-
-
 
         Gamepads.gamepad1().leftBumper().whenBecomesTrue(() -> {
             Lock.INSTANCE.closed.schedule();
@@ -110,33 +109,62 @@ public class TeleOpVermelho extends NextFTCOpMode {
                 new SequentialGroup(
                         Lock.INSTANCE.open,
                         Intake.INSTANCE.shooting,
-                        new Delay(1),
+                        new Delay(0.6),
+                        Intake.INSTANCE.stop,
+                        new Delay(0.2),
+                        Intake.INSTANCE.shooting,
+                        new Delay(0.3),
                         Intake.INSTANCE.stop
-                ).schedule();
-            }else{
+                        ).schedule();
+            } else {
                 Turret.addOffset(angleLL);
             }
+        });
+
+        Gamepads.gamepad1().rightTrigger().greaterThan(0.2).whenBecomesTrue(() -> {
+            Turret.setManualMode(true, -0.5);
+            Turret.disableHeading();
+        });
+        Gamepads.gamepad1().rightTrigger().greaterThan(0.2).whenBecomesFalse(() -> {
+            Turret.setManualMode(false, 0);
+        });
+
+        Gamepads.gamepad1().leftTrigger().greaterThan(0.2).whenBecomesTrue(() -> {
+            Turret.setManualMode(true, 0.5);
+            Turret.disableHeading();
+        });
+        Gamepads.gamepad1().leftTrigger().greaterThan(0.2).whenBecomesFalse(() -> {
+            Turret.setManualMode(false, 0);
+        });
+
+        Gamepads.gamepad1().y().whenBecomesTrue(() -> {
+            Turret.enableHeading();
+            Turret.lockCurrentAngle();
         });
     }
 
     @Override
     public void onUpdate() {
         PedroComponent.follower().update();
-
         driverControlled.update();
+
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
 
-        angleLL = -LimelightHelper.updateAngleLL(limelight);
-        LLResult result = limelight.getLatestResult();
-        telemetry.update();
-        if ((!(PedroComponent.follower().getAngularVelocity() > 1))&& angleLL != 0.0) {
+        //angleLL = -LimelightHelper.updateAngleLL(limelight);
+
+        if ((!(PedroComponent.follower().getAngularVelocity() > 1)) && angleLL != 0.0) {
             Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry);
             lastAngleLL = angleLL;
-        }else{
+        } else {
             Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, false, telemetry);
         }
+
         Turret.INSTANCE.periodic();
+
         telemetry.addData("destination", calculatedDestinationAngle);
+        telemetry.addData("manualMode", Turret.manualMode);
+        telemetry.addData("followEnabled", Turret.followEnabled);
+        telemetry.addData("lockAngleEnabled", Turret.lockAngleEnabled);
 
         double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPoseazul);
 

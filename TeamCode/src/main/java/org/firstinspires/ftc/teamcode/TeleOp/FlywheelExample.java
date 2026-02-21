@@ -34,7 +34,6 @@ public class FlywheelExample extends NextFTCOpMode {
     }
 
     private ControlSystem controller;
-
     public static double Fkp = 0.00003;
     public static double Fki = 0.0000000;
     public static double Fkd = 0.005;
@@ -76,10 +75,10 @@ public class FlywheelExample extends NextFTCOpMode {
         controller.setGoal(new KineticState(0.0, goal));
         servoHood.setPosition(hood);
         if (gamepad1 .a) {
-             power = -controller.calculate(new KineticState(
+             power = controller.calculate(new KineticState(
                     flywheelMotor1.getCurrentPosition(),
                     flywheelMotor1.getVelocity()));
-             power2 = -controller.calculate(new KineticState(
+             power2 = controller.calculate(new KineticState(
                     flywheelMotor2.getCurrentPosition(),
                     flywheelMotor2.getVelocity()));
         } else {
@@ -92,7 +91,7 @@ public class FlywheelExample extends NextFTCOpMode {
         PedroComponent.follower().update();
         telemetry.addData("velo", flywheelMotor2.getVelocity());
         telemetry.addData("velo2", flywheelMotor1.getVelocity());
-        telemetry.addData("dist", PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPoseazul));
+        telemetry.addData("dist", PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPoseazul.mirror()));
         telemetry.addData("x", PedroComponent.follower().poseTracker.getPose().getX());
         telemetry.addData("y", PedroComponent.follower().poseTracker.getPose().getY());
         telemetry.update();
