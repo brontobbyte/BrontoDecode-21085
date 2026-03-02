@@ -1084,7 +1084,7 @@ class Triangle extends OpMode {
     public void loop() {
         follower.update();
         drawCurrentAndHistory();
-
+        telemetryM.debug(follower.getCurrentTValue());
         if (follower.atParametricEnd()) {
             follower.followPath(triangle, true);
         }

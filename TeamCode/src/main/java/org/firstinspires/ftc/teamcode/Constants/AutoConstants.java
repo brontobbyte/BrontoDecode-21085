@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Constants;
 
 import static androidx.core.math.MathUtils.clamp;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.controllerauto;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 
@@ -17,10 +19,6 @@ public class AutoConstants {
     private static Follower follower;
     @Configurable
     public static class Calculos {
-        private static ControlSystem controllerauto;
-        public static double Tkp = 0.01;
-        public static double Tki = 0;
-        public static double Tkd = 0.0004;
         public static double pesoLL = 2;
         public static double pesoHeading = 1;
         public static double destinationAngleLL;
@@ -38,9 +36,6 @@ public class AutoConstants {
             double destinationAngleHeading = angleToEncoderTicks(degrees);
             destinationAngleLL = (destinationAngleHeading + angleToEncoderTicks(clamp(angleLL, -10, 10))) ;
             double TARGET_TICK_VALUE = clamp(destinationAngleHeading + currentPosition, angleToEncoderTicks(-170), angleToEncoderTicks(170));
-            controllerauto = ControlSystem.builder()
-                    .posPid(Tkp, Tki, Tkd)
-                    .build();
             controllerauto.setGoal(new KineticState(TARGET_TICK_VALUE));
             return controllerauto.calculate(new KineticState(
                     turretMotor.getCurrentPosition(),

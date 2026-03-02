@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 @Configurable
@@ -20,7 +16,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                 .build();
     }
 
@@ -109,7 +105,6 @@ public class AutoPathsVermelho {
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
-
     public static PathChain IntakeCima(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -121,7 +116,6 @@ public class AutoPathsVermelho {
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
-
     public static PathChain ShootCima(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -133,7 +127,6 @@ public class AutoPathsVermelho {
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
-
     public static PathChain IntakeBaixo(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -146,7 +139,6 @@ public class AutoPathsVermelho {
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
-
     public static PathChain shootPoselast(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -166,7 +158,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.last.mirror()
                         )
                 )
-                .setTangentHeadingInterpolation().setReversed()
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
                 .build();
     }
 }

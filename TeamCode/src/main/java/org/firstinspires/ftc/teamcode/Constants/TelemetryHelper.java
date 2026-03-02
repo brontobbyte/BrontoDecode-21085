@@ -3,15 +3,25 @@ package org.firstinspires.ftc.teamcode.Constants;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Subsystems.Turret;
-
-import java.util.Objects;
 
 public class TelemetryHelper {
 
-    public static void addCommonTelemetry
-            (Telemetry telemetry, Pose poseAtual, double flywheelVelocity,double turretAngle, double destinationAngle, double toTurn, Limelight3A limelight, double angleLL, boolean debugMode, double distanceToGoal, double leftStickY, double leftStickX, double rightStickX) {
-       //telemetry.addData("heading", poseAtual.getHeading());
+    public static void addCommonTelemetry(
+            Telemetry telemetry,
+            Pose poseAtual,
+            double flywheelVelocity,
+            double turretAngle,
+            double destinationAngle,
+            double turretError,
+            Limelight3A limelight,
+            double angleLL,
+            boolean debugMode,
+            double distanceToGoal,
+            double leftStickY,
+            double leftStickX,
+            double rightStickX
+    ) {
+
         telemetry.addData("x", poseAtual.getX());
         telemetry.addData("y", poseAtual.getY());
         telemetry.addData("velo", flywheelVelocity);
@@ -23,8 +33,7 @@ public class TelemetryHelper {
         if (debugMode) {
             telemetry.addData("turretAngle", turretAngle);
             telemetry.addData("destinationAngle", destinationAngle);
-            telemetry.addData("toTurn", toTurn);
-           // telemetry.addData("angleLL", Turret.angleLL);
+            telemetry.addData("turretError", turretError);
             telemetry.addData("distanceToGoal", distanceToGoal);
             telemetry.addData("flywheelVelocity", flywheelVelocity);
             telemetry.addData("Shooter Goal Distance", distanceToGoal);
@@ -34,7 +43,11 @@ public class TelemetryHelper {
         }
     }
 
-    public static void addMinimalTelemetry(Telemetry telemetry, Pose poseAtual, double flywheelVelocity) {
+    public static void addMinimalTelemetry(
+            Telemetry telemetry,
+            Pose poseAtual,
+            double flywheelVelocity
+    ) {
         telemetry.addData("heading", poseAtual.getHeading());
         telemetry.addData("x", poseAtual.getX());
         telemetry.addData("y", poseAtual.getY());

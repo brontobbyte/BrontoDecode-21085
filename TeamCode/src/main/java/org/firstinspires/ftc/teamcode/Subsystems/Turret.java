@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.tu
 import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants.AutoPoses;
+import org.opencv.core.Mat;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
@@ -18,6 +20,10 @@ import dev.nextftc.hardware.positionable.SetPosition;
 @Configurable
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
+    public static ControlSystem controllerauto;
+    public static double Tkp = 0.012;
+    public static double Tki = 0;
+    public static double Tkd = 0.001;
     private double robotY;
     private double robotX;
     public static double angleLL;
@@ -53,6 +59,7 @@ public class Turret implements Subsystem {
     public static double manualPower = 0.6;
     public static boolean lockAngleEnabled = false;
     public static double lockedAngle = 0;
+    public static double realAngleLLcorrected = 0;
     public static boolean followEnabled = true;
     public static boolean headingEnabled = true;
 
@@ -67,11 +74,11 @@ public class Turret implements Subsystem {
         Turret.angleLL = angleLL;
         this.telemetry = telemetry;
         if (azul) {
-            goalx = 10;
-            goaly = 137;
+            goalx = AutoPoses.goalPoseazul.getX();
+            goaly = AutoPoses.goalPoseazul.getY();
         } else {
-            goalx = 124;
-            goaly = 137;
+            goalx = AutoPoses.goalPoseVermelho.getX();
+            goaly = AutoPoses.goalPoseVermelho.getY();
         }
     }
 
@@ -146,6 +153,7 @@ public class Turret implements Subsystem {
 
         filteredVision = alpha * angleLL + (1 - alpha) * filteredVision;
 
+        /*
         if (lockAngleEnabled) {
             destinationAngle = lockedAngle;
         } else if (followEnabled && limelightActive) {
@@ -168,6 +176,24 @@ public class Turret implements Subsystem {
         } else {
             destinationAngle = calculatedDestinationAngle;
         }
+
+
+         */
+        contador++;
+        if (contador%20 == 0 && Math.abs(angleLL) > 4 && Math.abs(motor.getVelocity()) < 300){
+            realAngleLLcorrected += angleLL;
+            contador = 0;
+        }
+        if (Math.abs(motor.getVelocity()) < 300 && Math.abs(angleLL) > 4){
+            destinationAngle = calculatedDestinationAngle - angleLL/2 - realAngleLLcorrected/2;
+            realAngleLL = angleLL/2;
+        }else{
+            destinationAngle = calculatedDestinationAngle - realAngleLL - realAngleLLcorrected/2;
+        }
+        if (Math.abs(angleLL) < 4){
+            realAngleLLcorrected = 0;
+        }
+
 
         turretAngle = encoderTicksToAngle(motor.getRawTicks());
         double robotAngle = headingEnabled ? heading : 0;
@@ -192,6 +218,9 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
+        controllerauto = ControlSystem.builder()
+                .posPid(Tkp, Tki, Tkd)
+                .build();
         if (manualMode) {
             motor.setPower(manualDirection * manualPower);
             return;

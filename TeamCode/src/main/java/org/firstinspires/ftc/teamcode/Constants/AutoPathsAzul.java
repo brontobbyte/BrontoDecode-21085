@@ -12,7 +12,7 @@ import com.pedropathing.paths.PathChain;
 
 @Configurable
 public class AutoPathsAzul {
-    public static PathChain ShootPreload(Follower follower){
+    public static PathChain ShootPreload(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -20,11 +20,12 @@ public class AutoPathsAzul {
                                 AutoPoses.shootPose1
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
-    public static PathChain IntakeMeio(Follower follower){
-        return  follower.pathBuilder()
+
+    public static PathChain IntakeMeio(Follower follower) {
+        return follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
                                 AutoPoses.shootPose1,
@@ -35,41 +36,67 @@ public class AutoPathsAzul {
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
-    public static PathChain ShootMeio(Follower follower){
-        return  follower.pathBuilder()
+
+    public static PathChain ShootMeio(Follower follower) {
+        return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakeMeioPose,
+                                AutoPoses.gatePose,
                                 AutoPoses.shootPose1
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
-    public static PathChain Gate(Follower follower){
-        return  follower.pathBuilder()
+
+    public static PathChain Gate(Follower follower) {
+        return follower.pathBuilder()
                 .addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 AutoPoses.shootPose1,
+                                AutoPoses.gateCurvedPose,
                                 AutoPoses.gatePose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(160))
                 .build();
     }
-    public static PathChain GateCicle(Follower follower){
-        return  follower.pathBuilder()
+    public static PathChain Gate2(Follower follower) {
+        return follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
+                                AutoPoses.intakeMeioPose,
+                                AutoPoses.gatePose2
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(150))
+                .build();
+    }
+
+    public static PathChain GateCicle(Follower follower) {
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
                                 AutoPoses.gatePose,
-                                AutoPoses.gateCicleCurvedPose,
                                 AutoPoses.gateCiclePose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(150))
                 .build();
     }
-    public static PathChain ShootGate(Follower follower){
+    public static PathChain GateCicleFinal(Follower follower) {
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                AutoPoses.gateCiclePose,
+                                AutoPoses.gateCiclePoseFinal
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
+                .build();
+    }
+
+    public static PathChain ShootGate(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -80,30 +107,33 @@ public class AutoPathsAzul {
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
-    public static PathChain ShootGateCima(Follower follower){
-        return follower.pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                AutoPoses.gateCiclePose,
-                                AutoPoses.shootCurvedPose2,
-                                AutoPoses.shootPose2
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                .build();
-    }
-    public static PathChain IntakeCima(Follower follower){
+
+    public static PathChain ShootGateCima(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.shootPose2,
+                                AutoPoses.gateCiclePose,
+                                AutoPoses.shootPose1
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
+                .build();
+    }
+
+    public static PathChain IntakeCima(Follower follower) {
+        return follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                AutoPoses.shootPose1,
+                                AutoPoses.intakeCimaCurvedPose,
                                 AutoPoses.intakeCimaPose
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
-    public static PathChain ShootCima(Follower follower){
+
+    public static PathChain ShootCima(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -114,7 +144,8 @@ public class AutoPathsAzul {
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
     }
-    public static PathChain IntakeBaixo(Follower follower){
+
+    public static PathChain IntakeBaixo(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
@@ -123,32 +154,30 @@ public class AutoPathsAzul {
                                 AutoPoses.intakeBaixoPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(180))
                 .build();
     }
-    public static PathChain ShootBaixo(Follower follower){
+
+    public static PathChain shootPoselast(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
                                 AutoPoses.intakeBaixoPose,
-                                AutoPoses.shootPose3
+                                AutoPoses.shootPose1
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(-132), Math.toRadians(180))
                 .build();
     }
-
-    public static PathChain saida(Follower follower){
+    public static PathChain last (Follower follower){
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakeBaixoPose,
-                                AutoPoses.shootPose3
+                                AutoPoses.shootPoselast,
+                                AutoPoses.last
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                 .build();
     }
-
-
 }
