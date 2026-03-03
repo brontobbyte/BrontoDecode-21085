@@ -34,8 +34,7 @@ public class AutoConstants {
         public static double turnTurretBy(double degrees, double angleLL, double div) {
             double currentPosition = turretMotor.getCurrentPosition();
             double destinationAngleHeading = angleToEncoderTicks(degrees);
-            destinationAngleLL = (destinationAngleHeading + angleToEncoderTicks(clamp(angleLL, -10, 10))) ;
-            double TARGET_TICK_VALUE = clamp(destinationAngleHeading + currentPosition, angleToEncoderTicks(-170), angleToEncoderTicks(170));
+            double TARGET_TICK_VALUE = clamp(destinationAngleHeading + currentPosition, angleToEncoderTicks(-180), angleToEncoderTicks(180));
             controllerauto.setGoal(new KineticState(TARGET_TICK_VALUE));
             return controllerauto.calculate(new KineticState(
                     turretMotor.getCurrentPosition(),

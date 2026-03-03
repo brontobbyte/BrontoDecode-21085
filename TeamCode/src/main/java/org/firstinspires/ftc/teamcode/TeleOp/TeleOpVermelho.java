@@ -101,7 +101,7 @@ public class TeleOpVermelho extends NextFTCOpMode {
     public void onStartButtonPressed() {
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
 
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry, 0);
         PedroComponent.follower().update();
 
         driverControlled = new PedroDriverControlled(
@@ -155,10 +155,10 @@ public class TeleOpVermelho extends NextFTCOpMode {
         telemetry.addData("yVelo", yVelo);
 
         if ((!(PedroComponent.follower().getAngularVelocity() > 1)) && angleLL != 0.0) {
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry, 0);
             lastAngleLL = angleLL;
         } else {
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, false, telemetry);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, false, telemetry, 0);
         }
 
         Turret.INSTANCE.periodic();

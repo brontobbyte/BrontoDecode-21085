@@ -21,11 +21,18 @@ import dev.nextftc.hardware.positionable.SetPosition;
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
     public static ControlSystem controllerauto;
+    public static ControlSystem controllerTeleop;
     public static double Tkp = 0.012;
     public static double Tki = 0;
     public static double Tkd = 0.001;
+
+    public static double TTkp = 0.012;
+    public static double TTki = 0;
+    public static double TTkd = 0.001;
     private double robotY;
     private double robotX;
+    private double compensation;
+
     public static double angleLL;
     private double realAngleLL = 0;
     public static double destinationAngle;
@@ -47,8 +54,6 @@ public class Turret implements Subsystem {
     public static double offset = 3;
     public static double RecoveryOffset = 0;
 
-    private static double visionMultiplier = 0.380;
-    private static double offsetAdjustmentRate = 0.43;
     private static boolean azul = true;
     private boolean wrapped = false;
     public int contador = 0;
@@ -56,6 +61,8 @@ public class Turret implements Subsystem {
 
     public static boolean manualMode = false;
     public static double manualDirection = 0;
+    public static double reset = 0;
+
     public static double manualPower = 0.6;
     public static boolean lockAngleEnabled = false;
     public static double lockedAngle = 0;
@@ -67,12 +74,13 @@ public class Turret implements Subsystem {
     private Turret() {
     }
 
-    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, boolean azul, Telemetry telemetry) {
+    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, boolean azul, Telemetry telemetry, double compensation) {
         this.robotX = robotX;
         this.robotY = robotY;
         this.heading = heading;
         Turret.angleLL = angleLL;
         this.telemetry = telemetry;
+        this.compensation = compensation;
         if (azul) {
             goalx = AutoPoses.goalPoseazul.getX();
             goaly = AutoPoses.goalPoseazul.getY();
@@ -130,6 +138,9 @@ public class Turret implements Subsystem {
         lockAngleEnabled = false;
         followEnabled = true;
     }
+    public void resetTurret() {
+        reset = motor.getCurrentPosition();
+    }
 
     public static void disableHeading() {
         headingEnabled = false;
@@ -180,33 +191,39 @@ public class Turret implements Subsystem {
 
          */
         contador++;
-        if (contador%20 == 0 && Math.abs(angleLL) > 4 && Math.abs(motor.getVelocity()) < 300){
-            realAngleLLcorrected += angleLL;
-            contador = 0;
-        }
-        if (Math.abs(motor.getVelocity()) < 300 && Math.abs(angleLL) > 4){
-            destinationAngle = calculatedDestinationAngle - angleLL/2 - realAngleLLcorrected/2;
-            realAngleLL = angleLL/2;
+//        if (contador%20 == 0 && Math.abs(angleLL) > 4 && Math.abs(motor.getVelocity()) < 300){
+//            realAngleLLcorrected = angleLL;
+//            contador = 0;
+//        }
+//        if (Math.abs(motor.getVelocity()) < 300 && Math.abs(angleLL) > 4){
+//            destinationAngle = calculatedDestinationAngle - angleLL/2 - realAngleLLcorrected/2;
+//            realAngleLL = angleLL/2;
+//        }else{
+//            destinationAngle = calculatedDestinationAngle - realAngleLL - realAngleLLcorrected/2;
+//        }
+//        if (Math.abs(angleLL) < 4){
+//            realAngleLLcorrected = 0;
+//        }
+        if (motor.getVelocity() < 100) {
+            destinationAngle = calculatedDestinationAngle - angleLL + compensation;
+            realAngleLL = angleLL;
         }else{
-            destinationAngle = calculatedDestinationAngle - realAngleLL - realAngleLLcorrected/2;
-        }
-        if (Math.abs(angleLL) < 4){
-            realAngleLLcorrected = 0;
+            destinationAngle = calculatedDestinationAngle - realAngleLL + compensation;
         }
 
 
-        turretAngle = encoderTicksToAngle(motor.getRawTicks());
-        double robotAngle = headingEnabled ? heading : 0;
-        turretAngle = ((turretAngle + 170) % 360) - 170;
-        destinationAngle = ((destinationAngle + 170) % 360) - 170;
+        turretAngle = encoderTicksToAngle(motor.getRawTicks() - reset);
+        double robotAngle = heading;
+        turretAngle = ((turretAngle + 180) % 360) - 180;
+        destinationAngle = ((destinationAngle + 180) % 360) - 180;
 
         toTurn = destinationAngle - (turretAngle + robotAngle);
         toTurn = ((toTurn + 180) % 360) - 180;
 
-        if (turretAngle > 170 || (toTurn > 0 && turretAngle + toTurn > 170)) {
+        if (turretAngle > 180 || (toTurn > 0 && turretAngle + toTurn > 180)) {
             toTurn -= 360;
             wrapped = true;
-        } else if (turretAngle < -170 || (toTurn < 0 && turretAngle + toTurn < -170)) {
+        } else if (turretAngle < -180 || (toTurn < 0 && turretAngle + toTurn < -180)) {
             toTurn += 360;
             wrapped = true;
         } else {
@@ -221,15 +238,21 @@ public class Turret implements Subsystem {
         controllerauto = ControlSystem.builder()
                 .posPid(Tkp, Tki, Tkd)
                 .build();
+
+        controllerTeleop = ControlSystem.builder()
+                .posPid(TTkp, TTki, TTkd)
+                .build();
+
         if (manualMode) {
             motor.setPower(manualDirection * manualPower);
             return;
         }
 
         double power = turnTurretBy(aimToObject(), angleLL, div);
+
         if (Math.abs(toTurn) < 1) {
             power = 0;
         }
-        motor.setPower(power + RecoveryOffset);
+        motor.setPower(power);
     }
 }

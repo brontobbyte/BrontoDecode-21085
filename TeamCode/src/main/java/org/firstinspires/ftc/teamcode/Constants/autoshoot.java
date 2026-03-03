@@ -4,9 +4,14 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.math.MathFunctions;
 @Configurable
 public class autoshoot {
-    public static double flywheeloffset = 0;
+    public static double flywheeloffset = -200;
     public static double hoodOffset = 0;
     public static double flywheelSpeed(double goalDist) {
+        if (goalDist > 140) {
+            flywheeloffset = -300;
+        }else{
+            flywheeloffset = -200;
+        }
         double speed =
                 (0.00264319 * Math.pow(goalDist, 3))
                         - (0.55359 * Math.pow(goalDist, 2))

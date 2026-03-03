@@ -57,7 +57,6 @@ public class Auto21Azul extends NextFTCOpMode {
     }
 
     private static final MotorEx motor = new MotorEx("turret").brakeMode();
-
     public static double Fkp = 0.005;
     public static double Fki = 0.000000001;
     public static double Fkd = 0;
@@ -87,6 +86,7 @@ public class Auto21Azul extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        Hood.INSTANCE.setHoodPos(Hood.pos);
         Intake.INSTANCE.initialize();
         Intake.INSTANCE.intake.invoke();
         Intake.INSTANCE.stop.invoke();
@@ -108,7 +108,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public void onWaitForStart() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry, 0);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         //Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 
@@ -120,6 +120,7 @@ public class Auto21Azul extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
+        Hood.INSTANCE.setHoodPos(Hood.pos);
         motor.brakeMode();
         CommandManager.INSTANCE.scheduleCommand(
                 new SequentialGroup(
@@ -154,17 +155,15 @@ public class Auto21Azul extends NextFTCOpMode {
 
         Flywheel.setPower(power);
 
-        //
-
         PedroComponent.follower().update();
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), 0, true, telemetry);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), 0, true, telemetry, 0);
         distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul.mirror());
-        Shooter.INSTANCE.setGoalDistance(distanceToGoal);
-        Shooter.INSTANCE.periodic();
+        //Shooter.INSTANCE.setGoalDistance(distanceToGoal);
+        //Shooter.INSTANCE.periodic();
         //Hood.INSTANCE.setGoalDistance(distanceToGoal);
-        Hood.INSTANCE.periodic();
+        //Hood.INSTANCE.periodic();
         TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
                 Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,
                 limelight, angleLL, debugMode, distanceToGoal, 0.0, 0.0, 0.0);
@@ -238,6 +237,7 @@ public class Auto21Azul extends NextFTCOpMode {
                         shootar()
         );
     }
+
     private SequentialGroup intakeMeio() {
         return new SequentialGroup(
                 intake(),
@@ -246,7 +246,6 @@ public class Auto21Azul extends NextFTCOpMode {
 
         );
     }
-
     private SequentialGroup preload() {
         return new SequentialGroup(
                 new FollowPath(AutoPathsAzul.ShootPreload(PedroComponent.follower())), //Shoot Preload
@@ -254,7 +253,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 intake()
         );
     }
-
     private SequentialGroup intakeCima() {
         return new SequentialGroup(
                 new ParallelGroup(
@@ -264,7 +262,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 intake()
         );
     }
-
     private SequentialGroup shootCima() {
         return new SequentialGroup(
                 intake(),
@@ -273,7 +270,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 shootar()
         );
     }
-
     private SequentialGroup intakeBaixo() {
         return new SequentialGroup(
                 new ParallelGroup(
@@ -283,7 +279,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 intake()
         );
     }
-
     private SequentialGroup shootfinal() {
         return new SequentialGroup(
                 new FollowPath(AutoPathsAzul.shootPoselast(PedroComponent.follower())),
@@ -291,7 +286,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 shootar()
         );
     }
-
     public class LLalign extends Command {
         private boolean done = false;
         private ControlSystem controller;
@@ -305,7 +299,6 @@ public class Auto21Azul extends NextFTCOpMode {
             requires();
             setInterruptible(true);
         }
-
         public double getFilteredAngle() {
             return filteredAngle;
         }
@@ -356,8 +349,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 }
             }
         }
-
-
         @Override
         public void stop(boolean interrupted) {
             motor.setPower(0);

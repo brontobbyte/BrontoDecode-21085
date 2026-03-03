@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalShootPoseAzul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.calculatedDestinationAngle;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.destinationAngle;
@@ -65,6 +66,12 @@ public class TeleOpAzul extends NextFTCOpMode {
     private Limelight3A limelight;
     private double angleLL = 0;
     private double lastAngleLL = 0;
+    private double compensationX = 0;
+    private double compensationY = 0;
+
+
+    public static double offsetturret = 1;
+
     private DriverControlledCommand driverControlled;
     public static boolean debugMode = true;
 
@@ -89,7 +96,7 @@ public class TeleOpAzul extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
         PedroComponent.follower().update();
 
         driverControlled = new PedroDriverControlled(
@@ -121,13 +128,16 @@ public class TeleOpAzul extends NextFTCOpMode {
                     Intake.INSTANCE.stop
             ).schedule();
         });
-        Gamepads.gamepad1().x().whenTrue(() -> {
-            resetPose();
-        });
+        Gamepads.gamepad1().x().whenBecomesTrue(this::resetPose);
+        Gamepads.gamepad1().a().whenBecomesTrue(this::resetTurretPose);
+
     }
     private void resetPose() {
-        PedroComponent.follower().setStartingPose(poseInicial);
+        PedroComponent.follower().setPose(poseInicial);
         PedroComponent.follower().update();
+    }
+    private void resetTurretPose() {
+        Turret.INSTANCE.resetTurret();
     }
     @Override
     public void onUpdate() {
@@ -139,16 +149,32 @@ public class TeleOpAzul extends NextFTCOpMode {
         Pose poseTurret2 = new Pose(0, 0, Math.toRadians(destinationAngle));
         Pose poseTurretAtual = new Pose(0, 0, Math.toRadians(toTurn));
         angleLL = -LimelightHelper.updateAngleLL(limelight);
+        double xVelo = PedroComponent.follower().getVelocity().getXComponent();
+        double yVelo = PedroComponent.follower().getVelocity().getYComponent();
+        if (xVelo < -10){
+            compensationX = xVelo/4;
+        }else{
+            compensationX = 0;
+        }
+        if (yVelo > 10){
+            compensationY = yVelo/1.5;
+        }else{
+            compensationY = 0;
+        }
+        telemetry.addData("xvelo", xVelo);
+        telemetry.addData("yvelo", yVelo);
+        telemetry.addData("compensation", compensationX + compensationY);
+        telemetry.update();
 
         if ((!(PedroComponent.follower().getAngularVelocity() > 1)) && angleLL != 0.0) {
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL + offsetturret, true, telemetry, compensationX + compensationY);
             lastAngleLL = angleLL;
         } else {
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, true, telemetry);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, true, telemetry, compensationX + compensationY);
         }
 
         Turret.INSTANCE.periodic();
-        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPoseazul.mirror());
+        double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalShootPoseAzul);
 
         panelsField.setStyle(robotLook);
         panelsField.moveCursor(poseAtual.getX(), poseAtual.getY());
@@ -178,8 +204,8 @@ public class TeleOpAzul extends NextFTCOpMode {
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         Shooter.INSTANCE.periodic();
 
-      //  Hood.INSTANCE.setGoalDistance(poseAtual.distanceFrom(goalPoseazul));
-       // Hood.INSTANCE.periodic();
+        Hood.INSTANCE.setGoalDistance(poseAtual.distanceFrom(goalPoseazul));
+        Hood.INSTANCE.periodic();
 
         TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
                 Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,

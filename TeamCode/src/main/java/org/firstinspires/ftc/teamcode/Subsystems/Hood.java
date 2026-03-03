@@ -25,11 +25,13 @@ public class Hood implements Subsystem {
     }
     @Override
     public void periodic() {
-        servoHood.setPosition(pos);
+
     }
     public Command set = new SetPosition(servoHood, 0.61).requires(this);
 
-
+    public void setHoodPos(double position){
+        servoHood.setPosition(position);
+    }
     public void setGoalDistance(double goalDistance) {
         double angle = autoshoot.hoodAngle(goalDistance);
         setHoodPosition(angle);

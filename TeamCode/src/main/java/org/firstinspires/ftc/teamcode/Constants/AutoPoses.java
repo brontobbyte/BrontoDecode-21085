@@ -23,6 +23,10 @@ public class AutoPoses {
     public static Pose intakeBaixoCurvedPose = new Pose(70, 35, Math.toRadians(0));
     public static Pose goalPoseazul          = new Pose(0, 144, Math.toRadians(0));
     public static Pose goalPoseVermelho      = new Pose(144, 144, Math.toRadians(0));
+    public static Pose goalShootPoseVermelho      = new Pose(124, 20, Math.toRadians(0));
+    public static Pose goalShootPoseAzul      = new Pose(124, 124, Math.toRadians(0));
+
+
     public static Pose shootPoselast         = new Pose(60, 80, Math.toRadians(0));
     public static Pose last                  = new Pose(45, 63, Math.toRadians(0));
 }
