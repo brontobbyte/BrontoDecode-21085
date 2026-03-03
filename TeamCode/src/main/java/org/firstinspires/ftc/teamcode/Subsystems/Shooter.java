@@ -31,6 +31,9 @@ public class Shooter implements Subsystem {
 
     @Override
     public void periodic() { }
+    public void setSpeed(double speed){
+        setVelocity(speed);
+    }
 
     public void setGoalDistance(double goalDistance) {
         double speed = autoshoot.flywheelSpeed(goalDistance);

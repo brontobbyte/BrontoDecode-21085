@@ -69,6 +69,7 @@ public class TeleOpAzul extends NextFTCOpMode {
     private double compensationX = 0;
     private double compensationY = 0;
 
+    private double shooter = 0;
 
     public static double offsetturret = 1;
 
@@ -151,20 +152,20 @@ public class TeleOpAzul extends NextFTCOpMode {
         angleLL = -LimelightHelper.updateAngleLL(limelight);
         double xVelo = PedroComponent.follower().getVelocity().getXComponent();
         double yVelo = PedroComponent.follower().getVelocity().getYComponent();
-        if (xVelo < -10){
+        if (Math.abs(xVelo) < -10){
             compensationX = xVelo/4;
         }else{
             compensationX = 0;
         }
-        if (yVelo > 10){
-            compensationY = yVelo/1.5;
+        if (Math.abs(yVelo) > 10){
+            compensationY = yVelo/1.3;
         }else{
             compensationY = 0;
         }
-        telemetry.addData("xvelo", xVelo);
-        telemetry.addData("yvelo", yVelo);
-        telemetry.addData("compensation", compensationX + compensationY);
-        telemetry.update();
+        //telemetry.addData("xvelo", xVelo);
+        //telemetry.addData("yvelo", yVelo);
+        //telemetry.addData("compensation", compensationX + compensationY);
+        //telemetry.update();
 
         if ((!(PedroComponent.follower().getAngularVelocity() > 1)) && angleLL != 0.0) {
             Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL + offsetturret, true, telemetry, compensationX + compensationY);
@@ -201,6 +202,7 @@ public class TeleOpAzul extends NextFTCOpMode {
         panelsField.moveCursor(x5, y5);
         panelsField.line(x6, y6);
         panelsField.update();
+
         Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         Shooter.INSTANCE.periodic();
 
