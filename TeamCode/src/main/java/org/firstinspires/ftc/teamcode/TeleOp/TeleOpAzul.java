@@ -73,6 +73,9 @@ public class TeleOpAzul extends NextFTCOpMode {
 
     public static double offsetturret = 1;
 
+    public static double compensation = 1.8;
+
+
     private DriverControlledCommand driverControlled;
     public static boolean debugMode = true;
 
@@ -158,7 +161,7 @@ public class TeleOpAzul extends NextFTCOpMode {
             compensationX = 0;
         }
         if (Math.abs(yVelo) > 10){
-            compensationY = yVelo/1.3;
+            compensationY = yVelo/compensation;
         }else{
             compensationY = 0;
         }

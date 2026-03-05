@@ -6,23 +6,16 @@ import com.pedropathing.geometry.Pose;
 @Configurable
 public class AutoPosesFar {
 
-    public static Pose PoseInicialFar   = new Pose(59.083, 9.541, 0);
-    public static Pose fileiraBaixoControl = new Pose(37.211, 38.000, 0);
-    public static Pose fileiraBaixoEnd     = new Pose(13.064, 35.339, 0);
-
-    public static Pose shoot2Start = new Pose(13.064, 35.339, 0);
-    public static Pose shoot2End   = new Pose(61.431, 28.404, 0);
-
-    public static Pose intakeHpStart   = new Pose(61.431, 28.404, 0);
-    public static Pose intakeHpControl = new Pose(29.261, 8.986, 0);
-    public static Pose intakeHpEnd     = new Pose(10.578, 8.431, 0);
-
-    public static Pose voltaHpStart = new Pose(10.578, 8.431, 0);
-    public static Pose voltaHpEnd   = new Pose(19.881, 8.523, 0);
-
-    public static Pose intake2Start = new Pose(19.881, 8.523, 0);
-    public static Pose intake2End   = new Pose(10.743, 8.615, 0);
-
-    public static Pose path6Start = new Pose(10.743, 8.615, 0);
-    public static Pose path6End   = new Pose(61.000, 28.000, 0);
+    public static Pose PoseInicialFar = new Pose(63, 8.000, Math.toRadians(180));
+    public static Pose intakeEnd = new Pose(17.000, 8.000, Math.toRadians(180));
+    public static Pose intakeDuplicateEnd = new Pose(23.547, 8.000, Math.toRadians(180));
+    public static Pose intakeDuplicate2End = new Pose(9.610, 8.000, Math.toRadians(180));
+    public static Pose shootPoseFar = new Pose(63, 8.000, Math.toRadians(180));
+    public static Pose fileiraBaixoControl = new Pose(66.022, 36.604, Math.toRadians(180));
+    public static Pose fileiraBaixoEnd = new Pose(23.547, 36.604, Math.toRadians(180));
+    public static Pose shootPoseFar_1 = new Pose(63, 8.000, Math.toRadians(180));
+    public static Pose line7End = new Pose(17, 16.515, Math.toRadians(180));
+    public static Pose line8End = new Pose(25, 13, Math.toRadians(180));
+    public static Pose line9End = new Pose(16, 25, Math.toRadians(180));
+    public static Pose shootPoseFar_2 = new Pose(63, 8.000, Math.toRadians(180));
 }

@@ -1,239 +1,291 @@
-//
-//
-///* ============================================================= *
-// *        Pedro Pathing Plus Visualizer — Auto-Generated         *
-// *                                                               *
-// *  Version: 1.7.4.                                              *
-// *  Copyright (c) 2026 Matthew Allen                             *
-// *                                                               *
-// *  THIS FILE IS AUTO-GENERATED — DO NOT EDIT MANUALLY.          *
-// *  Changes will be overwritten when regenerated.                *
-// * ============================================================= */
-//
-//
-//package org.firstinspires.ftc.teamcode.Autos;
-//
-//import com.pedropathing.follower.Follower;
-//import com.pedropathing.geometry.BezierCurve;
-//import com.pedropathing.geometry.BezierLine;
-//import com.pedropathing.geometry.Pose;
-//import com.pedropathing.paths.PathChain;
-//import com.qualcomm.robotcore.hardware.HardwareMap;
-//
-//import dev.nextftc.core.commands.groups.SequentialGroup;
-//import dev.nextftc.core.commands.groups.ParallelRaceGroup;
-//import dev.nextftc.core.commands.Delay;
-//import dev.nextftc.core.commands.WaitUntil;
-//import dev.nextftc.core.command.InstantCommand;
-//import dev.nextftc.extensions.pedro.command.FollowPath;
-//
-//import org.firstinspires.ftc.robotcore.external.Telemetry;
-//
-//import com.pedropathingplus.pathing.ProgressTracker;
-//import com.pedropathingplus.pathing.NamedCommands;
-//import java.io.IOException;
-//import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-//
-//public class trajectory__4_ extends SequentialGroup {
-//
-//    private final Follower follower;
-//    private final ProgressTracker progressTracker;
-//
-//    // Poses
-//    private Pose startPoint;
-//    private Pose PreLoadEFlileiraMeio;
-//    private Pose PreLoadEFlileiraMeio_line0_control1;
-//    private Pose ShootPose;
-//    private Pose PrimeiraFileira;
-//    private Pose ShootGate;
-//    private Pose Gate;
-//    private Pose Gate_line4_control1;
-//    private Pose GiradinhaGate;
-//    private Pose Gate_line7_control1;
-//    private Pose 3fileira;
-//    private Pose 3fileira_line10_control1;
-//    private Pose point12;
-//
-//    // Path chains
-//    private PathChain startPointTOPreLoadEFlileiraMeio;
-//    private PathChain PreLoadEFlileiraMeioTOShootPose;
-//    private PathChain ShootPoseTOPrimeiraFileira;
-//    private PathChain PrimeiraFileiraTOShootGate;
-//    private PathChain ShootGateTOGate;
-//    private PathChain GateTOGiradinhaGate;
-//    private PathChain GiradinhaGateTOShootGate;
-//    private PathChain ShootGateTOGate_1;
-//    private PathChain GateTOGiradinhaGate_1;
-//    private PathChain GiradinhaGateTOShootGate_1;
-//    private PathChain ShootGateTO3fileira;
-//    private PathChain 3fileiraTOpoint12;
-//
-//    public trajectory__4_(final Drivetrain drive, HardwareMap hw, Telemetry telemetry) throws IOException {
-//        this.follower = drive.getFollower();
-//        this.progressTracker = new ProgressTracker(follower, telemetry);
-//
-//
-//
-//        // Load poses
-//        startPoint = new Pose(21.594, 123.069, Math.toRadians(143));
-//        PreLoadEFlileiraMeio = new Pose(24.055, 59.495, Math.toRadians(180));
-//        PreLoadEFlileiraMeio_line0_control1 = new Pose(69.630, 59.495);
-//        ShootPose = new Pose(51.907, 79.756, Math.toRadians(180));
-//        PrimeiraFileira = new Pose(24.055, 83.905, Math.toRadians(180));
-//        ShootGate = new Pose(51.907, 79.756, Math.toRadians(180));
-//        Gate = new Pose(16.000, 64.642, Math.toRadians(180));
-//        Gate_line4_control1 = new Pose(43.836, 63.818);
-//        GiradinhaGate = new Pose(12.420, 59.495, Math.toRadians(145));
-//        Gate_line7_control1 = new Pose(43.836, 63.818);
-//        3fileira = new Pose(24.055, 35.648, Math.toRadians(180));
-//        3fileira_line10_control1 = new Pose(42.693, 32.766);
-//        point12 = new Pose(59.012, 70.616, Math.toRadians(-145));
-//
-//        follower.setStartingPose(startPoint);
-//
-//        buildPaths();
-//
-//        addCommands(
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(startPointTOPreLoadEFlileiraMeio);
-//                            progressTracker.setCurrentPathName("startPointTOPreLoadEFlileiraMeio");
-//                        }),
-//                new FollowPath(startPointTOPreLoadEFlileiraMeio),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(PreLoadEFlileiraMeioTOShootPose);
-//                            progressTracker.setCurrentPathName("PreLoadEFlileiraMeioTOShootPose");
-//                        }),
-//                new FollowPath(PreLoadEFlileiraMeioTOShootPose),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(ShootPoseTOPrimeiraFileira);
-//                            progressTracker.setCurrentPathName("ShootPoseTOPrimeiraFileira");
-//                        }),
-//                new FollowPath(ShootPoseTOPrimeiraFileira),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(PrimeiraFileiraTOShootGate);
-//                            progressTracker.setCurrentPathName("PrimeiraFileiraTOShootGate");
-//                        }),
-//                new FollowPath(PrimeiraFileiraTOShootGate),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(ShootGateTOGate);
-//                            progressTracker.setCurrentPathName("ShootGateTOGate");
-//                        }),
-//                new FollowPath(ShootGateTOGate),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(GateTOGiradinhaGate);
-//                            progressTracker.setCurrentPathName("GateTOGiradinhaGate");
-//                        }),
-//                new FollowPath(GateTOGiradinhaGate),
-//                new Delay(2.000),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(GiradinhaGateTOShootGate);
-//                            progressTracker.setCurrentPathName("GiradinhaGateTOShootGate");
-//                        }),
-//                new FollowPath(GiradinhaGateTOShootGate),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(ShootGateTOGate_1);
-//                            progressTracker.setCurrentPathName("ShootGateTOGate_1");
-//                        }),
-//                new FollowPath(ShootGateTOGate_1),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(GateTOGiradinhaGate_1);
-//                            progressTracker.setCurrentPathName("GateTOGiradinhaGate_1");
-//                        }),
-//                new FollowPath(GateTOGiradinhaGate_1),
-//                new Delay(2.000),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(GiradinhaGateTOShootGate_1);
-//                            progressTracker.setCurrentPathName("GiradinhaGateTOShootGate_1");
-//                        }),
-//                new FollowPath(GiradinhaGateTOShootGate_1),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(ShootGateTO3fileira);
-//                            progressTracker.setCurrentPathName("ShootGateTO3fileira");
-//                        }),
-//                new FollowPath(ShootGateTO3fileira),
-//                new InstantCommand(
-//                        () -> {
-//                            progressTracker.setCurrentChain(3fileiraTOpoint12);
-//                            progressTracker.setCurrentPathName("3fileiraTOpoint12");
-//                        }),
-//                new FollowPath(3fileiraTOpoint12)
-//        );
-//    }
-//
-//    public void buildPaths() {
-//        startPointTOPreLoadEFlileiraMeio = follower.pathBuilder()
-//                .addPath(new BezierCurve(startPoint, PreLoadEFlileiraMeio_line0_control1, PreLoadEFlileiraMeio))
-//                .setLinearHeadingInterpolation(Math.toRadians(143), Math.toRadians(180))
-//                .build();
-//
-//        PreLoadEFlileiraMeioTOShootPose = follower.pathBuilder()
-//                .addPath(new BezierLine(PreLoadEFlileiraMeio, ShootPose))
-//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-//                .setReversed()
-//                .build();
-//
-//        ShootPoseTOPrimeiraFileira = follower.pathBuilder()
-//                .addPath(new BezierLine(ShootPose, PrimeiraFileira))
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .build();
-//
-//        PrimeiraFileiraTOShootGate = follower.pathBuilder()
-//                .addPath(new BezierLine(PrimeiraFileira, ShootGate))
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .setReversed()
-//                .build();
-//
-//        ShootGateTOGate = follower.pathBuilder()
-//                .addPath(new BezierCurve(ShootGate, Gate_line4_control1, Gate))
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .build();
-//
-//        GateTOGiradinhaGate = follower.pathBuilder()
-//                .addPath(new BezierLine(Gate, GiradinhaGate))
-//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(145))
-//                .build();
-//
-//        GiradinhaGateTOShootGate = follower.pathBuilder()
-//                .addPath(new BezierLine(GiradinhaGate, ShootGate))
-//                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
-//                .setReversed()
-//                .build();
-//
-//        ShootGateTOGate_1 = follower.pathBuilder()
-//                .addPath(new BezierCurve(ShootGate, Gate_line7_control1, Gate))
-//                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .build();
-//
-//        GateTOGiradinhaGate_1 = follower.pathBuilder()
-//                .addPath(new BezierLine(Gate, GiradinhaGate))
-//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(145))
-//                .build();
-//
-//        GiradinhaGateTOShootGate_1 = follower.pathBuilder()
-//                .addPath(new BezierLine(GiradinhaGate, ShootGate))
-//                .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(180))
-//                .setReversed()
-//                .build();
-//
-//        ShootGateTO3fileira = follower.pathBuilder()
-//                .addPath(new BezierCurve(ShootGate, 3fileira_line10_control1, 3fileira))
-//                .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(180))
-//                .build();
-//
-//        3fileiraTOpoint12 = follower.pathBuilder()
-//                .addPath(new BezierLine(3fileira, point12))
-//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-145))
-//                .build();
-//    }
-//}
+package org.firstinspires.ftc.teamcode.Autos;
+import static com.pedropathing.math.MathFunctions.clamp;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPosesFar.PoseInicialFar;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkd;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tki;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkp;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.controllerauto;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.CommandManager;
+import dev.nextftc.core.commands.delays.Delay;
+
+import dev.nextftc.core.commands.delays.WaitUntil;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.FollowPath;
+import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.hardware.controllable.MotorGroup;
+import dev.nextftc.hardware.impl.MotorEx;
+
+import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.ams.AMSColorSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.sun.tools.javac.util.MandatoryWarningHandler;
+
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
+import org.firstinspires.ftc.teamcode.Constants.AutoPathsAzul;
+import org.firstinspires.ftc.teamcode.Constants.AutoPathsFar;
+import org.firstinspires.ftc.teamcode.Constants.PoseManager;
+import org.firstinspires.ftc.teamcode.Subsystems.Hood;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Lock;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Turret;
+import org.firstinspires.ftc.teamcode.Constants.LimelightHelper;
+import org.firstinspires.ftc.teamcode.Constants.TelemetryHelper;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+@Configurable
+@Autonomous
+public class AutoFarAzul extends NextFTCOpMode {
+    {
+        addComponents(
+                new SubsystemComponent(Intake.INSTANCE, Lock.INSTANCE, Hood.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE),
+                new PedroComponent(Constants::createFollower)
+        );
+    }
+
+    public static double Fkp = 0.005;
+    public static double Fki = 0.000000001;
+    public static double Fkd = 0;
+    public static double Fks = 0.17;
+    public static double Fka = 6;
+    public static double Fkv = 0.00028;
+    private static final MotorEx motor = new MotorEx("turret").brakeMode();
+
+    private final MotorGroup Flywheel = new MotorGroup(
+            new MotorEx("f1"),
+            new MotorEx("f2")
+    );
+
+
+    public static boolean debugMode = true;
+    public static double distanceToGoal;
+    public static double kp = 0.12;
+    public static double goal = 1900;
+    public static double tol = 1.5;
+
+    private ControlSystem turretHoldController;
+    private double turretInitialPosition = 0;
+
+    public static double gatedelay = 1.6;
+
+    public static double carolina = 0.8;
+    public static double filter = 0;
+    private static ControlSystem controller;
+    Limelight3A limelight;
+    private double angleLL = 0;
+
+    @Override
+    public void onInit() {
+        Hood.INSTANCE.setHoodPos(Hood.pos);
+        Intake.INSTANCE.initialize();
+        Intake.INSTANCE.intake.invoke();
+        Intake.INSTANCE.stop.invoke();
+        Lock.INSTANCE.closed.invoke();
+        Lock.INSTANCE.open.invoke();
+        Hood.INSTANCE.set.invoke();
+        Shooter.INSTANCE.getPower();
+        angleLL = 0;
+        PedroComponent.follower().setStartingPose(PoseInicialFar);
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(400);
+        limelight.pipelineSwitch(5);
+        limelight.start();
+        CommandManager.INSTANCE.scheduleCommand(Lock.INSTANCE.open);
+        new AutoPathsAzul();
+    }
+
+    @Override
+    public void onWaitForStart() {
+        angleLL = LimelightHelper.updateAngleLL(limelight);
+        Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
+        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
+        //Shooter.INSTANCE.setGoalDistance(distanceToGoal);
+
+        TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
+                Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,
+                limelight, angleLL, debugMode, distanceToGoal, 0.0, 0.0, 0.0);
+        telemetry.update();
+    }
+
+    @Override
+    public void onStartButtonPressed() {
+
+        turretInitialPosition = motor.getCurrentPosition();
+
+        turretHoldController = ControlSystem.builder()
+                .posPid(0.008, 0, 0)
+                .build();
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Hood.INSTANCE.setHoodPos(Hood.pos);
+
+        CommandManager.INSTANCE.scheduleCommand(
+                new SequentialGroup(
+                        new Delay(2),
+                        intakePaths(),
+                        fileiraPaths(),
+                        FinalPaths()
+                )
+        );
+
+        PedroComponent.follower().update();
+    }
+
+    @Override
+    public void onUpdate() {
+
+        ControlSystem controlSystem = ControlSystem.builder()
+                .velPid(Fkp, Fki, Fkd)
+                .basicFF(Fkv, Fka, Fks)
+                .build();
+
+        controlSystem.setGoal(new KineticState(0, goal));
+
+        double flywheelPower = controlSystem.calculate(
+                new KineticState(
+                        Flywheel.getCurrentPosition(),
+                        Flywheel.getVelocity()
+                )
+        );
+
+        Flywheel.setPower(flywheelPower);
+        turretHoldController.setGoal(new KineticState(turretInitialPosition));
+        double turretPower = turretHoldController.calculate(
+                new KineticState(
+                        motor.getCurrentPosition(),
+                        motor.getVelocity()
+                )
+        );
+        motor.setPower(clamp(turretPower, -0.5, 0.5));
+
+        PedroComponent.follower().update();
+
+        distanceToGoal = PedroComponent.follower()
+                .getPose()
+                .distanceFrom(goalPoseazul);
+
+        TelemetryHelper.addCommonTelemetry(
+                telemetry,
+                PedroComponent.follower().getPose(),
+                Shooter.INSTANCE.getVelocity(),
+                turretAngle,
+                Turret.destinationAngle,
+                toTurn,
+                limelight,
+                0,
+                debugMode,
+                distanceToGoal,
+                0.0,
+                0.0,
+                0.0
+        );
+
+        telemetry.update();
+    }
+
+    @Override
+    public void onStop() {
+        //Shooter.INSTANCE.setGoalDistance(0);
+        PoseManager.currentPose = PedroComponent.follower().getPose();
+    }
+
+    private SequentialGroup shootar() {
+        return new SequentialGroup(
+                Lock.INSTANCE.open,
+                Intake.INSTANCE.intake,
+                new Delay(0.7),
+                Intake.INSTANCE.stop,
+                new Delay(0.1),
+                Intake.INSTANCE.intake,
+                new Delay(0.3)
+        );
+    }
+    private SequentialGroup intake() {
+        return new SequentialGroup(
+                Lock.INSTANCE.closed,
+                Intake.INSTANCE.intake
+        );
+    }
+    private SequentialGroup stopintake() {
+        return new SequentialGroup(
+                Intake.INSTANCE.stop
+        );
+    }
+    private SequentialGroup intakePaths() {
+        return new SequentialGroup(
+                new Delay(gatedelay),
+                shootar(),
+                intake(),
+                new FollowPath(AutoPathsFar.Intake(PedroComponent.follower())),
+                new FollowPath(AutoPathsFar.IntakeDuplicate(PedroComponent.follower())),
+                //new FollowPath(AutoPathsFar.IntakeDuplicate2(PedroComponent.follower())),
+                new FollowPath(AutoPathsFar.ShootPoseFar(PedroComponent.follower())),
+                shootar(),
+                intake()
+        );
+    }
+
+    private SequentialGroup fileiraPaths() {
+        return new SequentialGroup(
+                new FollowPath(AutoPathsFar.FileiraBaixo(PedroComponent.follower())),
+                new FollowPath(AutoPathsFar.ShootPoseFar1(PedroComponent.follower())),
+                shootar(),
+                intake()
+        );
+    }
+
+    private SequentialGroup FinalPaths() {
+        return new SequentialGroup(
+                new FollowPath(AutoPathsFar.Line7(PedroComponent.follower())),
+                //new FollowPath(AutoPathsFar.Line8(PedroComponent.follower())),
+               // new FollowPath(AutoPathsFar.Line9(PedroComponent.follower())),
+                new FollowPath(AutoPathsFar.ShootPoseFar(PedroComponent.follower())),
+                shootar()
+        );
+    }
+
+    public class LLalign extends Command {
+        private boolean done = false;
+        private ControlSystem controller;
+        private double tolerancia = tol;
+        private double offset = 0;
+        private double filteredAngle = filter;
+        private final double alpha = carolina;
+        private boolean started = false;
+
+        public LLalign() {
+            requires();
+            setInterruptible(true);
+        }
+        public double getFilteredAngle() {
+            return filteredAngle;
+        }
+        @Override
+        public boolean isDone() {
+            return done;
+        }
+
+        @Override
+        public void start() {
+            done = false;
+            controller = ControlSystem.builder()
+                    .posPid(0.008, Tki, Tkd)
+                    .build();
+            filteredAngle = 0;
+        }
+    }
+}
