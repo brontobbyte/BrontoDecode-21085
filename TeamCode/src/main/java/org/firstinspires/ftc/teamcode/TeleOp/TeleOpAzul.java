@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import dev.nextftc.bindings.Button;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
@@ -168,7 +169,8 @@ public class TeleOpAzul extends NextFTCOpMode {
             Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL + offsetturret, true, telemetry, compensationX + compensationY);
             lastAngleLL = angleLL;
         } else {
-            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, true, telemetry, compensationX + compensationY);
+            Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.
+                    toDegrees(poseAtual.getHeading()), lastAngleLL, true, telemetry, compensationX + compensationY);
         }
         Turret.INSTANCE.periodic();
         double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalShootPoseAzul);
