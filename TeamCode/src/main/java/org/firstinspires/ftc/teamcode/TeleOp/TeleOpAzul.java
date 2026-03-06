@@ -73,7 +73,7 @@ public class TeleOpAzul extends NextFTCOpMode {
 
     public static double offsetturret = 1;
 
-    public static double compensation = 1.8;
+    public static double compensation = 1.45;
 
 
     private DriverControlledCommand driverControlled;
@@ -134,7 +134,6 @@ public class TeleOpAzul extends NextFTCOpMode {
         });
         Gamepads.gamepad1().x().whenBecomesTrue(this::resetPose);
         Gamepads.gamepad1().a().whenBecomesTrue(this::resetTurretPose);
-
     }
     private void resetPose() {
         PedroComponent.follower().setPose(poseInicial);
@@ -165,18 +164,12 @@ public class TeleOpAzul extends NextFTCOpMode {
         }else{
             compensationY = 0;
         }
-        //telemetry.addData("xvelo", xVelo);
-        //telemetry.addData("yvelo", yVelo);
-        //telemetry.addData("compensation", compensationX + compensationY);
-        //telemetry.update();
-
         if ((!(PedroComponent.follower().getAngularVelocity() > 1)) && angleLL != 0.0) {
             Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL + offsetturret, true, telemetry, compensationX + compensationY);
             lastAngleLL = angleLL;
         } else {
             Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), lastAngleLL, true, telemetry, compensationX + compensationY);
         }
-
         Turret.INSTANCE.periodic();
         double distanceToGoal = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalShootPoseAzul);
 

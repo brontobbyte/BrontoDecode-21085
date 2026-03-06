@@ -136,6 +136,7 @@ public class AutoFarAzul extends NextFTCOpMode {
         CommandManager.INSTANCE.scheduleCommand(
                 new SequentialGroup(
                         new Delay(2),
+                        new FollowPath(AutoPathsFar.ShootPoseFar1(PedroComponent.follower())),
                         intakePaths(),
                         fileiraPaths(),
                         FinalPaths()

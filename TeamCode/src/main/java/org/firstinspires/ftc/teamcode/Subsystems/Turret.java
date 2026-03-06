@@ -196,21 +196,21 @@ public class Turret implements Subsystem {
             contador = 0;
         }
         if (Math.abs(motor.getVelocity()) < 300 && Math.abs(angleLL) > 4){
-            destinationAngle = calculatedDestinationAngle - angleLL/2 - realAngleLLcorrected/2 + compensation;
+            destinationAngle = calculatedDestinationAngle - angleLL/2 - realAngleLLcorrected/2;
             realAngleLL = angleLL/2;
         }else{
-            destinationAngle = calculatedDestinationAngle - realAngleLL - realAngleLLcorrected/2 + compensation;
+            destinationAngle = calculatedDestinationAngle - realAngleLL - realAngleLLcorrected/2;
         }
         if (Math.abs(angleLL) < 4){
             realAngleLLcorrected = 0;
        }
 
-//        if (motor.getVelocity() < 100) {
-//            destinationAngle = calculatedDestinationAngle - angleLL + compensation;
-//            realAngleLL = angleLL;
-//        }else{
-//            destinationAngle = calculatedDestinationAngle - realAngleLL + compensation;
-//        }
+        if (motor.getVelocity() < 100) {
+            destinationAngle = calculatedDestinationAngle - angleLL + compensation;
+            realAngleLL = angleLL;
+        }else{
+            destinationAngle = calculatedDestinationAngle - realAngleLL + compensation;
+        }
 
 
         turretAngle = encoderTicksToAngle(motor.getRawTicks() - reset);
