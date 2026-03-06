@@ -113,7 +113,6 @@ public class FlywheelExample extends NextFTCOpMode {
         } else {
             motor.setPower(0);
         }
-
         rebuildController();
 
         servoHood.setPosition(hood);

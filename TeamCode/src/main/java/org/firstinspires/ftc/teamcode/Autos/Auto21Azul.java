@@ -4,8 +4,7 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkd;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tki;
-import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkp;
-import static org.firstinspires.ftc.teamcode.Subsystems.Turret.controllerauto;
+
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
 
@@ -24,13 +23,10 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.sun.tools.javac.util.MandatoryWarningHandler;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.AutoPathsAzul;
@@ -62,7 +58,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public static double Fkd = 0;
     public static double Fks = 0.17;
     public static double Fka = 6;
-    public static double Fkv = 0.00028;
+    public static double Fkv = 0.00030;
 
     private final MotorGroup Flywheel = new MotorGroup(
             new MotorEx("f1"),
@@ -73,7 +69,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public static boolean debugMode = true;
     public static double distanceToGoal;
     public static double kp = 0.12;
-    public static double goal = 1470;
+    public static double goal = 1560;
     public static double tol = 1.5;
 
     public static double gatedelay = 1.6;
@@ -108,7 +104,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public void onWaitForStart() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, false, telemetry, 0);
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         //Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 
@@ -224,7 +220,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 new FollowPath(AutoPathsAzul.Gate(PedroComponent.follower())),
                 intake(),
                 new Delay(2),
-                //new FollowPath(AutoPathsVermelho.GateCicleFinal(PedroComponent.follower())),
                 stopintake(),
                 new FollowPath(AutoPathsAzul.ShootGateCima(PedroComponent.follower())),
                 shootar()

@@ -69,14 +69,9 @@ public class TeleOpAzul extends NextFTCOpMode {
     private double lastAngleLL = 0;
     private double compensationX = 0;
     private double compensationY = 0;
-
     private double shooter = 0;
-
     public static double offsetturret = 1;
-
     public static double compensation = 1.45;
-
-
     private DriverControlledCommand driverControlled;
     public static boolean debugMode = true;
 
