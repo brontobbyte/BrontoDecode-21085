@@ -6,7 +6,7 @@ import com.pedropathing.geometry.Pose;
 public class AutoPoses {
     public static Pose poseInicial           = new Pose(26.96435342014482, 126.87326351120366, Math.toRadians(180));
     public static Pose intakeMeioCurvedPose  = new Pose(60, 59.49504304316747, Math.toRadians(0));
-    public static Pose intakeMeioPose        = new Pose(17, 59.49504304316747, Math.toRadians(0));
+    public static Pose intakeMeioPose        = new Pose(15, 59.49504304316747, Math.toRadians(0));
     public static Pose gatePose              = new Pose(13, 61.7, Math.toRadians(0));
     public static Pose gatePose2             = new Pose(12, 65, Math.toRadians(0));
     public static Pose gateCurvedPose        = new Pose(43.83565901109489, 63.81782018211766, Math.toRadians(0));

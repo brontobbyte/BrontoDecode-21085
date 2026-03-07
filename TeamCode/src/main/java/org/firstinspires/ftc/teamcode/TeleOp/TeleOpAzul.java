@@ -120,6 +120,9 @@ public class TeleOpAzul extends NextFTCOpMode {
         Gamepads.gamepad1().b().whenTrue(() -> {
             Intake.INSTANCE.reversed.schedule();
         });
+        Gamepads.gamepad1().dpadLeft().whenBecomesTrue(Turret::addRecOffset);
+        Gamepads.gamepad1().dpadRight().whenBecomesTrue(Turret::lessRecOffset);
+
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             new SequentialGroup(
                     Lock.INSTANCE.open,
@@ -150,7 +153,7 @@ public class TeleOpAzul extends NextFTCOpMode {
         angleLL = -LimelightHelper.updateAngleLL(limelight);
         double xVelo = PedroComponent.follower().getVelocity().getXComponent();
         double yVelo = PedroComponent.follower().getVelocity().getYComponent();
-        if (Math.abs(xVelo) < -10){
+        if ((xVelo) < -10){
             compensationX = xVelo/4;
         }else{
             compensationX = 0;
