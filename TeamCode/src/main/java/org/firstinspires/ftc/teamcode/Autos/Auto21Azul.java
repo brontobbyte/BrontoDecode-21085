@@ -131,7 +131,7 @@ public class Auto21Azul extends NextFTCOpMode {
                         shootCima(),
                         intakeBaixo(),
                         shootfinal(),
-                        gateCicle(),
+                        //gateCicle(),
                         new FollowPath(AutoPathsAzul.last(PedroComponent.follower()))
                 )
         );
