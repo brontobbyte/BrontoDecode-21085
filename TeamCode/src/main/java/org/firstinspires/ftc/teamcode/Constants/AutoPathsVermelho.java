@@ -151,7 +151,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.intakeBaixoPose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
 
@@ -163,7 +163,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(132), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(0))
                 .build();
     }
     public static PathChain last (Follower follower){
@@ -174,7 +174,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.last.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
     }
 }

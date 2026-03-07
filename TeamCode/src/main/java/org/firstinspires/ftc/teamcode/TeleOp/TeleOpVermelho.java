@@ -70,7 +70,7 @@ public class TeleOpVermelho extends NextFTCOpMode {
     private double compensationY = 0;
     private double shooter = 0;
     public static double offsetturret = 1;
-    public static double compensation = 1.45;
+    public static double compensation = 1.4;
     private DriverControlledCommand driverControlled;
     public static boolean debugMode = true;
 
@@ -88,7 +88,7 @@ public class TeleOpVermelho extends NextFTCOpMode {
         PedroComponent.follower().setStartingPose(startPose);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(40);
-        limelight.pipelineSwitch(5);
+        limelight.pipelineSwitch(4);
         limelight.start();
         PedroComponent.follower().update();
     }
@@ -116,9 +116,11 @@ public class TeleOpVermelho extends NextFTCOpMode {
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> {
             Intake.INSTANCE.stop.schedule();
         });
-        Gamepads.gamepad1().b().whenTrue(() -> {
+        Gamepads.gamepad1().y().whenTrue(() -> {
             Intake.INSTANCE.reversed.schedule();
         });
+        Gamepads.gamepad1().dpadRight().whenBecomesTrue(Turret::addRecOffset);
+        Gamepads.gamepad1().b().whenBecomesTrue(Turret::lessRecOffset);
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             new SequentialGroup(
                     Lock.INSTANCE.open,

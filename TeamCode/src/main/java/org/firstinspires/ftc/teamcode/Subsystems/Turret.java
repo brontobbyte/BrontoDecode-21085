@@ -24,11 +24,11 @@ public class Turret implements Subsystem {
     public static ControlSystem controllerTeleop;
     public static double Tkp = 0.012;
     public static double Tki = 0;
-    public static double Tkd = 0.001;
+    public static double Tkd = 0.00;
 
     public static double TTkp = 0.012;
     public static double TTki = 0;
-    public static double TTkd = 0.001;
+    public static double TTkd = 0.00;
     private double robotY;
     private double robotX;
     private double compensation;
@@ -85,8 +85,8 @@ public class Turret implements Subsystem {
             goalx = AutoPoses.goalPoseazul.getX();
             goaly = AutoPoses.goalPoseazul.getY();
         } else {
-            goalx = AutoPoses.goalPoseVermelho.getX();
-            goaly = AutoPoses.goalPoseVermelho.getY();
+            goalx = AutoPoses.goalPoseazul.mirror().getX();
+            goaly = AutoPoses.goalPoseazul.mirror().getY();
         }
     }
 
@@ -205,7 +205,7 @@ public class Turret implements Subsystem {
 //            realAngleLLcorrected = 0;
 //       }
 
-        if (motor.getVelocity() < 100) {
+        if (motor.getVelocity() < 60) {
             destinationAngle = calculatedDestinationAngle - angleLL + compensation + RecoveryOffset;
             realAngleLL = angleLL;
         }else{

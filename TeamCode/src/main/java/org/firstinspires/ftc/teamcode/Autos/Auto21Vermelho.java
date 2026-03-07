@@ -76,6 +76,8 @@ public class Auto21Vermelho extends NextFTCOpMode {
 
     public static double carolina = 0.8;
     public static double filter = 0;
+    public static double velGateCicle = 0.95;
+
     private static ControlSystem controller;
     Limelight3A limelight;
     private double angleLL = 0;
@@ -128,8 +130,10 @@ public class Auto21Vermelho extends NextFTCOpMode {
                         gateCicle(),
                         intakeCima(),
                         shootCima(),
-                        intakeBaixo(),
-                        shootfinal(),
+                        gateCicle(),
+
+                        //intakeBaixo(),
+                        //shootfinal(),
                         new FollowPath(AutoPathsVermelho.last(PedroComponent.follower()))
                 )
         );
@@ -205,7 +209,7 @@ public class Auto21Vermelho extends NextFTCOpMode {
         return new SequentialGroup(
                 new ParallelGroup(
                         intake().afterTime(1),
-                        new FollowPath(AutoPathsVermelho.Gate(PedroComponent.follower()))
+                        new FollowPath(AutoPathsVermelho.Gate(PedroComponent.follower()), false, velGateCicle)
                 ),
                 new Delay(gatedelay),
                 intake(),

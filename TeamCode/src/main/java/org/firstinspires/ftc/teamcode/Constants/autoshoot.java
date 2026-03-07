@@ -4,7 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.math.MathFunctions;
 @Configurable
 public class autoshoot {
-    public static double flywheeloffset = 00;
+    public static double flywheeloffset = 80;
     public static double hoodOffset = 0;
     public static double flywheelSpeed(double goalDist) {
         double speed =

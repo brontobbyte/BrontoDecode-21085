@@ -70,7 +70,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public static boolean debugMode = true;
     public static double distanceToGoal;
     public static double kp = 0.12;
-    public static double goal = 1620;
+    public static double goal = 1700;
     public static double tol = 1.5;
 
     public static double gatedelay = 1.6;
