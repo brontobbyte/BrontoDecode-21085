@@ -25,6 +25,7 @@ import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
@@ -69,7 +70,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public static boolean debugMode = true;
     public static double distanceToGoal;
     public static double kp = 0.12;
-    public static double goal = 1560;
+    public static double goal = 1620;
     public static double tol = 1.5;
 
     public static double gatedelay = 1.6;
@@ -104,7 +105,7 @@ public class Auto21Azul extends NextFTCOpMode {
     public void onWaitForStart() {
         angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
+        //Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         //Shooter.INSTANCE.setGoalDistance(distanceToGoal);
 
@@ -126,11 +127,11 @@ public class Auto21Azul extends NextFTCOpMode {
                         shootMeio(),
                         gateCicle(),
                         gateCicle(),
-                        gateCicle(),
                         intakeCima(),
                         shootCima(),
-                       // intakeBaixo(),
-                       // shootfinal(),
+                        intakeBaixo(),
+                        shootfinal(),
+                        gateCicle(),
                         new FollowPath(AutoPathsAzul.last(PedroComponent.follower()))
                 )
         );
@@ -153,9 +154,15 @@ public class Auto21Azul extends NextFTCOpMode {
         Flywheel.setPower(power);
 
         PedroComponent.follower().update();
-        angleLL = LimelightHelper.updateAngleLL(limelight);
+        LLResult result = limelight.getLatestResult();
+
+        if (result != null){
+            angleLL = LimelightHelper.updateAngleLL(limelight);
+        }else{
+            angleLL = 0.0;
+        }
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        //.Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
+        //Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), angleLL, true, telemetry, 0);
         distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         //Shooter.INSTANCE.setGoalDistance(distanceToGoal);
         //Shooter.INSTANCE.periodic();
@@ -177,11 +184,10 @@ public class Auto21Azul extends NextFTCOpMode {
         LLalign align = new LLalign();
         return new ParallelGroup(
                 align,
-                align,
                 new SequentialGroup(
                         Lock.INSTANCE.open,
                         new WaitUntil(() ->
-                                Math.abs(angleLL) < 3.5 && angleLL != 0.0),
+                                Math.abs(angleLL) < 3.5 && angleLL != 0.0 || Math.abs(motor.getVelocity()) < 100 && angleLL == 0.0),
                         new Delay(0.1),
                         Intake.INSTANCE.intake,
                         new WaitUntil(() -> Math.abs(Intake.INSTANCE.getVel()) > 100),

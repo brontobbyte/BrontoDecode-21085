@@ -41,7 +41,7 @@ public class AutoPathsAzul {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.gatePose,
+                                AutoPoses.intakeMeioPose,
                                 AutoPoses.shootPose1
                         )
                 )
