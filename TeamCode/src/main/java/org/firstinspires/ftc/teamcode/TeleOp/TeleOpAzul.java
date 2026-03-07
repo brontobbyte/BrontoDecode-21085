@@ -117,12 +117,11 @@ public class TeleOpAzul extends NextFTCOpMode {
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> {
             Intake.INSTANCE.stop.schedule();
         });
-        Gamepads.gamepad1().b().whenTrue(() -> {
+        Gamepads.gamepad1().y().whenTrue(() -> {
             Intake.INSTANCE.reversed.schedule();
         });
-        Gamepads.gamepad1().dpadLeft().whenBecomesTrue(Turret::addRecOffset);
-        Gamepads.gamepad1().dpadRight().whenBecomesTrue(Turret::lessRecOffset);
-
+        Gamepads.gamepad1().dpadRight().whenBecomesTrue(Turret::addRecOffset);
+        Gamepads.gamepad1().b().whenBecomesTrue(Turret::lessRecOffset);
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
             new SequentialGroup(
                     Lock.INSTANCE.open,

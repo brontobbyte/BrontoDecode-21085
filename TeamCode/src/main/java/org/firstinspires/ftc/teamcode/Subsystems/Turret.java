@@ -24,11 +24,11 @@ public class Turret implements Subsystem {
     public static ControlSystem controllerTeleop;
     public static double Tkp = 0.012;
     public static double Tki = 0;
-    public static double Tkd = 0.00;
+    public static double Tkd = 0.001;
 
     public static double TTkp = 0.012;
     public static double TTki = 0;
-    public static double TTkd = 0.00;
+    public static double TTkd = 0.001;
     private double robotY;
     private double robotX;
     private double compensation;

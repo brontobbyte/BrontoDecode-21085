@@ -76,7 +76,7 @@ public class Auto21Vermelho extends NextFTCOpMode {
 
     public static double carolina = 0.8;
     public static double filter = 0;
-    public static double velGateCicle = 0.95;
+    public static double velGateCicle = 1;
 
     private static ControlSystem controller;
     Limelight3A limelight;
