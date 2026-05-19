@@ -249,11 +249,18 @@ public class Turret implements Subsystem {
             return;
         }
 
-        double power = turnTurretBy(aimToObject(), angleLL, div);
+        double power = turnTurretBy(aimToObject());
 
+        if (turretAngle > 387){
+            power = 0;
+        }
+        if (turretAngle < 0){
+            power = 0;
+        }
         if (Math.abs(toTurn) < 1) {
             power = 0;
         }
+        power = power/4;
         motor.setPower(power);
     }
 }

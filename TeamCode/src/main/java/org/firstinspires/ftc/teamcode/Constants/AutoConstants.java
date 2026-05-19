@@ -24,14 +24,14 @@ public class AutoConstants {
         public static double destinationAngleLL;
         private static MotorEx turretMotor = new MotorEx("turret");
         private static IMU imu;
-        public static double scalingFactor = 0.2684563758;
+        public static double scalingFactor = 0.9302325581;
         public static double encoderTicksToAngle(double ticks) {
             return (ticks * scalingFactor);
         }
         public static int angleToEncoderTicks(double degrees) {
             return (int) (degrees / scalingFactor);
         }
-        public static double turnTurretBy(double degrees, double angleLL, double div) {
+        public static double turnTurretBy(double degrees) {
             double currentPosition = turretMotor.getCurrentPosition();
             double destinationAngleHeading = angleToEncoderTicks(degrees);
             double TARGET_TICK_VALUE = clamp(destinationAngleHeading + currentPosition, angleToEncoderTicks(-180), angleToEncoderTicks(180));
