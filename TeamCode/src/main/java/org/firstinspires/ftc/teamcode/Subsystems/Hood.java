@@ -13,19 +13,14 @@ import org.firstinspires.ftc.teamcode.Constants.autoshoot;
 public class Hood implements Subsystem {
 
     public static final Hood INSTANCE = new Hood();
-
     private Hood() { }
-
     private final ServoEx servoHood = new ServoEx("sHood");
-
     public static double pos = 0.8;
-
     public void initialize() {
         servoHood.setPosition(0.75);
     }
     @Override
     public void periodic() {
-
     }
     public Command set = new SetPosition(servoHood, 0.61).requires(this);
 
@@ -35,13 +30,13 @@ public class Hood implements Subsystem {
     public void setGoalDistance(double goalDistance) {
         double angle = autoshoot.hoodAngle(goalDistance);
         setHoodPosition(angle);
+
     }
 
     public void setHoodPosition(double launchAngle) {
-        pos = Math.min(Math.max(launchAngle, 0.0), 0.8);
+        pos = Math.min(Math.max(launchAngle, 0.28), 0.98);
         servoHood.setPosition(pos);
     }
-
     public double getHoodPosition() {
         return pos;
     }

@@ -2,85 +2,82 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static com.pedropathing.math.MathFunctions.clamp;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.turnTurretBy;
 
 import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.AutoPoses;
-import org.opencv.core.Mat;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.positionable.SetPosition;
 
 @Configurable
 public class Turret implements Subsystem {
+
     public static final Turret INSTANCE = new Turret();
+
     public static ControlSystem controllerauto;
     public static ControlSystem controllerTeleop;
-    public static double Tkp = 0.012;
-    public static double Tki = 0;
-    public static double Tkd = 0.001;
 
-    public static double TTkp = 0.012;
-    public static double TTki = 0;
-    public static double TTkd = 0.001;
-    private double robotY;
-    private double robotX;
-    private double compensation;
+    public static double Tkp  = 0.045;
+    public static double Tki  = 0.00000000003;
+    public static double Tkd  = 0.0098;
+    public static double TTkp = 0.045;
+    public static double TTki = 0.00000000003;
+    public static double TTkd = 0.0098;
 
-    public static double angleLL;
-    private double realAngleLL = 0;
-    public static double destinationAngle;
-    private double lastValidDestinationAngle = 0.0;
-    private boolean hasValidLastAngle = false;
-    private static double heading;
-    public static double toTurn;
-    public static double div = 0;
+    private double robotX     = 0.0;
+    private double robotY     = 0.0;
+    private double headingRad = 0.0;
+    private double compensation = 0.0;
 
-    public static double goalx = 132;
-    public static double goaly = 137;
-    public static double multiMax = 5;
-    public static double alpha = 0.1;
-    public static double filteredVision = 0.1;
+    public static double angleLL                    = 0.0;
+    public static double turretAngle                = 0.0;
+    public static double destinationAngle           = 0.0;
+    public static double calculatedDestinationAngle = 0.0;
+    public static double toTurn                     = 0.0;
 
-    public static double turretAngle;
-    public static double calculatedDestinationAngle;
+    public static double goalx = 132.0;
+    public static double goaly = 137.0;
 
-    public static double offset = 3;
-    public static double RecoveryOffset = 0;
+    public static double offset         = 3.0;
+    public static double RecoveryOffset = 0.0;
 
-    private static boolean azul = true;
-    private boolean wrapped = false;
-    public int contador = 0;
-    Telemetry telemetry;
+    public static double  manualPower     = 0.6;
+    public static boolean manualMode      = false;
+    public static double  manualDirection = 0.0;
 
-    public static boolean manualMode = false;
-    public static double manualDirection = 0;
-    public static double reset = 0;
-
-    public static double manualPower = 0.6;
+    public static boolean followEnabled    = true;
+    public static boolean headingEnabled   = true;
     public static boolean lockAngleEnabled = false;
-    public static double lockedAngle = 0;
-    public static double realAngleLLcorrected = 0;
-    public static boolean followEnabled = true;
-    public static boolean headingEnabled = true;
+    public static double  lockedAngle      = 0.0;
 
+    private double resetTick = 0.0;
+    private static final MotorEx motor = new MotorEx("turret");
 
-    private Turret() {
-    }
+    private static final double max =  90.0;
+    private static final double min = -90.0;
 
-    public void setPoseTracker(double robotX, double robotY, double heading, double angleLL, boolean azul, Telemetry telemetry, double compensation) {
-        this.robotX = robotX;
-        this.robotY = robotY;
-        this.heading = heading;
-        Turret.angleLL = angleLL;
-        this.telemetry = telemetry;
+    private Turret() {}
+
+    public void setPoseTracker(
+            double robotX,
+            double robotY,
+            double headingRadians,
+            double angleLL,
+            boolean azul,
+            Telemetry telemetry,
+            double compensation
+    ) {
+        this.robotX       = robotX;
+        this.robotY       = robotY;
+        this.headingRad   = headingRadians;
+        Turret.angleLL    = angleLL;
         this.compensation = compensation;
+
         if (azul) {
             goalx = AutoPoses.goalPoseazul.getX();
             goaly = AutoPoses.goalPoseazul.getY();
@@ -90,152 +87,30 @@ public class Turret implements Subsystem {
         }
     }
 
-    private static final MotorEx motor = new MotorEx("turret");
-
-    public static void addOffset(double angle) {
-        offset += angle;
-    }
-
-    public static void addRecOffset() {
-        RecoveryOffset += 15;
-    }
-
-    public static void lessRecOffset() {
-        RecoveryOffset += -15;
-    }
-
-    public static void stopRecOffset() {
-        RecoveryOffset = 0;
-    }
+    public static void addOffset(double angle) { offset += angle; }
+    public static void addRecOffset()           { RecoveryOffset += 15; }
+    public static void lessRecOffset()          { RecoveryOffset -= 15; }
+    public static void stopRecOffset()          { RecoveryOffset = 0; }
 
     public static void setManualMode(boolean enabled, double direction) {
-        manualMode = enabled;
+        manualMode      = enabled;
         manualDirection = direction;
-        if (enabled) {
-            followEnabled = false;
-        }
+        if (enabled) followEnabled = false;
     }
 
     public static void lockCurrentAngle() {
-        turretAngle = encoderTicksToAngle(motor.getRawTicks());
-        lockedAngle = turretAngle + heading;
+        turretAngle  = encoderTicksToAngle(motor.getCurrentPosition());
+        lockedAngle  = turretAngle + Math.toDegrees(INSTANCE.headingRad);
         lockAngleEnabled = true;
-        followEnabled = true;
+        followEnabled    = true;
     }
-    public static void unlockAngle() {
-        lockAngleEnabled = false;
-    }
+
+    public static void unlockAngle()    { lockAngleEnabled = false; }
+    public static void disableHeading() { headingEnabled = false; }
+    public static void enableHeading()  { headingEnabled = true; }
+
     @Override
     public void initialize() {
-    }
-    public void reset() {
-        headingEnabled = true;
-        motor.zeroed();
-        hasValidLastAngle = false;
-        lastValidDestinationAngle = 0.0;
-        wrapped = false;
-        manualMode = false;
-        lockAngleEnabled = false;
-        followEnabled = true;
-    }
-    public void resetTurret() {
-        reset = motor.getCurrentPosition();
-    }
-
-    public static void disableHeading() {
-        headingEnabled = false;
-    }
-
-    public static void enableHeading() {
-        headingEnabled = true;
-    }
-
-    public double aimToObject() {
-        if (manualMode) {
-            return manualDirection * 50;
-        }
-
-        double robotYPosition = robotY;
-        double robotXPosition = robotX;
-
-        calculatedDestinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition, goalx - robotXPosition));
-
-        boolean limelightActive = Math.abs(angleLL) > 0.3;
-
-        filteredVision = alpha * angleLL + (1 - alpha) * filteredVision;
-
-        /*
-        if (lockAngleEnabled) {
-            destinationAngle = lockedAngle;
-        } else if (followEnabled && limelightActive) {
-            if (Math.abs(angleLL) > 2) {
-                offset += -Math.signum(angleLL) * offsetAdjustmentRate;
-            }
-
-            realAngleLL = filteredVision * visionMultiplier + offset;
-
-            destinationAngle = calculatedDestinationAngle + realAngleLL;
-
-            lastValidDestinationAngle = destinationAngle;
-            hasValidLastAngle = true;
-        } else if (followEnabled) {
-            if (hasValidLastAngle) {
-                destinationAngle = lastValidDestinationAngle;
-            } else {
-                destinationAngle = calculatedDestinationAngle;
-            }
-        } else {
-            destinationAngle = calculatedDestinationAngle;
-        }
-
-
-         */
-//        contador++;
-//        if (contador%20 == 0 && Math.abs(angleLL) > 4 && Math.abs(motor.getVelocity()) < 300){
-//            realAngleLLcorrected = angleLL;
-//            contador = 0;
-//        }
-//        if (Math.abs(motor.getVelocity()) < 300 && Math.abs(angleLL) > 4){
-//            destinationAngle = calculatedDestinationAngle - angleLL/2 - realAngleLLcorrected/2;
-//            realAngleLL = angleLL/2;
-//        }else{
-//            destinationAngle = calculatedDestinationAngle - realAngleLL - realAngleLLcorrected/2;
-//        }
-//        if (Math.abs(angleLL) < 4){
-//            realAngleLLcorrected = 0;
-//       }
-
-        if (motor.getVelocity() < 60) {
-            destinationAngle = calculatedDestinationAngle - angleLL + compensation + RecoveryOffset;
-            realAngleLL = angleLL;
-        }else{
-            destinationAngle = calculatedDestinationAngle - realAngleLL + compensation + RecoveryOffset;
-        }
-
-
-        turretAngle = encoderTicksToAngle(motor.getRawTicks() - reset);
-        double robotAngle = heading;
-        turretAngle = ((turretAngle + 180) % 360) - 180;
-        destinationAngle = ((destinationAngle + 180) % 360) - 180;
-
-        toTurn = destinationAngle - (turretAngle + robotAngle);
-        toTurn = ((toTurn + 180) % 360) - 180;
-
-        if (turretAngle > 180 || (toTurn > 0 && turretAngle + toTurn > 180)) {
-            toTurn -= 360;
-            wrapped = true;
-        } else if (turretAngle < -180 || (toTurn < 0 && turretAngle + toTurn < -180)) {
-            toTurn += 360;
-            wrapped = true;
-        } else {
-            wrapped = false;
-        }
-
-        return toTurn;
-    }
-
-    @Override
-    public void periodic() {
         controllerauto = ControlSystem.builder()
                 .posPid(Tkp, Tki, Tkd)
                 .build();
@@ -244,23 +119,110 @@ public class Turret implements Subsystem {
                 .posPid(TTkp, TTki, TTkd)
                 .build();
 
+        headingEnabled   = true;
+        manualMode       = false;
+        lockAngleEnabled = false;
+        followEnabled    = true;
+        resetTick        = 0.0;
+    }
+
+    public void reset() {
+        motor.zeroed();
+        resetTick        = 0.0;
+        headingEnabled   = true;
+        manualMode       = false;
+        lockAngleEnabled = false;
+        followEnabled    = true;
+    }
+
+    public void resetTurret() {
+        resetTick = motor.getCurrentPosition();
+    }
+
+    public double aimToObject() {
+
+        if (manualMode) {
+            return manualDirection * 50.0;
+        }
+
+        turretAngle = encoderTicksToAngle(
+                motor.getCurrentPosition() - resetTick
+        );
+
+        if (lockAngleEnabled) {
+
+            destinationAngle = lockedAngle;
+
+            toTurn = destinationAngle - turretAngle;
+            toTurn = Math.IEEEremainder(toTurn, 360.0);
+
+            double projectedAngle = turretAngle + toTurn;
+
+            if (projectedAngle > max) {
+                toTurn = max - turretAngle;
+            } else if (projectedAngle < min) {
+                toTurn = min - turretAngle;
+            }
+
+            return toTurn;
+        }
+
+        calculatedDestinationAngle = Math.toDegrees(
+                Math.atan2(goaly - robotY, goalx - robotX));
+
+        destinationAngle = calculatedDestinationAngle + compensation + RecoveryOffset;
+
+        double robotAngleDeg = Math.toDegrees(headingRad);
+
+        toTurn = destinationAngle - robotAngleDeg - turretAngle;
+
+        toTurn = Math.IEEEremainder(toTurn, 360.0);
+
+        double projectedAngle = turretAngle + toTurn;
+
+        if (projectedAngle > max) {
+            toTurn = max - turretAngle;
+        } else if (projectedAngle < min) {
+            toTurn = min - turretAngle;
+        }
+
+        return toTurn;
+    }
+    @Override
+    public void periodic() {
+
         if (manualMode) {
             motor.setPower(manualDirection * manualPower);
             return;
         }
 
-        double power = turnTurretBy(aimToObject());
+        double currentTick = motor.getCurrentPosition() - resetTick;
 
-        if (turretAngle > 387){
-            power = 0;
-        }
-        if (turretAngle < 0){
-            power = 0;
-        }
-        if (Math.abs(toTurn) < 1) {
-            power = 0;
-        }
-        power = power/4;
-        motor.setPower(power);
+        turretAngle = encoderTicksToAngle(currentTick);
+
+        double error = aimToObject();
+
+        double targetTick = currentTick + angleToEncoderTicks(error);
+
+        targetTick = clamp(
+                targetTick,
+                angleToEncoderTicks(min),
+                angleToEncoderTicks(max)
+        );
+
+        controllerauto.setGoal(new KineticState(targetTick));
+
+        double power = controllerauto.calculate(
+                new KineticState(
+                        currentTick,
+                        motor.getVelocity()
+                )
+        );
+
+        motor.setPower(-power / 2.0);
+    }
+
+    private static double angleToEncoderTicks(double degrees) {
+        return degrees / AutoConstants.Calculos.scalingFactor;
     }
 }

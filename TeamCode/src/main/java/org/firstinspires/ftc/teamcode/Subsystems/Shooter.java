@@ -12,18 +12,18 @@ import org.firstinspires.ftc.teamcode.Constants.autoshoot;
 public class Shooter implements Subsystem {
     public static final Shooter INSTANCE = new Shooter();
 
-    public static double Fkp =0.005;
-    public static double Fki = 0.000000001;
+    public static double Fkp = 0;
+    public static double Fki = 0.0000005;
     public static double Fkd = 0;
-    public static double Fks = 0.17;
-    public static double Fka = 6;
-    public static double Fkv = 0.00030;
+    public static double Fks = 0.16;
+    public static double Fka = 0;
+    public static double Fkv = 0.000381;
+    public static double goal = 1500;
 
     private final MotorGroup Flywheel = new MotorGroup(
-            new MotorEx("f1"),
-            new MotorEx("f2")
+            new MotorEx("f1").reversed(),
+            new MotorEx("f2").reversed()
     );
-
     @Override
     public void initialize() {
         Flywheel.setPower(0.000001);
@@ -36,23 +36,22 @@ public class Shooter implements Subsystem {
     }
 
     public void setGoalDistance(double goalDistance) {
-        double speed = autoshoot.flywheelSpeed(goalDistance);
-        setVelocity(speed);
+        double velocity = autoshoot.flywheelSpeed(goalDistance);
+        setVelocity(velocity);
     }
-
     public void setVelocity(double launchSpeed) {
         ControlSystem controlSystem = ControlSystem.builder()
                 .velPid(Fkp, Fki, Fkd)
                 .basicFF(Fkv, Fka, Fks)
                 .build();
 
-        controlSystem.setGoal(new KineticState(0, launchSpeed));
+        controlSystem.setGoal(new KineticState(0, -launchSpeed));
 
         double power = controlSystem.calculate(new KineticState(
                 Flywheel.getCurrentPosition(),
                 Flywheel.getVelocity()));
 
-        Flywheel.setPower(power);
+        Flywheel.setPower(-power);
     }
 
     public double getVelocity() {

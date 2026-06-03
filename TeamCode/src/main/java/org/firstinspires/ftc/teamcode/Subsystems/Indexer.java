@@ -8,17 +8,17 @@ import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 import dev.nextftc.hardware.powerable.SetPower;
-public class Lock implements Subsystem {
-    public static final Lock INSTANCE = new Lock();
+public class Indexer implements Subsystem {
+    public static final Indexer INSTANCE = new Indexer();
     @Override
     public void initialize(){
     }
-    private Lock() { }
-    private ServoEx servo = new ServoEx("sLock");
+    private Indexer() { }
+    private ServoEx servo = new ServoEx("sIndexer");
 
-    public Command open = new SetPosition(servo, 1).requires(this);
+    public Command shooting = new SetPosition(servo, 0.5).requires(this);
 
-    public Command closed = new SetPosition(servo,  0.8).requires(this);
+    public Command naoshooting = new SetPosition(servo,  0.6).requires(this);
     public double getPos() {
         return servo.getPosition();
     }
