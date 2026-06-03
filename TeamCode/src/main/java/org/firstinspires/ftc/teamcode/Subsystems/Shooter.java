@@ -17,7 +17,7 @@ public class Shooter implements Subsystem {
     public static double Fkd = 0;
     public static double Fks = 0.16;
     public static double Fka = 0;
-    public static double Fkv = 0.000381;
+    public static double Fkv = 0.00045;
     public static double goal = 1500;
 
     private final MotorGroup Flywheel = new MotorGroup(
