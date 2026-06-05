@@ -16,9 +16,9 @@ public class Indexer implements Subsystem {
     private Indexer() { }
     private ServoEx servo = new ServoEx("sIndexer");
 
-    public Command shooting = new SetPosition(servo, 0.5).requires(this);
+    public Command shooting = new SetPosition(servo, 0.58).requires(this);
 
-    public Command naoshooting = new SetPosition(servo,  0.6).requires(this);
+    public Command naoshooting = new SetPosition(servo,  0.7).requires(this);
     public double getPos() {
         return servo.getPosition();
     }

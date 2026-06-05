@@ -18,7 +18,7 @@ public class Lock implements Subsystem {
 
     public Command open = new SetPosition(servo, 0.5).requires(this);
 
-    public Command closed = new SetPosition(servo,  0.4).requires(this);
+    public Command closed = new SetPosition(servo,  0.2).requires(this);
     public double getPos() {
         return servo.getPosition();
     }
