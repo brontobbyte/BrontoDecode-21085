@@ -55,11 +55,13 @@ public class Turret implements Subsystem {
     public static boolean lockAngleEnabled = false;
     public static double  lockedAngle      = 0.0;
 
+    private double lockedHeadingRad = 0.0;
+
     private double resetTick = 0.0;
     private static final MotorEx motor = new MotorEx("turret");
 
-    private static final double max =  90.0;
-    private static final double min = -90.0;
+    private static final double max =  90;
+    private static final double min = -180.0;
 
     private Turret() {}
 
@@ -99,8 +101,11 @@ public class Turret implements Subsystem {
     }
 
     public static void lockCurrentAngle() {
-        turretAngle  = encoderTicksToAngle(motor.getCurrentPosition());
-        lockedAngle  = turretAngle + Math.toDegrees(INSTANCE.headingRad);
+
+        double currentHeadingRad = INSTANCE.headingRad;
+        turretAngle  = encoderTicksToAngle(motor.getCurrentPosition() - INSTANCE.resetTick);
+        lockedAngle  = turretAngle + Math.toDegrees(currentHeadingRad);
+        INSTANCE.lockedHeadingRad = currentHeadingRad;
         lockAngleEnabled = true;
         followEnabled    = true;
     }
@@ -139,57 +144,60 @@ public class Turret implements Subsystem {
         resetTick = motor.getCurrentPosition();
     }
 
-    public double aimToObject() {
 
-        if (manualMode) {
-            return manualDirection * 50.0;
-        }
+    public double aimToObject(double currentTurretAngle) {
 
-        turretAngle = encoderTicksToAngle(
-                motor.getCurrentPosition() - resetTick
-        );
 
         if (lockAngleEnabled) {
-
             destinationAngle = lockedAngle;
 
-            toTurn = destinationAngle - turretAngle;
-            toTurn = Math.IEEEremainder(toTurn, 360.0);
+            double error = destinationAngle - currentTurretAngle;
+            error = Math.IEEEremainder(error, 360.0);
 
-            double projectedAngle = turretAngle + toTurn;
-
+            double projectedAngle = currentTurretAngle + error;
             if (projectedAngle > max) {
-                toTurn = max - turretAngle;
+                error = max - currentTurretAngle;
             } else if (projectedAngle < min) {
-                toTurn = min - turretAngle;
+                error = min - currentTurretAngle;
             }
 
-            return toTurn;
+            return error;
         }
 
         calculatedDestinationAngle = Math.toDegrees(
                 Math.atan2(goaly - robotY, goalx - robotX));
 
-        destinationAngle = calculatedDestinationAngle + compensation + RecoveryOffset;
+
+        double dx   = goalx - robotX;
+        double dy   = goaly - robotY;
+        double dist = Math.sqrt(dx * dx + dy * dy);
+
+
+        double leadAngleDeg = 0.0;
+        if (dist > 1.0) {
+            leadAngleDeg = Math.toDegrees(Math.atan2(compensation, dist));
+        }
+
+        destinationAngle = calculatedDestinationAngle + leadAngleDeg + RecoveryOffset;
 
         double robotAngleDeg = Math.toDegrees(headingRad);
 
-        toTurn = destinationAngle - robotAngleDeg - turretAngle;
+        double error = destinationAngle - robotAngleDeg - currentTurretAngle;
+        error = Math.IEEEremainder(error, 360.0);
 
-        toTurn = Math.IEEEremainder(toTurn, 360.0);
-
-        double projectedAngle = turretAngle + toTurn;
-
+        double projectedAngle = currentTurretAngle + error;
         if (projectedAngle > max) {
-            toTurn = max - turretAngle;
+            error = max - currentTurretAngle;
         } else if (projectedAngle < min) {
-            toTurn = min - turretAngle;
+            error = min - currentTurretAngle;
         }
 
-        return toTurn;
+        return error;
     }
+
     @Override
     public void periodic() {
+
 
         if (manualMode) {
             motor.setPower(manualDirection * manualPower);
@@ -200,9 +208,9 @@ public class Turret implements Subsystem {
 
         turretAngle = encoderTicksToAngle(currentTick);
 
-        double error = aimToObject();
+        toTurn = aimToObject(turretAngle);
 
-        double targetTick = currentTick + angleToEncoderTicks(error);
+        double targetTick = currentTick + angleToEncoderTicks(toTurn);
 
         targetTick = clamp(
                 targetTick,
@@ -219,7 +227,8 @@ public class Turret implements Subsystem {
                 )
         );
 
-        motor.setPower(-power / 2.0);
+
+        motor.setPower(clamp(-power, -1.0, 1.0));
     }
 
     private static double angleToEncoderTicks(double degrees) {

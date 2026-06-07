@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalShootPoseAzul;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.last;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
@@ -51,10 +52,6 @@ public class TeleOpAzul extends NextFTCOpMode {
         );
     }
 
-//    private static final Style robotLook  = new Style("", "#3F51B5", 0.75);
-//    private static final Style robotLook2 = new Style("", "#800000", 0.75);
-//    private static final Style robotLook3 = new Style("", "#008000", 0.75);
-
     private static final FieldManager panelsField =
             PanelsField.INSTANCE.getField();
 
@@ -63,9 +60,12 @@ public class TeleOpAzul extends NextFTCOpMode {
     private DcMotor BackLeft;
     private DcMotor BackRight;
 
-    public static double compensation = 0.5;
+    public static double compensation = 0;
+    public static double flywheelCompensation = 0.75;
+
+    public static double projectileSpeed = 73;
     public static boolean debugMode = true;
-    public static double targetHeadingDeg = 141;
+    public static double targetHeadingDeg = 149;
     public static double kpHeading = 0.5;
     public static double max = 0.09;
 
@@ -127,27 +127,23 @@ public class TeleOpAzul extends NextFTCOpMode {
 
         Gamepads.gamepad1().y().whenTrue(() ->
                 Intake.INSTANCE.reversed.schedule()
-        );
-
-        Gamepads.gamepad1().dpadRight().whenBecomesTrue(
-                Turret::addRecOffset
+        ).whenBecomesFalse(
+                () -> Intake.INSTANCE.intake.schedule()
         );
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() ->
                 new SequentialGroup(
                         Indexer.INSTANCE.shooting,
                         Lock.INSTANCE.open,
-                        Intake.INSTANCE.shooting,
                         new Delay(0.7),
                         Lock.INSTANCE.closed,
-                        Indexer.INSTANCE.naoshooting,
-                        Intake.INSTANCE.intake
+                        Indexer.INSTANCE.naoshooting
                 ).schedule()
         );
 
         Gamepads.gamepad1().x().whenBecomesTrue(this::resetPose);
-       //Gamepads.gamepad1().a().whenBecomesTrue(this::resetTurretPose);
     }
+
     @Override
     public void onUpdate() {
 
@@ -213,8 +209,24 @@ public class TeleOpAzul extends NextFTCOpMode {
         BackRight.setPower((rotY + rotX - rx) / denominator);
 
         Pose poseAtual = PedroComponent.follower().getPose();
-        double compY = (poseAtual.getAsVector().getYComponent()*compensation);
-        double compY2 = (PedroComponent.follower().getVelocity().getYComponent()*compensation);
+        double distanceToGoal = poseAtual.distanceFrom(goalShootPoseAzul);
+
+
+//        double dx   = Turret.goalx - poseAtual.getX();
+//        double dy   = Turret.goaly - poseAtual.getY();
+//        double dist = Math.sqrt(dx * dx + dy * dy);
+//
+//        double vx = PedroComponent.follower().getVelocity().getXComponent();
+//        double vy = PedroComponent.follower().getVelocity().getYComponent();
+//
+//        double radialVelX = dx / dist;
+//        double radialVelY = dy / dist;
+//        double lateralVel = vx * (-radialVelY) + vy * radialVelX;
+        double lateralVel = PedroComponent.follower().poseTracker.getVelocity().getYComponent();
+
+        double flightTime = distanceToGoal / projectileSpeed;
+
+        double leadCompensation = lateralVel * flightTime;
 
         Turret.INSTANCE.setPoseTracker(
                 poseAtual.getX(),
@@ -223,58 +235,14 @@ public class TeleOpAzul extends NextFTCOpMode {
                 0.0,
                 true,
                 telemetry,
-                compY2
+                leadCompensation
         );
 
-        double distanceToGoal = poseAtual.distanceFrom(goalShootPoseAzul);
+//        double radialVel = (vx * dx + vy * dy) / dist;
+//        Shooter.radialCompensation = radialVel * flywheelCompensation;
 
-        Shooter.INSTANCE.setGoalDistance(distanceToGoal);
+        Shooter.INSTANCE.setGoalDistanceWithComp(distanceToGoal);
         Hood.INSTANCE.setGoalDistance(distanceToGoal);
-
-//        Vector v = new Pose(0, 0, Math.toRadians(calculatedDestinationAngle)).getHeadingAsUnitVector();
-//        v.setMagnitude(v.getMagnitude() * 9);
-//
-//        Vector v2 = new Pose(0, 0, Math.toRadians(destinationAngle)).getHeadingAsUnitVector();
-//        v2.setMagnitude(v2.getMagnitude() * 9);
-//
-//        Vector v3 = new Pose(0, 0, Math.toRadians(toTurn)).getHeadingAsUnitVector();
-//        v3.setMagnitude(v3.getMagnitude() * 9);
-//
-//        panelsField.setStyle(robotLook);
-//        panelsField.moveCursor(poseAtual.getX(), poseAtual.getY());
-//        panelsField.circle(9);
-//
-//        panelsField.setStyle(robotLook);
-//        panelsField.moveCursor(
-//                poseAtual.getX() + v.getXComponent() / 2,
-//                poseAtual.getY() + v.getYComponent() / 2
-//        );
-//        panelsField.line(
-//                poseAtual.getX() + v.getXComponent(),
-//                poseAtual.getY() + v.getYComponent()
-//        );
-//
-//        panelsField.setStyle(robotLook2);
-//        panelsField.moveCursor(
-//                poseAtual.getX() + v2.getXComponent() / 2,
-//                poseAtual.getY() + v2.getYComponent() / 2
-//        );
-//        panelsField.line(
-//                poseAtual.getX() + v2.getXComponent(),
-//                poseAtual.getY() + v2.getYComponent()
-//        );
-//
-//        panelsField.setStyle(robotLook3);
-//        panelsField.moveCursor(
-//                poseAtual.getX() + v3.getXComponent() / 2,
-//                poseAtual.getY() + v3.getYComponent()
-//        );
-//        panelsField.line(
-//                poseAtual.getX() + v3.getXComponent(),
-//                poseAtual.getY() + v3.getYComponent()
-//        );
-//
-//        panelsField.update();
 
         TelemetryHelper.addCommonTelemetry(
                 telemetry,
@@ -292,28 +260,13 @@ public class TeleOpAzul extends NextFTCOpMode {
                 0.0
         );
 
-        double fps = (tempoLoopMs > 0) ? 1000.0 / tempoLoopMs : 0;
-        double fpsMedio = (tempoloopmedio > 0) ? 1000.0 / tempoloopmedio : 0;
-
-        telemetry.addData("Loop Time", String.format("%.3f ms", tempoLoopMs));
-        telemetry.addData("Loop Time Avg", String.format("%.3f ms", tempoloopmedio));
-        telemetry.addData("FPS", String.format("%.1f", fps));
-        telemetry.addData("FPS (Avg)", String.format("%.1f", fpsMedio));
-        telemetry.addData("compensation", compY);
-        telemetry.addData("compensation2", compY2);
-
-
-
-//        telemetry.addData("Heading Turret (graus)", Math.toDegrees(headingTurret));
-//        telemetry.addData("Shooter Target", Shooter.INSTANCE.getTarget());
-//        telemetry.addData("Shooter Velocity", Shooter.INSTANCE.getVelocity());
-//        telemetry.addData("Shooter Error", Shooter.INSTANCE.getVelocityError());
-//        telemetry.addData("Hood Position", Hood.INSTANCE.getHoodPosition());
         telemetry.update();
     }
+
     private void resetPose() {
         PedroComponent.follower().setPose(poseInicial);
     }
+
     private void resetTurretPose() {
         Turret.INSTANCE.resetTurret();
     }

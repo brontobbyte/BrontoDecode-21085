@@ -22,6 +22,8 @@ public class Shooter implements Subsystem {
     public static double Fkv  = 0.00034;
     public static double goal = 1500;
 
+    public static double radialCompensation = 0.0;
+
     private final MotorGroup flywheel = new MotorGroup(
             new MotorEx("f1").reversed(),
             new MotorEx("f2").reversed()
@@ -74,6 +76,10 @@ public class Shooter implements Subsystem {
 
     public void setGoalDistance(double goalDistance) {
         setVelocity(autoshoot.flywheelSpeed(goalDistance));
+    }
+
+    public void setGoalDistanceWithComp(double goalDistance) {
+        setVelocity(autoshoot.flywheelSpeed(goalDistance + radialCompensation));
     }
 
     public void stop() {
