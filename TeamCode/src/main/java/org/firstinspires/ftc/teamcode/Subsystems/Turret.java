@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static com.pedropathing.math.MathFunctions.clamp;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.encoderTicksToAngle;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.Calculos.turnTurretBy;
 
 import com.bylazar.configurables.annotations.Configurable;
 
@@ -208,6 +209,9 @@ public class Turret implements Subsystem {
         );
 
         controllerauto.setGoal(new KineticState(targetTick));
+        
+        double power = turnTurretBy(aimToObject(), angleLL, div);
+
 
         double power = controllerauto.calculate(
                 new KineticState(
