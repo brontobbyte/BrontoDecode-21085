@@ -23,10 +23,10 @@ public class Turret implements Subsystem {
     public static ControlSystem controllerTeleop;
 
     public static double Tkp  = 0.045;
-    public static double Tki  = 0.00000000003;
+    public static double Tki  = 0;
     public static double Tkd  = 0.0098;
     public static double TTkp = 0.045;
-    public static double TTki = 0.00000000003;
+    public static double TTki = 0;
     public static double TTkd = 0.0098;
 
     private double robotX     = 0.0;
@@ -61,7 +61,7 @@ public class Turret implements Subsystem {
     private static final MotorEx motor = new MotorEx("turret");
 
     private static final double max =  90;
-    private static final double min = -180.0;
+    private static final double min = -270;
 
     private Turret() {}
 

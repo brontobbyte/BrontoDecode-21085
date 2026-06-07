@@ -27,5 +27,7 @@ public class Intake implements Subsystem {
     public Command shooting = new SetPower(motor, 1).requires(this);
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        motor.setPower(1);
+    }
 }

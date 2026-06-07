@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -42,8 +42,8 @@ public class FlywheelExample extends NextFTCOpMode {
     public static double hood = 0;
     public static double intake = 1;
 
-    public static double poselegalimportantex = 8.612928348909657;
-    public static double poselegalimportantey = 8.220404984423668;
+    public static double poselegalimportantex = poseResetHumanPAzul.getX();
+    public static double poselegalimportantey = poseResetHumanPAzul.getY();
 
     public static boolean redAlliance = false;
 

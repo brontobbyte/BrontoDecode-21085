@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalShootPoseAz
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.last;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
 
@@ -63,11 +64,11 @@ public class TeleOpAzul extends NextFTCOpMode {
     public static double compensation = 0;
     public static double flywheelCompensation = 0.75;
 
-    public static double projectileSpeed = 73;
+    public static double projectileSpeed = 80;
     public static boolean debugMode = true;
     public static double targetHeadingDeg = 149;
     public static double kpHeading = 0.5;
-    public static double max = 0.09;
+    public static double max = 0.9;
 
     private long tempoloopanterior = 0;
     private double tempoloopmedio = 0;
@@ -120,19 +121,18 @@ public class TeleOpAzul extends NextFTCOpMode {
         );
 
         Lock.INSTANCE.closed.invoke();
-        Intake.INSTANCE.intake.invoke();
+//        Intake.INSTANCE.intake.invoke();
         Indexer.INSTANCE.naoshooting.invoke();
 
         Shooter.INSTANCE.setVelocity(Shooter.goal);
 
         Gamepads.gamepad1().y().whenTrue(() ->
                 Intake.INSTANCE.reversed.schedule()
-        ).whenBecomesFalse(
-                () -> Intake.INSTANCE.intake.schedule()
         );
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() ->
                 new SequentialGroup(
+//                        Intake.INSTANCE.intake,
                         Indexer.INSTANCE.shooting,
                         Lock.INSTANCE.open,
                         new Delay(0.7),
@@ -231,7 +231,7 @@ public class TeleOpAzul extends NextFTCOpMode {
         Turret.INSTANCE.setPoseTracker(
                 poseAtual.getX(),
                 poseAtual.getY(),
-                headingTurret,
+                poseAtual.getHeading(),
                 0.0,
                 true,
                 telemetry,
@@ -264,7 +264,7 @@ public class TeleOpAzul extends NextFTCOpMode {
     }
 
     private void resetPose() {
-        PedroComponent.follower().setPose(poseInicial);
+        PedroComponent.follower().setPose(poseResetHumanPAzul);
     }
 
     private void resetTurretPose() {
