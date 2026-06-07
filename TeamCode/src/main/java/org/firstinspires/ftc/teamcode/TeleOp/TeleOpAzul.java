@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.last;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.destinationAngle;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
 
@@ -60,6 +61,9 @@ public class TeleOpAzul extends NextFTCOpMode {
     private DcMotor FrontRight;
     private DcMotor BackLeft;
     private DcMotor BackRight;
+    private static final Style robotLook = new Style("", "#3F51B5", 0.75);
+    private static final Style robotLook2 = new Style("", "#800000", 0.75);
+    private static final Style robotLook3 = new Style("", "#008000", 0.75);
 
     public static double compensation = 0;
     public static double flywheelCompensation = 0.75;
@@ -211,6 +215,65 @@ public class TeleOpAzul extends NextFTCOpMode {
         Pose poseAtual = PedroComponent.follower().getPose();
         double distanceToGoal = poseAtual.distanceFrom(goalShootPoseAzul);
 
+        Vector v = new Pose(
+                0,
+                0,
+                Math.toRadians(poseAtual.getHeading())
+        ).getHeadingAsUnitVector();
+
+        v.setMagnitude(v.getMagnitude() * 9);
+
+        Vector v2 = new Pose(
+                0,
+                0,
+                Math.toRadians(destinationAngle)
+        ).getHeadingAsUnitVector();
+
+        v2.setMagnitude(v2.getMagnitude() * 9);
+
+        Vector v3 = new Pose(
+                0,
+                0,
+                Math.toRadians(toTurn)
+        ).getHeadingAsUnitVector();
+
+        v3.setMagnitude(v3.getMagnitude() * 9);
+
+        panelsField.setStyle(robotLook);
+        panelsField.moveCursor(poseAtual.getX()-7.5175, poseAtual.getY()-6.04);
+        panelsField.rect(15.3543, 12.08661);
+
+        panelsField.setStyle(robotLook);
+        panelsField.moveCursor(
+                poseAtual.getX() + v.getXComponent() / 2,
+                poseAtual.getY() + v.getYComponent() / 2
+        );
+        panelsField.line(
+                poseAtual.getX() + v.getXComponent(),
+                poseAtual.getY() + v.getYComponent()
+        );
+
+        panelsField.setStyle(robotLook2);
+        panelsField.moveCursor(
+                poseAtual.getX() + v2.getXComponent() / 2,
+                poseAtual.getY() + v2.getYComponent() / 2
+        );
+        panelsField.line(
+                poseAtual.getX() + v2.getXComponent(),
+                poseAtual.getY() + v2.getYComponent()
+        );
+
+        panelsField.setStyle(robotLook3);
+        panelsField.moveCursor(
+                poseAtual.getX() + v3.getXComponent() / 2,
+                poseAtual.getY() + v3.getYComponent()
+        );
+        panelsField.line(
+                poseAtual.getX() + v3.getXComponent(),
+                poseAtual.getY() + v3.getYComponent()
+        );
+
+        panelsField.update();
 
 //        double dx   = Turret.goalx - poseAtual.getX();
 //        double dy   = Turret.goaly - poseAtual.getY();
@@ -249,7 +312,7 @@ public class TeleOpAzul extends NextFTCOpMode {
                 poseAtual,
                 Shooter.INSTANCE.getVelocity(),
                 turretAngle,
-                Turret.destinationAngle,
+                destinationAngle,
                 toTurn,
                 null,
                 0.0,

@@ -168,36 +168,25 @@ public class Turret implements Subsystem {
                 Math.atan2(goaly - robotY, goalx - robotX));
 
 
-        double dx   = goalx - robotX;
-        double dy   = goaly - robotY;
-        double dist = Math.sqrt(dx * dx + dy * dy);
-
-
-        double leadAngleDeg = 0.0;
-        if (dist > 1.0) {
-            leadAngleDeg = Math.toDegrees(Math.atan2(compensation, dist));
-        }
-
-        destinationAngle = calculatedDestinationAngle + leadAngleDeg + RecoveryOffset;
+        destinationAngle = calculatedDestinationAngle + RecoveryOffset;
 
         double robotAngleDeg = Math.toDegrees(headingRad);
-
-        double error = destinationAngle - robotAngleDeg - currentTurretAngle;
-        error = Math.IEEEremainder(error, 360.0);
-
-        double projectedAngle = currentTurretAngle + error;
-        if (projectedAngle > max) {
-            error = max - currentTurretAngle;
-        } else if (projectedAngle < min) {
-            error = min - currentTurretAngle;
-        }
-
-        return error;
+//
+//        double error = destinationAngle - robotAngleDeg - currentTurretAngle;
+//        error = Math.IEEEremainder(error, 360.0);
+//
+//        double projectedAngle = currentTurretAngle + error;
+//        if (projectedAngle > max) {
+//            error = max - currentTurretAngle;
+//        } else if (projectedAngle < min) {
+//            error = min - currentTurretAngle;
+//        }
+//
+//        return error;
     }
 
     @Override
     public void periodic() {
-
 
         if (manualMode) {
             motor.setPower(manualDirection * manualPower);
@@ -228,7 +217,7 @@ public class Turret implements Subsystem {
         );
 
 
-        motor.setPower(clamp(-power, -1.0, 1.0));
+        motor.setPower(clamp(-power/2, -0.8, 0.8));
     }
 
     private static double angleToEncoderTicks(double degrees) {

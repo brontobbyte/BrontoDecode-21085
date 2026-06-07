@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -68,7 +69,7 @@ public class FlywheelExample extends NextFTCOpMode {
     @Override
     public void onInit() {
         PedroComponent.follower().setStartingPose(
-                pose(poselegalimportantex, poselegalimportantey, 90)
+                pose(poselegalimportantex, poselegalimportantey, 180)
         );
 
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() ->

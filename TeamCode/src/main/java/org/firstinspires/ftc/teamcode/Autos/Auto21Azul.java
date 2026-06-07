@@ -122,7 +122,6 @@ public class Auto21Azul extends NextFTCOpMode {
 //        motor.brakeMode();
         CommandManager.INSTANCE.scheduleCommand(
                 new SequentialGroup(
-                        Lock.INSTANCE.open,
                         preload(),
                         intakeMeio(),
                         shootMeio(),
