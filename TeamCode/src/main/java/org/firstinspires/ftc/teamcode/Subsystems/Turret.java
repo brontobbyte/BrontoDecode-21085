@@ -23,12 +23,12 @@ public class Turret implements Subsystem {
     public static ControlSystem controllerauto;
     public static ControlSystem controllerTeleop;
 
-    public static double Tkp  = 0.045;
+    public static double Tkp  = 0.02;
     public static double Tki  = 0;
-    public static double Tkd  = 0.0098;
-    public static double TTkp = 0.045;
+    public static double Tkd  = 0.00;
+    public static double TTkp = 0.02;
     public static double TTki = 0;
-    public static double TTkd = 0.0098;
+    public static double TTkd = 0.00;
 
     private double robotX     = 0.0;
     private double robotY     = 0.0;
@@ -146,31 +146,31 @@ public class Turret implements Subsystem {
     }
 
 
-    public double aimToObject(double currentTurretAngle) {
+    public double aimToObject() {
+        double robotYPosition = robotY;
+        double robotXPosition = robotX;
+
+        calculatedDestinationAngle = Math.toDegrees(Math.atan2(goaly - robotYPosition, goalx - robotXPosition));
+        destinationAngle = calculatedDestinationAngle /*+ compensation*/;
+        turretAngle = encoderTicksToAngle(motor.getRawTicks());
 
 
-        if (lockAngleEnabled) {
-            destinationAngle = lockedAngle;
-
-            double error = destinationAngle - currentTurretAngle;
-            error = Math.IEEEremainder(error, 360.0);
-
-            double projectedAngle = currentTurretAngle + error;
-            if (projectedAngle > max) {
-                error = max - currentTurretAngle;
-            } else if (projectedAngle < min) {
-                error = min - currentTurretAngle;
-            }
-
-            return error;
-        }
-
-        calculatedDestinationAngle = Math.toDegrees(
-                Math.atan2(goaly - robotY, goalx - robotX));
-
-
-        destinationAngle = calculatedDestinationAngle + RecoveryOffset;
-
+//        if (lockAngleEnabled) {
+//            destinationAngle = lockedAngle;
+//
+//            double error = destinationAngle - currentTurretAngle;
+//            error = Math.IEEEremainder(error, 360.0);
+//
+//            double projectedAngle = currentTurretAngle + error;
+//            if (projectedAngle > max) {
+//                error = max - currentTurretAngle;
+//            } else if (projectedAngle < min) {
+//                error = min - currentTurretAngle;
+//            }
+//
+//            return error;
+//        }
+        double robotAngle = Math.toDegrees(headingRad);
         double robotAngleDeg = Math.toDegrees(headingRad);
 //
 //        double error = destinationAngle - robotAngleDeg - currentTurretAngle;
@@ -184,41 +184,43 @@ public class Turret implements Subsystem {
 //        }
 //
 //        return error;
+        toTurn = destinationAngle - (turretAngle + robotAngle);
+        return toTurn;
     }
 
     @Override
     public void periodic() {
 
-        if (manualMode) {
-            motor.setPower(manualDirection * manualPower);
-            return;
-        }
+//        if (manualMode) {
+//            motor.setPower(manualDirection * manualPower);
+//            return;
+//        }
 
-        double currentTick = motor.getCurrentPosition() - resetTick;
+//        double currentTick = motor.getCurrentPosition() - resetTick;
 
-        turretAngle = encoderTicksToAngle(currentTick);
+//        turretAngle = encoderTicksToAngle(currentTick);
 
-        toTurn = aimToObject(turretAngle);
+//        toTurn = aimToObject(turretAngle);
 
-        double targetTick = currentTick + angleToEncoderTicks(toTurn);
+//        double targetTick = currentTick + angleToEncoderTicks(toTurn);
 
-        targetTick = clamp(
-                targetTick,
-                angleToEncoderTicks(min),
-                angleToEncoderTicks(max)
-        );
+//        targetTick = clamp(
+//                targetTick,
+//                angleToEncoderTicks(min),
+//                angleToEncoderTicks(max)
+//        );
 
-        controllerauto.setGoal(new KineticState(targetTick));
+//        controllerauto.setGoal(new KineticState(targetTick));
         
-        double power = turnTurretBy(aimToObject(), angleLL, div);
+        double power = turnTurretBy(aimToObject());
 
-
-        double power = controllerauto.calculate(
-                new KineticState(
-                        currentTick,
-                        motor.getVelocity()
-                )
-        );
+//
+//        double power = controllerauto.calculate(
+//                new KineticState(
+//                        currentTick,
+//                        motor.getVelocity()
+//                )
+//        );
 
 
         motor.setPower(clamp(-power/2, -0.8, 0.8));
