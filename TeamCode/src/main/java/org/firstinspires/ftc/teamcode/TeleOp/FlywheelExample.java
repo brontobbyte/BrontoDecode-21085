@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
@@ -42,8 +43,8 @@ public class FlywheelExample extends NextFTCOpMode {
     public static double hood = 0;
     public static double intake = 1;
 
-    public static double poselegalimportantex = 26.96435342014482;
-    public static double poselegalimportantey = 126.87326351120366;
+    public static double poselegalimportantex = poseResetHumanPAzul.getX();
+    public static double poselegalimportantey = poseResetHumanPAzul.getY();
 
     public static boolean redAlliance = false;
 
@@ -53,6 +54,13 @@ public class FlywheelExample extends NextFTCOpMode {
     private boolean shooterOn = false;
     private boolean lastAState = false;
 
+    private double lastFkp = Shooter.Fkp;
+    private double lastFki = Shooter.Fki;
+    private double lastFkd = Shooter.Fkd;
+    private double lastFkv = Shooter.Fkv;
+    private double lastFka = Shooter.Fka;
+    private double lastFks = Shooter.Fks;
+
     private Pose pose(double x, double y, double headingDegrees) {
         Pose p = new Pose(x, y, Math.toRadians(headingDegrees));
         return redAlliance ? p.mirror() : p;
@@ -61,19 +69,18 @@ public class FlywheelExample extends NextFTCOpMode {
     @Override
     public void onInit() {
         PedroComponent.follower().setStartingPose(
-                pose(poselegalimportantex, poselegalimportantey, 90)
+                pose(poselegalimportantex, poselegalimportantey, 180)
         );
-        Gamepads.gamepad1().rightBumper().whenBecomesTrue(() -> {
 
-            new SequentialGroup(
-                    Lock.INSTANCE.open,
-                    Indexer.INSTANCE.shooting,
-                    Intake.INSTANCE.shooting,
-                    new Delay(0.7),
-                    Intake.INSTANCE.stop
-            ).schedule();
-
-        });
+        Gamepads.gamepad1().rightBumper().whenBecomesTrue(() ->
+                new SequentialGroup(
+                        Lock.INSTANCE.open,
+                        Indexer.INSTANCE.shooting,
+                        Intake.INSTANCE.shooting,
+                        new Delay(0.7),
+                        Intake.INSTANCE.stop
+                ).schedule()
+        );
     }
 
     @Override
@@ -81,6 +88,9 @@ public class FlywheelExample extends NextFTCOpMode {
 
         if (gamepad1.a && !lastAState) {
             shooterOn = !shooterOn;
+            if (!shooterOn) {
+                Shooter.INSTANCE.stop();
+            }
         }
         lastAState = gamepad1.a;
 
@@ -95,63 +105,61 @@ public class FlywheelExample extends NextFTCOpMode {
         servoHood.setPosition(hood);
 
         if (shooterOn) {
+            if (gainsTuned()) {
+                Shooter.INSTANCE.rebuildControlSystem();
+                syncGainCache();
+            }
             Shooter.INSTANCE.setVelocity(Shooter.goal);
-        } else {
-            Shooter.INSTANCE.setSpeed(0);
         }
 
         PedroComponent.follower().update();
 
         Pose goalPose = redAlliance ? goalPoseazul.mirror() : goalPoseazul;
+        double dist = PedroComponent.follower().poseTracker.getPose().distanceFrom(goalPose);
 
-        telemetry.addLine("Aliança");
+        telemetry.addLine("=== ALIANÇA ===");
         telemetry.addData("Alliance", redAlliance ? "VERMELHO" : "AZUL");
 
-        telemetry.addLine("Shooter");
+        telemetry.addLine("=== SHOOTER ===");
         telemetry.addData("Shooter On", shooterOn);
+        telemetry.addData("Target", Shooter.goal);
+        telemetry.addData("Velocity", Shooter.INSTANCE.getVelocity());
+        telemetry.addData("Error", Shooter.INSTANCE.getVelocityError());
+        telemetry.addData("Power", Shooter.INSTANCE.getPower());
 
-        telemetry.addLine("PID");
+        telemetry.addLine("=== GAINS ===");
         telemetry.addData("Fkp", Shooter.Fkp);
         telemetry.addData("Fki", Shooter.Fki);
         telemetry.addData("Fkd", Shooter.Fkd);
 
-        telemetry.addLine("FeedForward");
-        telemetry.addData("Fks", Shooter.Fks);
-        telemetry.addData("Fka", Shooter.Fka);
+        telemetry.addLine("=== FEEDFORWARD ===");
         telemetry.addData("Fkv", Shooter.Fkv);
+        telemetry.addData("Fka", Shooter.Fka);
+        telemetry.addData("Fks", Shooter.Fks);
 
-        telemetry.addLine("Goal");
-        telemetry.addData("Goal Velocity", Shooter.goal);
-
-        telemetry.addLine("Motor");
-        telemetry.addData("Velocity", Shooter.INSTANCE.getVelocity());
-        telemetry.addData("Power", Shooter.INSTANCE.getPower());
-
-        telemetry.addLine("Pose");
-        telemetry.addData(
-                "dist",
-                PedroComponent.follower()
-                        .poseTracker
-                        .getPose()
-                        .distanceFrom(goalPose)
-        );
-
-        telemetry.addData(
-                "x",
-                PedroComponent.follower()
-                        .poseTracker
-                        .getPose()
-                        .getX()
-        );
-
-        telemetry.addData(
-                "y",
-                PedroComponent.follower()
-                        .poseTracker
-                        .getPose()
-                        .getY()
-        );
+        telemetry.addLine("=== POSE ===");
+        telemetry.addData("x", PedroComponent.follower().poseTracker.getPose().getX());
+        telemetry.addData("y", PedroComponent.follower().poseTracker.getPose().getY());
+        telemetry.addData("dist", dist);
 
         telemetry.update();
+    }
+
+    private boolean gainsTuned() {
+        return Shooter.Fkp != lastFkp
+                || Shooter.Fki != lastFki
+                || Shooter.Fkd != lastFkd
+                || Shooter.Fkv != lastFkv
+                || Shooter.Fka != lastFka
+                || Shooter.Fks != lastFks;
+    }
+
+    private void syncGainCache() {
+        lastFkp = Shooter.Fkp;
+        lastFki = Shooter.Fki;
+        lastFkd = Shooter.Fkd;
+        lastFkv = Shooter.Fkv;
+        lastFka = Shooter.Fka;
+        lastFks = Shooter.Fks;
     }
 }

@@ -41,9 +41,7 @@ public class LimelightMT2 extends LinearOpMode{
 
         limelight.pipelineSwitch(0);
 
-        /*
-         * Inicia a coleta de dados.
-         */
+
         limelight.start();
 
         waitForStart();

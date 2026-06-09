@@ -39,7 +39,6 @@ public class TurretTuner extends NextFTCOpMode {
         Turret.INSTANCE.initialize();
         Turret.INSTANCE.reset();
 
-        // começa apontando para 60°
         Turret.lockedAngle = positionB;
         Turret.destinationAngle = positionB;
         Turret.lockAngleEnabled = true;
