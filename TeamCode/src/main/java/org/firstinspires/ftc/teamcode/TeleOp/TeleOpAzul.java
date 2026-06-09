@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalShootPoseAzul;
-import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.last;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
@@ -61,9 +60,11 @@ public class TeleOpAzul extends NextFTCOpMode {
     private DcMotor FrontRight;
     private DcMotor BackLeft;
     private DcMotor BackRight;
+
     private static final Style robotLook = new Style("", "#3F51B5", 0.75);
     private static final Style robotLook2 = new Style("", "#800000", 0.75);
     private static final Style robotLook3 = new Style("", "#008000", 0.75);
+
 
     public static double compensation = 0;
     public static double flywheelCompensation = 0.75;
@@ -291,6 +292,8 @@ public class TeleOpAzul extends NextFTCOpMode {
 
         double leadCompensation = lateralVel * flightTime;
 
+        //double angleCompensation =  errorDeg - targetHeadingDeg;
+
         Turret.INSTANCE.setPoseTracker(
                 poseAtual.getX(),
                 poseAtual.getY(),
@@ -298,7 +301,7 @@ public class TeleOpAzul extends NextFTCOpMode {
                 0.0,
                 true,
                 telemetry,
-                leadCompensation
+                leadCompensation //= + angleCompensation
         );
 
 //        double radialVel = (vx * dx + vy * dy) / dist;
@@ -322,6 +325,12 @@ public class TeleOpAzul extends NextFTCOpMode {
                 0.0,
                 0.0
         );
+
+        telemetry.addData("heading graus", Math.toDegrees(poseAtual.getHeading()));
+        telemetry.addData("goalx", Turret.goalx);
+        telemetry.addData("goaly", Turret.goaly);
+        telemetry.addData("toTurn", Turret.toTurn);
+        telemetry.addData("turretAngle", Turret.turretAngle);
 
         telemetry.update();
     }

@@ -4,17 +4,14 @@ import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkd;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tki;
-
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
 import static org.firstinspires.ftc.teamcode.TeleOp.TeleOpAzul.projectileSpeed;
-
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.delays.Delay;
-
 import dev.nextftc.core.commands.delays.WaitUntil;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -26,12 +23,13 @@ import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.AutoPathsAzul;
+import org.firstinspires.ftc.teamcode.Constants.AutoPoses;
 import org.firstinspires.ftc.teamcode.Constants.PoseManager;
 import org.firstinspires.ftc.teamcode.Subsystems.Hood;
 import org.firstinspires.ftc.teamcode.Subsystems.Indexer;
@@ -42,7 +40,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 import org.firstinspires.ftc.teamcode.Constants.LimelightHelper;
 import org.firstinspires.ftc.teamcode.Constants.TelemetryHelper;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
 // TODO AUTONOMOUS - 21 ARTIFACTS CLASSIFIED AZUL + 3 BASE - 21085 - BRONTOBYTE - BR
 @Configurable
 @Autonomous
@@ -54,33 +51,29 @@ public class Auto21Azul extends NextFTCOpMode {
                 new PedroComponent(Constants::createFollower)
         );
     }
-
     public static double Fkp = 0.005;
     public static double Fki = 0.000000001;
     public static double Fkd = 0;
     public static double Fks = 0.17;
     public static double Fka = 6;
     public static double Fkv = 0.00030;
-
     private final MotorGroup Flywheel = new MotorGroup(
             new MotorEx("f1"),
             new MotorEx("f2")
     );
-
     public static boolean debugMode = true;
     public static double distanceToGoal;
     public static double kp = 0.12;
     public static double goal = 1620;
     public static double tol = 1.5;
-
     public static double gatedelay = 1.6;
 
+    public static double distforshoot = 6.0;
     public static double carolina = 0.8;
     public static double filter = 0;
     private static ControlSystem controller;
     //    Limelight3A limelight;
     private double angleLL = 0;
-
     @Override
     public void onInit() {
         Hood.INSTANCE.setHoodPos(Hood.pos);
@@ -92,7 +85,6 @@ public class Auto21Azul extends NextFTCOpMode {
         Hood.INSTANCE.set.invoke();
         Indexer.INSTANCE.naoshooting.invoke();
         Shooter.INSTANCE.setGoalDistance(0);
-
         // Shooter.INSTANCE.getPower();
         PedroComponent.follower().setStartingPose(poseInicial);
 //        limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -102,7 +94,6 @@ public class Auto21Azul extends NextFTCOpMode {
         CommandManager.INSTANCE.scheduleCommand(Lock.INSTANCE.closed);
         new AutoPathsAzul();
     }
-
     @Override
     public void onWaitForStart() {
 //        angleLL = LimelightHelper.updateAngleLL(limelight);
@@ -110,13 +101,11 @@ public class Auto21Azul extends NextFTCOpMode {
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), 0, true, telemetry, 0);
         double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
         Shooter.INSTANCE.setGoalDistance(0);
-
 //        TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
 //                Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,
 //                limelight, angleLL, debugMode, distanceToGoal, 0.0, 0.0, 0.0);
         telemetry.update();
     }
-
     @Override
     public void onStartButtonPressed() {
 //        motor.brakeMode();
@@ -129,15 +118,15 @@ public class Auto21Azul extends NextFTCOpMode {
                         gateCicle(),
                         intakeCima(),
                         shootCima(),
-                        intakeBaixo(),
-                        shootfinal(),
-                        //gateCicle(),
+                        //intakeBaixo(),
+                        gateCicle(),
+                        //shootfinal(),
+                       //gateCicle(),
                         new FollowPath(AutoPathsAzul.last(PedroComponent.follower()))
                 )
         );
         PedroComponent.follower().update();
     }
-
     @Override
     public void onUpdate() {
 //
@@ -146,16 +135,12 @@ public class Auto21Azul extends NextFTCOpMode {
 //                .velPid(Fkp, Fki, Fkd)
 //                .basicFF(Fkv, Fka, Fks)
 //                .build();
-
 //        controlSystem.setGoal(new KineticState(0, goal));
 //        double power = controlSystem.calculate(new KineticState(
 //                Flywheel.getCurrentPosition(),
 //                Flywheel.getVelocity()));
-
 //        Flywheel.setPower(power);
-
 //        LLResult result = limelight.getLatestResult();
-
 //        if (result != null){
 //            angleLL = 0;
 //        }else{
@@ -170,36 +155,45 @@ public class Auto21Azul extends NextFTCOpMode {
         Hood.INSTANCE.setGoalDistance(distanceToGoal);
         Hood.INSTANCE.periodic();
         double lateralVel = PedroComponent.follower().poseTracker.getVelocity().getYComponent();
-
         double flightTime = distanceToGoal / projectileSpeed;
-
         double leadCompensation = lateralVel * flightTime;
         Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), poseAtual.getHeading(), 0, true, telemetry, leadCompensation);
-
 //        TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
 //                Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,
 //                limelight, angleLL, debugMode, distanceToGoal, 0.0, 0.0, 0.0);
         telemetry.update();
     }
-
     @Override
     public void onStop() {
         //Shooter.INSTANCE.setGoalDistance(0);
         PoseManager.currentPose = PedroComponent.follower().getPose();
     }
-
     private SequentialGroup shootar() {
         return new SequentialGroup(
                 Lock.INSTANCE.open,
                 Indexer.INSTANCE.shooting,
-                new Delay(0.1),
+                new Delay(0.05),
                 Intake.INSTANCE.intake,
-                new Delay(0.55),
+                new Delay(0.30),
                 Indexer.INSTANCE.naoshooting,
                 Lock.INSTANCE.closed
         );
     }
-
+    private SequentialGroup shootpathdist(PathChain path) {
+        return new SequentialGroup(
+                new ParallelGroup(
+                        new FollowPath(path),
+                        new SequentialGroup(
+                                new WaitUntil(() ->
+                                        PedroComponent.follower()
+                                                .getCurrentPath()
+                                                .getClosestPointTValue() > 0.80
+                                ),
+                                shootar()
+                        )
+                )
+        );
+    }
     private SequentialGroup intake() {
         return new SequentialGroup(
                 Indexer.INSTANCE.naoshooting,
@@ -207,62 +201,49 @@ public class Auto21Azul extends NextFTCOpMode {
                 Intake.INSTANCE.intake
         );
     }
-
     private SequentialGroup stopintake() {
         return new SequentialGroup(
                 Intake.INSTANCE.stop
         );
     }
-
     private SequentialGroup gateCicle() {
         return new SequentialGroup(
                 new ParallelGroup(
                         intake().afterTime(1),
-                        new FollowPath(AutoPathsAzul.Gate(PedroComponent.follower()))
+                        new FollowPath(
+                                AutoPathsAzul.Gate(PedroComponent.follower()),
+                                true,
+                                0.8
+                        )
                 ),
                 new Delay(gatedelay),
                 intake(),
-                new FollowPath(AutoPathsAzul.ShootGate(PedroComponent.follower())),
-                shootar()
-
-        );
-    }
-
-    private SequentialGroup gateCicleCima() {
-        return new SequentialGroup(
-                new FollowPath(AutoPathsAzul.Gate(PedroComponent.follower())),
-                intake(),
-                new Delay(2),
-                stopintake(),
-                new FollowPath(AutoPathsAzul.ShootGateCima(PedroComponent.follower())),
-                shootar()
+                shootpathdist(
+                        AutoPathsAzul.ShootGate(PedroComponent.follower())
+                )
         );
     }
 
     private SequentialGroup shootMeio() {
-        return new SequentialGroup(
-                new FollowPath(AutoPathsAzul.ShootMeio(PedroComponent.follower())),
-                shootar()
+        return shootpathdist(
+                AutoPathsAzul.ShootMeio(PedroComponent.follower())
         );
     }
-
     private SequentialGroup intakeMeio() {
         return new SequentialGroup(
                 intake(),
                 new FollowPath(AutoPathsAzul.IntakeMeio(PedroComponent.follower())),   //Vai pra fileira do meio
                 intake()
-
         );
     }
-
     private SequentialGroup preload() {
         return new SequentialGroup(
-                new FollowPath(AutoPathsAzul.ShootPreload(PedroComponent.follower())), //Shoot Preload
+                shootpathdist(
+                        AutoPathsAzul.ShootPreload(PedroComponent.follower())), // Shoot Preload
                 shootar(),
                 intake()
         );
     }
-
     private SequentialGroup intakeCima() {
         return new SequentialGroup(
                 new ParallelGroup(
@@ -272,7 +253,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 intake()
         );
     }
-
     private SequentialGroup shootCima() {
         return new SequentialGroup(
                 intake(),
@@ -281,7 +261,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 shootar()
         );
     }
-
     private SequentialGroup intakeBaixo() {
         return new SequentialGroup(
                 new ParallelGroup(
@@ -291,12 +270,9 @@ public class Auto21Azul extends NextFTCOpMode {
                 intake()
         );
     }
-
     private SequentialGroup shootfinal() {
-        return new SequentialGroup(
-                new FollowPath(AutoPathsAzul.shootPoselast(PedroComponent.follower())),
-                Lock.INSTANCE.open,
-                shootar()
+        return shootpathdist(
+                AutoPathsAzul.shootPoselast(PedroComponent.follower())
         );
     }
 //    public class LLalign extends Command {
