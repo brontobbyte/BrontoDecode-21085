@@ -17,9 +17,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
 public class Constants {
+    public static double offsetY = 2.88583;
+    public static double offsetX = -2.62598;
+
     public static FollowerConstants followerConstants = new FollowerConstants()
             .centripetalScaling(0.0005)
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.029, 0.001, 0.0008,0.001,0.0001))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.007, 0.001, 0.0012, 0.001, 0.0001))
             .headingPIDFCoefficients(new PIDFCoefficients(1, 0.0001, 0.001, 0.0001))
             .translationalPIDFCoefficients(new PIDFCoefficients(0.09, 0.0003, 0.008, 0.03))
             .lateralZeroPowerAcceleration(-57.482201)
@@ -45,12 +48,14 @@ public class Constants {
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.9, 100, 1, 1);
     public static Follower createFollower(HardwareMap hardwareMap) {
-        return new FollowerBuilder(followerConstants, hardwareMap)
+        Follower follower = new FollowerBuilder(followerConstants, hardwareMap)
                 .pinpointLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
                 .build();
+
+        return follower;
     }
 }

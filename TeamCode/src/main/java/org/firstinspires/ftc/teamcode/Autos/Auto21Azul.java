@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.Autos;
 import static com.pedropathing.math.MathFunctions.clamp;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalPoseazul;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalShootPoseAzul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
+import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.shootPose1;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkd;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tki;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.turretAngle;
 import static org.firstinspires.ftc.teamcode.TeleOp.TeleOpAzul.projectileSpeed;
+import static org.firstinspires.ftc.teamcode.TeleOp.TeleOpAzul.projectileSpeedAutoX;
+import static org.firstinspires.ftc.teamcode.TeleOp.TeleOpAzul.projectileSpeedAutoY;
+
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -64,64 +69,62 @@ public class Auto21Azul extends NextFTCOpMode {
     public static boolean debugMode = true;
     public static double distanceToGoal;
     public static double kp = 0.12;
-    public static double goal = 1620;
+    public static double goal = 1400;
     public static double tol = 1.5;
-    public static double gatedelay = 1.6;
-
-    public static double distforshoot = 6.0;
+    public static double gatedelay = 1;
+    public static double shootdist = 0.95;
+    public static double velocidade = 1000;
     public static double carolina = 0.8;
     public static double filter = 0;
+    public static double turretTolerance = 1;
+    public static boolean preloadActive = true;
+    public static double preloadFlywheelOffset = 0;
     private static ControlSystem controller;
-    //    Limelight3A limelight;
     private double angleLL = 0;
     @Override
     public void onInit() {
-        Hood.INSTANCE.setHoodPos(Hood.pos);
-        Intake.INSTANCE.initialize();
-        Intake.INSTANCE.intake.invoke();
+        //Intake.INSTANCE.initialize();
+        Turret.INSTANCE.resetTurret();
         Intake.INSTANCE.stop.invoke();
         Lock.INSTANCE.closed.invoke();
         Lock.INSTANCE.open.invoke();
         Hood.INSTANCE.set.invoke();
         Indexer.INSTANCE.naoshooting.invoke();
-        Shooter.INSTANCE.setGoalDistance(0);
-        // Shooter.INSTANCE.getPower();
+        Shooter.INSTANCE.setVelocity(0);
         PedroComponent.follower().setStartingPose(poseInicial);
-//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-//        limelight.setPollRateHz(400);
-//        limelight.pipelineSwitch(5);
-//        limelight.start();
         CommandManager.INSTANCE.scheduleCommand(Lock.INSTANCE.closed);
+        Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
+        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), poseAtual.getHeading(), 0, true, telemetry, 0);
+
         new AutoPathsAzul();
     }
     @Override
     public void onWaitForStart() {
-//        angleLL = LimelightHelper.updateAngleLL(limelight);
         Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), Math.toDegrees(poseAtual.getHeading()), 0, true, telemetry, 0);
-        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
-        Shooter.INSTANCE.setGoalDistance(0);
-//        TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
-//                Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,
-//                limelight, angleLL, debugMode, distanceToGoal, 0.0, 0.0, 0.0);
+        double distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalShootPoseAzul);
+        //Shooter.INSTANCE.setGoalDistance(0);
         telemetry.update();
     }
     @Override
     public void onStartButtonPressed() {
-//        motor.brakeMode();
+        Turret.enabled = true;
+        Intake.INSTANCE.intake.invoke();
         CommandManager.INSTANCE.scheduleCommand(
                 new SequentialGroup(
                         preload(),
+                        new WaitUntil(() -> {
+                            preloadActive = false;
+                            return true;
+                        }),
                         intakeMeio(),
                         shootMeio(),
+                        gateCicle(),
                         gateCicle(),
                         gateCicle(),
                         intakeCima(),
                         shootCima(),
                         //intakeBaixo(),
-                        gateCicle(),
                         //shootfinal(),
-                       //gateCicle(),
                         new FollowPath(AutoPathsAzul.last(PedroComponent.follower()))
                 )
         );
@@ -129,52 +132,39 @@ public class Auto21Azul extends NextFTCOpMode {
     }
     @Override
     public void onUpdate() {
-//
-//
-//        ControlSystem controlSystem = ControlSystem.builder()
-//                .velPid(Fkp, Fki, Fkd)
-//                .basicFF(Fkv, Fka, Fks)
-//                .build();
-//        controlSystem.setGoal(new KineticState(0, goal));
-//        double power = controlSystem.calculate(new KineticState(
-//                Flywheel.getCurrentPosition(),
-//                Flywheel.getVelocity()));
-//        Flywheel.setPower(power);
-//        LLResult result = limelight.getLatestResult();
-//        if (result != null){
-//            angleLL = 0;
-//        }else{
-//            angleLL = 0.0;
-//        }
-        //Pose poseAtual = PedroComponent.follower().poseTracker.getPose();
         PedroComponent.follower().update();
         Pose poseAtual = PedroComponent.follower().getPose();
-        distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalPoseazul);
-        Shooter.INSTANCE.setGoalDistance(distanceToGoal);
+        distanceToGoal = PedroComponent.follower().getPose().distanceFrom(goalShootPoseAzul);
+        double targetVelocity =
+                Shooter.INSTANCE.getGoalForDistance(distanceToGoal);
+        if (preloadActive) {
+            targetVelocity += preloadFlywheelOffset;
+        }
+        Shooter.INSTANCE.setVelocity(goal);
         Shooter.INSTANCE.periodic();
-        Hood.INSTANCE.setGoalDistance(distanceToGoal);
+        Hood.INSTANCE.setHoodPos(Hood.pos);
         Hood.INSTANCE.periodic();
         double lateralVel = PedroComponent.follower().poseTracker.getVelocity().getYComponent();
-        double flightTime = distanceToGoal / projectileSpeed;
-        double leadCompensation = lateralVel * flightTime;
-        Turret.INSTANCE.setPoseTracker(poseAtual.getX(), poseAtual.getY(), poseAtual.getHeading(), 0, true, telemetry, leadCompensation);
-//        TelemetryHelper.addCommonTelemetry(telemetry, PedroComponent.follower().getPose(),
-//                Shooter.INSTANCE.getVelocity(), turretAngle, Turret.destinationAngle, toTurn,
-//                limelight, angleLL, debugMode, distanceToGoal, 0.0, 0.0, 0.0);
+        double vertVel = PedroComponent.follower().poseTracker.getVelocity().getXComponent();
+        double flightTimey = distanceToGoal / projectileSpeedAutoY;
+        double flightTimex = distanceToGoal / projectileSpeedAutoX;
+        double leadCompensation = flightTimex * vertVel + flightTimey * lateralVel;
+
+        Turret.INSTANCE.setPoseTracker(shootPose1.getX(), shootPose1.getY(), shootPose1.getHeading(), 0, true, telemetry, 0);
         telemetry.update();
     }
     @Override
     public void onStop() {
-        //Shooter.INSTANCE.setGoalDistance(0);
         PoseManager.currentPose = PedroComponent.follower().getPose();
+        Turret.enabled = false;
     }
     private SequentialGroup shootar() {
         return new SequentialGroup(
+                //new Delay(0.10),
                 Lock.INSTANCE.open,
                 Indexer.INSTANCE.shooting,
-                new Delay(0.05),
                 Intake.INSTANCE.intake,
-                new Delay(0.30),
+                new Delay(0.50),
                 Indexer.INSTANCE.naoshooting,
                 Lock.INSTANCE.closed
         );
@@ -187,8 +177,9 @@ public class Auto21Azul extends NextFTCOpMode {
                                 new WaitUntil(() ->
                                         PedroComponent.follower()
                                                 .getCurrentPath()
-                                                .getClosestPointTValue() > 0.80
+                                                .getClosestPointTValue() > shootdist
                                 ),
+                                Indexer.INSTANCE.shooting,
                                 shootar()
                         )
                 )
@@ -213,8 +204,13 @@ public class Auto21Azul extends NextFTCOpMode {
                         new FollowPath(
                                 AutoPathsAzul.Gate(PedroComponent.follower()),
                                 true,
-                                0.8
+                                0.98
                         )
+                ),
+                new FollowPath(
+                        AutoPathsAzul.Gate2(PedroComponent.follower()),
+                        true,
+                        0.7
                 ),
                 new Delay(gatedelay),
                 intake(),
@@ -223,7 +219,6 @@ public class Auto21Azul extends NextFTCOpMode {
                 )
         );
     }
-
     private SequentialGroup shootMeio() {
         return shootpathdist(
                 AutoPathsAzul.ShootMeio(PedroComponent.follower())
@@ -232,18 +227,23 @@ public class Auto21Azul extends NextFTCOpMode {
     private SequentialGroup intakeMeio() {
         return new SequentialGroup(
                 intake(),
-                new FollowPath(AutoPathsAzul.IntakeMeio(PedroComponent.follower())),   //Vai pra fileira do meio
+                new FollowPath(AutoPathsAzul.IntakeMeio(PedroComponent.follower())),
                 intake()
         );
     }
     private SequentialGroup preload() {
+        preloadActive = true;
+        Hood.INSTANCE.setHoodPos(Hood.pos);
         return new SequentialGroup(
                 shootpathdist(
-                        AutoPathsAzul.ShootPreload(PedroComponent.follower())), // Shoot Preload
-                shootar(),
-                intake()
+                        AutoPathsAzul.ShootPreload(PedroComponent.follower())
+                ),
+                Indexer.INSTANCE.shooting,
+                intake(),
+                shootar()
         );
     }
+
     private SequentialGroup intakeCima() {
         return new SequentialGroup(
                 new ParallelGroup(
@@ -256,9 +256,7 @@ public class Auto21Azul extends NextFTCOpMode {
     private SequentialGroup shootCima() {
         return new SequentialGroup(
                 intake(),
-                new FollowPath(AutoPathsAzul.ShootCima(PedroComponent.follower())),
-                Lock.INSTANCE.open,
-                shootar()
+                shootpathdist(AutoPathsAzul.ShootCima(PedroComponent.follower()))
         );
     }
     private SequentialGroup intakeBaixo() {
@@ -275,74 +273,30 @@ public class Auto21Azul extends NextFTCOpMode {
                 AutoPathsAzul.shootPoselast(PedroComponent.follower())
         );
     }
-//    public class LLalign extends Command {
-//        private boolean done = false;
-//        private ControlSystem controller;
-//        private double tolerancia = tol;
-//        private double offset = 0;
-//        private double filteredAngle = filter;
-//        private final double alpha = carolina;
-//        private boolean started = false;
-//
-//        public LLalign() {
-//            requires();
-//            setInterruptible(true);
-//        }
-//        public double getFilteredAngle() {
-//            return filteredAngle;
-//        }
-//
-//        @Override
-//        public boolean isDone() {
-//            return done;
-//        }
-//
-//        @Override
-//        public void start() {
-//            done = false;
-//            controller = ControlSystem.builder()
-//                    .posPid(0.008, Tki, Tkd)
-//                    .build();
-//            filteredAngle = 0;
-//        }
-//
-//        @Override
-//        public void update() {
-////            angleLL = LimelightHelper.updateAngleLL(limelight);
-//            if (angleLL != 0.0 && !started) {
-//                started = true;
-//
-//            }
-//
-//            if (started) {
-//                filteredAngle = filteredAngle + alpha * (angleLL - filteredAngle);
-//
-//                if (Math.abs(motor.getVelocity()) < 20) {
-//                    offset += filteredAngle/4;
-//                }
-//
-//                double targetPosition = motor.getCurrentPosition()
-//                        + AutoConstants.Calculos.angleToEncoderTicks(filteredAngle + offset);
-//
-//                controller.setGoal(new KineticState(targetPosition));
-//
-//                double power = controller.calculate(
-//                        new KineticState(motor.getCurrentPosition(), motor.getVelocity())
-//                );
-//
-//                motor.setPower(clamp(power, -0.5, 0.5));
-//
-//                if (Math.abs(filteredAngle) < tolerancia && Math.abs(motor.getVelocity()) < 40) {
-//                    done = true;
-//                    offset = 0;
-//                    filteredAngle = 0;
-//                }
-//            }
-//        }
-//        @Override
-//        public void stop(boolean interrupted) {
-//            motor.setPower(0);
-//            motor.brakeMode();
-//        }
-//    }
+
+    public class EnableShootBrake extends Command {
+
+        @Override
+        public void start() {
+            Turret.enableShootBrake();
+        }
+
+        @Override
+        public boolean isDone() {
+            return true;
+        }
+    }
+
+    public class DisableShootBrake extends Command {
+
+        @Override
+        public void start() {
+            Turret.disableShootBrake();
+        }
+
+        @Override
+        public boolean isDone() {
+            return true;
+        }
+    }
 }

@@ -18,7 +18,7 @@ public class Intake implements Subsystem {
 
     @Override
     public void initialize() {
-        //intake.setPower(0.000001);
+        motor.setPower(0.000001);
     }
     public Command stop = new SetPower(motor, 0).requires(this);
     public Command intake = new SetPower(motor, 1).requires(this);
@@ -28,6 +28,6 @@ public class Intake implements Subsystem {
 
     @Override
     public void periodic() {
-        motor.setPower(1);
+       //motor.setPower(0);
     }
 }

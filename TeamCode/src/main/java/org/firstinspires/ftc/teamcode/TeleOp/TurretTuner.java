@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static org.firstinspires.ftc.teamcode.Subsystems.Turret.Tkp;
+
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -72,7 +75,7 @@ public class TurretTuner extends NextFTCOpMode {
         prevB = curB;
 
         Turret.INSTANCE.periodic();
-
+        telemetry.addData("Kp", Tkp);
         telemetry.addData("Posição X", "%.1f°", positionA);
         telemetry.addData("Posição B", "%.1f°", positionB);
         telemetry.addData("Ângulo Atual", "%.2f°", Turret.turretAngle);

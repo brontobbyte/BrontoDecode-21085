@@ -17,7 +17,7 @@ public class Hood implements Subsystem {
 
     private final ServoEx servoHood = new ServoEx("sHood");
 
-    public static double pos = 0.8;
+    public static double pos = 0.7;
 
     private double pendingPosition = 0.75;
     private boolean positionDirty  = false;
