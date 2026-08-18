@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.Constants;
 
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
 @Configurable
 public class AutoPathsVermelho {
+
+    public static double gateAngle = -155;
+
     public static PathChain ShootPreload(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -17,7 +20,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-180))
                 .build();
     }
 
@@ -30,7 +33,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.intakeMeioPose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-180))
                 .build();
     }
 
@@ -38,11 +41,11 @@ public class AutoPathsVermelho {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.gatePose.mirror(),
+                                AutoPoses.intakeMeioPose.mirror(),
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-180))
                 .build();
     }
 
@@ -52,21 +55,22 @@ public class AutoPathsVermelho {
                         new BezierCurve(
                                 AutoPoses.shootPose1.mirror(),
                                 AutoPoses.gateCurvedPose.mirror(),
-                                AutoPoses.gatePose.mirror()
+                                AutoPoses.gatePose2.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(20))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(gateAngle))
                 .build();
     }
+
     public static PathChain Gate2(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakeMeioPose.mirror(),
-                                AutoPoses.gatePose2.mirror()
+                                AutoPoses.gatePose2.mirror(),
+                                AutoPoses.gatePose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(30))
+                .setLinearHeadingInterpolation(Math.toRadians(gateAngle), Math.toRadians(gateAngle))
                 .build();
     }
 
@@ -78,9 +82,10 @@ public class AutoPathsVermelho {
                                 AutoPoses.gateCiclePose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(30))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-150))
                 .build();
     }
+
     public static PathChain GateCicleFinal(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -89,7 +94,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.gateCiclePoseFinal.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(65), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(-135), Math.toRadians(-90))
                 .build();
     }
 
@@ -97,11 +102,11 @@ public class AutoPathsVermelho {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.gateCiclePose.mirror(),
+                                AutoPoses.gatePose.mirror(),
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-180))
                 .build();
     }
 
@@ -113,7 +118,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-145), Math.toRadians(-180))
                 .build();
     }
 
@@ -126,7 +131,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.intakeCimaPose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-180))
                 .build();
     }
 
@@ -138,7 +143,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-180))
                 .build();
     }
 
@@ -151,7 +156,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.intakeBaixoPose.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(130))
                 .build();
     }
 
@@ -163,10 +168,11 @@ public class AutoPathsVermelho {
                                 AutoPoses.shootPose1.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-130), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(132), Math.toRadians(132))
                 .build();
     }
-    public static PathChain last (Follower follower){
+
+    public static PathChain last(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -174,7 +180,7 @@ public class AutoPathsVermelho {
                                 AutoPoses.last.mirror()
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(-90))
                 .build();
     }
 }

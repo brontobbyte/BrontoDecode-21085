@@ -12,6 +12,8 @@ import com.pedropathing.paths.PathChain;
 
 @Configurable
 public class AutoPathsAzul {
+
+    public static double gateAngle = 155;
     public static PathChain ShootPreload(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
@@ -55,21 +57,21 @@ public class AutoPathsAzul {
                         new BezierCurve(
                                 AutoPoses.shootPose1,
                                 AutoPoses.gateCurvedPose,
-                                AutoPoses.gatePose
+                                AutoPoses.gatePose2
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(160))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(gateAngle))
                 .build();
     }
     public static PathChain Gate2(Follower follower) {
         return follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                AutoPoses.intakeMeioPose,
-                                AutoPoses.gatePose2
+                                AutoPoses.gatePose2,
+                                AutoPoses.gatePose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(150))
+                .setLinearHeadingInterpolation(Math.toRadians(gateAngle), Math.toRadians(gateAngle))
                 .build();
     }
 
@@ -104,7 +106,7 @@ public class AutoPathsAzul {
                                 AutoPoses.shootPose1
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(210), Math.toRadians(180))
                 .build();
     }
 

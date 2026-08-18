@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.goalShootPoseAzul;
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseInicial;
-
 import static org.firstinspires.ftc.teamcode.Constants.AutoPoses.poseResetHumanPAzul;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.destinationAngle;
 import static org.firstinspires.ftc.teamcode.Subsystems.Turret.toTurn;
@@ -39,10 +38,10 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Configurable
-@TeleOp(name = "TeleOpAzul")
-public class TeleOpAzul extends NextFTCOpMode {
+@TeleOp(name = "TeleOpTrasAzul")
+public class TeleOpTrasAzul extends NextFTCOpMode {
 
-    public TeleOpAzul() {
+    public TeleOpTrasAzul() {
         addComponents(
                 new SubsystemComponent(Shooter.INSTANCE),
                 new SubsystemComponent(Hood.INSTANCE),
@@ -63,46 +62,48 @@ public class TeleOpAzul extends NextFTCOpMode {
     private DcMotor BackLeft;
     private DcMotor BackRight;
 
-    private static final Style robotLook = new Style("", "#3F51B5", 0.75);
+    private static final Style robotLook  = new Style("", "#3F51B5", 0.75);
     private static final Style robotLook2 = new Style("", "#800000", 0.75);
     private static final Style robotLook3 = new Style("", "#008000", 0.75);
-    public static double compensation = 0;
-    public static double flywheelCompensation = 0.75;
-    public static double projectileSpeed = 140;
-    public static double projectileSpeedAutoY = 4000;
-    public static double projectileSpeedAutoX = 322;
-    public static boolean debugMode = true;
-    public static double targetHeadingDeg = 149;
-    public static double kpHeading = 0.5;
-    public static double max = 0.9;
-    public static double odometrycorrectiondeg = -0.41;
+
+    public static double compensation            = 0;
+    public static double flywheelCompensation    = 0.75;
+    public static double projectileSpeed         = 140;
+    public static double projectileSpeedAutoY    = 4000;
+    public static double projectileSpeedAutoX    = 3220000;
+    public static boolean debugMode              = true;
+    public static double targetHeadingDeg        = 149;
+    public static double kpHeading               = 0.5;
+    public static double max                     = 0.9;
+    public static double odometrycorrectiondeg   = -0.41;
+
+    public static double offsetxTras = 0;
     private long tempoloopanterior = 0;
-    private double tempoloopmedio = 0;
-    private int contagemLoops = 0;
+    private double tempoloopmedio  = 0;
+    private int contagemLoops      = 0;
     private static final int medialooptime = 20;
-    boolean lastDpadUp = false;
-    boolean lastb = false;
-    boolean lastDpadDown = false;
-    boolean lastDpadLeft = false;
+
+    boolean lastDpadUp    = false;
+    boolean lastb         = false;
+    boolean lastDpadDown  = false;
+    boolean lastDpadLeft  = false;
     boolean lastDpadRight = false;
-    double valorTurret = 0;
-    double valorFlywheel = 0;
-    boolean lastx = false;
+    double valorTurret    = 0;
+    double valorFlywheel  = 0;
+    boolean lastx         = false;
+
     @Override
     public void onInit() {
         Shooter.INSTANCE.setVelocity(0);
         Intake.INSTANCE.stop.invoke();
-//        Lock.INSTANCE.closed.invoke();
-//        Lock.setPos(0);
-        //Lock.enableds = true;
-        FrontLeft = hardwareMap.get(DcMotor.class, "fl");
+
+        FrontLeft  = hardwareMap.get(DcMotor.class, "fl");
         FrontRight = hardwareMap.get(DcMotor.class, "fr");
-        BackLeft = hardwareMap.get(DcMotor.class, "bl");
-        BackRight = hardwareMap.get(DcMotor.class, "br");
+        BackLeft   = hardwareMap.get(DcMotor.class, "bl");
+        BackRight  = hardwareMap.get(DcMotor.class, "br");
 
         BackLeft.setDirection(DcMotor.Direction.REVERSE);
         FrontLeft.setDirection(DcMotor.Direction.REVERSE);
-
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -121,7 +122,6 @@ public class TeleOpAzul extends NextFTCOpMode {
         Pose startPose = (PoseManager.currentPose != null)
                 ? PoseManager.currentPose
                 : poseInicial;
-
         PedroComponent.follower().setStartingPose(startPose);
     }
 
@@ -131,21 +131,17 @@ public class TeleOpAzul extends NextFTCOpMode {
         Lock.INSTANCE.open.invoke();
         Turret.enabled = true;
 
-        double correctionRad = Math.toRadians( odometrycorrectiondeg);
-
+        double correctionRad = Math.toRadians(odometrycorrectiondeg);
         double correctedX =
                 poseAtual.getX() * Math.cos(correctionRad)
                         - poseAtual.getY() * Math.sin(correctionRad);
-
         double correctedY =
                 poseAtual.getX() * Math.sin(correctionRad)
                         + poseAtual.getY() * Math.cos(correctionRad);
 
-        poseAtual = new Pose(
-                correctedX,
-                correctedY,
-                poseAtual.getHeading()
-        );
+        poseAtual = new Pose(correctedX, correctedY, poseAtual.getHeading());
+
+        Turret.offsetx = offsetxTras;
         Turret.INSTANCE.setPoseTracker(
                 poseAtual.getX(),
                 poseAtual.getY(),
@@ -155,10 +151,10 @@ public class TeleOpAzul extends NextFTCOpMode {
                 telemetry,
                 0
         );
+
         Lock.INSTANCE.closed.invoke();
         Intake.INSTANCE.intake.invoke();
         Indexer.INSTANCE.naoshooting.invoke();
-
         Shooter.INSTANCE.setVelocity(Shooter.goal);
 
         Gamepads.gamepad1().y().whenTrue(() ->
@@ -167,11 +163,8 @@ public class TeleOpAzul extends NextFTCOpMode {
         Gamepads.gamepad1().a().whenTrue(() ->
                 Intake.INSTANCE.intake.schedule()
         );
-
-
         Gamepads.gamepad1().rightBumper().whenBecomesTrue(() ->
                 new SequentialGroup(
-//                        Intake.INSTANCE.intake,
                         Indexer.INSTANCE.shooting,
                         Lock.INSTANCE.open,
                         new Delay(0.7),
@@ -179,16 +172,14 @@ public class TeleOpAzul extends NextFTCOpMode {
                         Indexer.INSTANCE.naoshooting
                 ).schedule()
         );
-
         Gamepads.gamepad1().x().whenBecomesTrue(this::resetPose);
     }
 
     @Override
     public void onUpdate() {
-
         long tempoLoopAtual = System.nanoTime();
-        double deltaNano = tempoLoopAtual - tempoloopanterior;
-        double tempoLoopMs = deltaNano / 1_000_000.0;
+        double deltaNano    = tempoLoopAtual - tempoloopanterior;
+        double tempoLoopMs  = deltaNano / 1_000_000.0;
 
         contagemLoops++;
         if (contagemLoops == 1) {
@@ -196,17 +187,15 @@ public class TeleOpAzul extends NextFTCOpMode {
         } else {
             tempoloopmedio = ((tempoloopmedio * (contagemLoops - 1)) + tempoLoopMs) / contagemLoops;
         }
-
         if (contagemLoops >= medialooptime) {
             contagemLoops = 0;
         }
-
         tempoloopanterior = tempoLoopAtual;
 
         PedroComponent.follower().update();
 
-        double y = gamepad1.left_stick_y;
-        double x = -gamepad1.left_stick_x;
+        double y  = gamepad1.left_stick_y;
+        double x  = -gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
         double headingTurret = PedroComponent.follower().getPose().getHeading();
@@ -218,7 +207,6 @@ public class TeleOpAzul extends NextFTCOpMode {
                     Math.cos(targetRad - headingTurret)
             );
             double errorDeg = Math.abs(Math.toDegrees(error));
-
             if (errorDeg > 45) {
                 x *= 0.4;
                 y *= 0.4;
@@ -229,7 +217,6 @@ public class TeleOpAzul extends NextFTCOpMode {
                 x *= 0.8;
                 y *= 0.8;
             }
-
             rx = Math.max(-max, Math.min(max, error * kpHeading));
             if (errorDeg < 2.0) rx = 0;
         }
@@ -248,34 +235,23 @@ public class TeleOpAzul extends NextFTCOpMode {
         BackRight.setPower((rotY + rotX - rx) / denominator);
 
         Pose poseAtual = PedroComponent.follower().getPose();
+
         double distanceToGoal = poseAtual.distanceFrom(goalShootPoseAzul);
 
-        Vector v = new Pose(
-                0,
-                0,
-                Math.toRadians(poseAtual.getHeading())
-        ).getHeadingAsUnitVector();
-
+        Vector v = new Pose(0, 0, Math.toRadians(poseAtual.getHeading()))
+                .getHeadingAsUnitVector();
         v.setMagnitude(v.getMagnitude() * 9);
 
-        Vector v2 = new Pose(
-                0,
-                0,
-                Math.toRadians(destinationAngle)
-        ).getHeadingAsUnitVector();
-
+        Vector v2 = new Pose(0, 0, Math.toRadians(destinationAngle))
+                .getHeadingAsUnitVector();
         v2.setMagnitude(v2.getMagnitude() * 9);
 
-        Vector v3 = new Pose(
-                0,
-                0,
-                Math.toRadians(toTurn)
-        ).getHeadingAsUnitVector();
-
+        Vector v3 = new Pose(0, 0, Math.toRadians(toTurn))
+                .getHeadingAsUnitVector();
         v3.setMagnitude(v3.getMagnitude() * 9);
 
         panelsField.setStyle(robotLook);
-        panelsField.moveCursor(poseAtual.getX()-7.5175, poseAtual.getY()-6.04);
+        panelsField.moveCursor(poseAtual.getX() - 7.5175, poseAtual.getY() - 6.04);
         panelsField.rect(15.3543, 12.08661);
 
         panelsField.setStyle(robotLook);
@@ -310,55 +286,29 @@ public class TeleOpAzul extends NextFTCOpMode {
 
         panelsField.update();
 
-//        double dx   = Turret.goalx - poseAtual.getX();
-//        double dy   = Turret.goaly - poseAtual.getY();
-//        double dist = Math.sqrt(dx * dx + dy * dy);
-//
-//        double vx = PedroComponent.follower().getVelocity().getXComponent();
-//        double vy = PedroComponent.follower().getVelocity().getYComponent();
-//
-//        double radialVelX = dx / dist;
-//        double radialVelY = dy / dist;
-//        double lateralVel = vx * (-radialVelY) + vy * radialVelX;
-        double lateralVelY = PedroComponent.follower().poseTracker.getVelocity().getYComponent();
+        double lateralVelY  = PedroComponent.follower().poseTracker.getVelocity().getYComponent();
         double VerticalVelX = PedroComponent.follower().poseTracker.getVelocity().getXComponent();
+        double flightTime   = distanceToGoal / projectileSpeed;
 
-        double flightTime = distanceToGoal / projectileSpeed;
-//        double leadCompensationX = VerticalVelX * flightTime;
+        if (gamepad2.dpad_up && !lastDpadUp)       valorFlywheel += 40;
+        if (gamepad2.dpad_down && !lastDpadDown)    valorFlywheel -= 40;
+        if (gamepad2.dpad_right && !lastDpadRight)  valorTurret++;
+        if (gamepad2.dpad_left && !lastDpadLeft)    valorTurret--;
+        if (gamepad2.b && !lastb)                   valorFlywheel = 0;
+        if (gamepad2.x && !lastx)                   valorTurret = 0;
 
-        if (gamepad2.dpad_up && !lastDpadUp) {
-            valorFlywheel +=40;        }
-
-        if (gamepad2.dpad_down && !lastDpadDown) {
-            valorFlywheel -= 40;
-        }
-
-        if (gamepad2.dpad_right && !lastDpadRight) {
-            valorTurret++;
-        }
-
-        if (gamepad2.dpad_left && !lastDpadLeft) {
-            valorTurret--;
-        }
-        if (gamepad2.b && !lastb) {
-            valorFlywheel=0;
-        }
-        if (gamepad2.x && !lastx) {
-            valorTurret=0;
-        }
-
-        lastDpadUp = gamepad2.dpad_up;
-        lastDpadDown = gamepad2.dpad_down;
-        lastDpadLeft = gamepad2.dpad_left;
+        lastDpadUp    = gamepad2.dpad_up;
+        lastDpadDown  = gamepad2.dpad_down;
+        lastDpadLeft  = gamepad2.dpad_left;
         lastDpadRight = gamepad2.dpad_right;
+        lastb         = gamepad2.b;
+        lastx         = gamepad2.x;
 
         double leadCompensation = lateralVelY * flightTime + valorTurret;
-
         autoshoot.SetFlywheelOffset(valorFlywheel);
 
-//        double leadCompensation = Math.clamp(leadCompensationX,(leadCompensationY - 2),(leadCompensationY + 2)) + (leadCompensationY + valor);
-
-        //double angleCompensation =  errorDeg - targetHeadingDeg;
+        // Garante que o offsetx correto está sendo usado nesse TeleOp
+        Turret.offsetx = offsetxTras;
 
         Turret.INSTANCE.setPoseTracker(
                 poseAtual.getX(),
@@ -367,11 +317,8 @@ public class TeleOpAzul extends NextFTCOpMode {
                 0.0,
                 true,
                 telemetry,
-                leadCompensation //= + angleCompensation
+                leadCompensation
         );
-
-//        double radialVel = (vx * dx + vy * dy) / dist;
-//        Shooter.radialCompensation = radialVel * flywheelCompensation;
 
         Shooter.INSTANCE.setGoalDistanceWithComp(distanceToGoal);
         Hood.INSTANCE.setGoalDistance(distanceToGoal);
@@ -392,26 +339,25 @@ public class TeleOpAzul extends NextFTCOpMode {
                 0.0
         );
 
-        telemetry.addData("cos", Math.cos(Math.toDegrees(poseAtual.getHeading())));
-        telemetry.addData("heading graus", Math.toDegrees(poseAtual.getHeading()));
-        telemetry.addData("goalx", Turret.goalx);
-        telemetry.addData("goaly", Turret.goaly);
-        telemetry.addData("toTurn", toTurn);
-        telemetry.addData("turretAngle", turretAngle);
-
+        telemetry.addData("cos",            Math.cos(Math.toDegrees(poseAtual.getHeading())));
+        telemetry.addData("heading graus",  Math.toDegrees(poseAtual.getHeading()));
+        telemetry.addData("goalx",          Turret.goalx);
+        telemetry.addData("goaly",          Turret.goaly);
+        telemetry.addData("toTurn",         toTurn);
+        telemetry.addData("turretAngle",    turretAngle);
+        telemetry.addData("offsetxTras",    Turret.offsetx);
+        telemetry.addData("offsetSeno",     offsetxTras * Math.sin(poseAtual.getHeading()));
         telemetry.update();
     }
 
     @Override
     public void onStop() {
         Turret.enabled = false;
+        // Restaura o offsetx original ao sair desse TeleOp
+        Turret.offsetx = 3.0;
     }
 
     private void resetPose() {
         PedroComponent.follower().setPose(poseResetHumanPAzul);
-    }
-
-    private void resetTurretPose() {
-        Turret.INSTANCE.resetTurret();
     }
 }
